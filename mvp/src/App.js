@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import "./App.css";
 import Form from "./components/common/Form";
 import Home from "./components/Home";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { app } from "./firebase-config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import handleEmailLogin from "./actions/auth";
+import { handleEmailLogin, handleEmailSignup } from "./actions/auth";
 function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +18,7 @@ function App() {
       navigate("/home");
     }
   }, []);
-  
+
   return (
     <div className="App">
       <>
@@ -33,6 +32,17 @@ function App() {
                 setEmail={setEmail}
                 setPassword={setPassword}
                 handleAction={() => handleEmailLogin(email, password)}
+              />
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <Form
+                title="Register"
+                setEmail={setEmail}
+                setPassword={setPassword}
+                handleAction={() => handleEmailSignup(email,password)}
               />
             }
           />
