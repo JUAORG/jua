@@ -1,7 +1,0 @@
-{
-  "name": "customer",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "react"
-}
