@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { Stack, TextField, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // component
+import { signUp } from '../../../actions/SignUp';
 import Iconify from '../../../components/Iconify';
-
 // ----------------------------------------------------------------------
 
 export default function RegisterForm() {
@@ -31,12 +31,21 @@ export default function RegisterForm() {
     },
     validationSchema: RegisterSchema,
     onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+      signUp(
+        formik.values.email,
+        formik.values.password,
+        formik.values.firstName,
+        formik.values.lastName
+      ).then(() => {
+        navigate('/dashboard', { replace: true });
+      }).catch((error) => {
+        console.log(error.message)
+      })
     },
   });
 
   const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
-
+  
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
