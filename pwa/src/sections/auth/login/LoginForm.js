@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
+import { Login } from 'src/actions/Login';
 // material
 import { Link, Stack, Checkbox, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -28,7 +29,16 @@ export default function LoginForm() {
     },
     validationSchema: LoginSchema,
     onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+      Login(
+        formik.values.email,
+        formik.values.password,
+        formik.values.firstName,
+        formik.values.lastName
+      ).then(() => {
+        navigate('/dashboard', { replace: true });
+      }).catch((error) => {
+        console.log(error.message)
+      })
     },
   });
 
