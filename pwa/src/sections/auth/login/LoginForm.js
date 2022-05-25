@@ -2,10 +2,10 @@ import * as Yup from 'yup';
 import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
-import { Login } from 'src/actions/Login';
 // material
 import { Link, Stack, Checkbox, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { login } from '../../../actions/Login';
 // component
 import Iconify from '../../../components/Iconify';
 
@@ -29,7 +29,7 @@ export default function LoginForm() {
     },
     validationSchema: LoginSchema,
     onSubmit: () => {
-      Login(
+      login(
         formik.values.email,
         formik.values.password,
         formik.values.firstName,

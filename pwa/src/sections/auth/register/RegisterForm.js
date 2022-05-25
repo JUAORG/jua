@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Stack, TextField, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // component
-import { signUp } from '../../../actions/SignUp';
+import { register } from '../../../actions/Register';
 import Iconify from '../../../components/Iconify';
 // ----------------------------------------------------------------------
 
@@ -31,7 +31,7 @@ export default function RegisterForm() {
     },
     validationSchema: RegisterSchema,
     onSubmit: () => {
-      signUp(
+      register(
         formik.values.email,
         formik.values.password,
         formik.values.firstName,

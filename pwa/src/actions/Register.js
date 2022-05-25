@@ -1,8 +1,8 @@
-import { firebaseAuth } from "src/utils/firebase";
 import { getFirestore, addDoc, collection } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { firebaseAuth } from "../utils/firebase"
 
-export const signUp = async (email, password, firstName, lastName) => {
+export const register = async (email, password, firstName, lastName) => {
 
     const firebaseDb = getFirestore();
     const userCredential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
