@@ -28,6 +28,9 @@ export default function RegisterForm() {
       lastName: '',
       email: '',
       password: '',
+      country: '',
+      town: '',
+      dob: '',
     },
     validationSchema: RegisterSchema,
     onSubmit: () => {
@@ -35,17 +38,22 @@ export default function RegisterForm() {
         formik.values.email,
         formik.values.password,
         formik.values.firstName,
-        formik.values.lastName
-      ).then(() => {
-        navigate('/dashboard', { replace: true });
-      }).catch((error) => {
-        console.log(error.message)
-      })
+        formik.values.lastName,
+        formik.values.dob,
+        formik.values.country,
+        formik.values.town
+      )
+        .then(() => {
+          navigate('/dashboard', { replace: true });
+        })
+        .catch((error) => {
+          console.log(error.message);
+        });
     },
   });
 
   const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
-  
+
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -67,7 +75,29 @@ export default function RegisterForm() {
               helperText={touched.lastName && errors.lastName}
             />
           </Stack>
-
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            <TextField
+              fullWidth
+              label="Country"
+              {...getFieldProps('country')}
+              error={Boolean(touched.country && errors.country)}
+              helperText={touched.country && errors.country}
+            />
+            <TextField
+              fullWidth
+              label="Town/City"
+              {...getFieldProps('town')}
+              error={Boolean(touched.town && errors.town)}
+              helperText={touched.town && errors.town}
+            />
+          </Stack>
+          <TextField
+            fullWidth
+            label="Date Of Birth"
+            {...getFieldProps('dob')}
+            error={Boolean(touched.dob && errors.dob)}
+            helperText={touched.dob && errors.dob}
+          />
           <TextField
             fullWidth
             autoComplete="username"
