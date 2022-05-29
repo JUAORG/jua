@@ -1,9 +1,9 @@
 // ----------------------------------------------------------------------
 
 const account = {
-  displayName: 'Jua Jua',
+  displayName: 'Demo User',
   email: 'demo@jua.co.za',
-  photoURL: '/static/mock-images/avatars/avatar_default.jpg',
+  photoURL: '/static/mock-images/avatars/avatar_5.jpg',
 };
 
 export default account;
