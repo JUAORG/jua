@@ -44,7 +44,7 @@ export default function RegisterForm() {
         formik.values.town
       )
         .then(() => {
-          navigate('/dashboard', { replace: true });
+          navigate('/dashboard/rate_card_setup', { replace: true });
         })
         .catch((error) => {
           console.log(error.message);
