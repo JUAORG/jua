@@ -8,18 +8,25 @@ export default function Profile() {
   return (
     <Page title="Profile">
       <Container maxWidth="xl">
-        <Typography variant="h4" sx={{ mb: 5 }}>
+        <Typography variant="h3" sx={{ mb: 5 }}>
           Profile
-          <Divider />
         </Typography>
         <Grid>
           <Grid my={5} />
           <UserProfileForm />
           <Grid />
           <Grid my={5}>
+          <Typography variant="h4" mb={3}>
+          Education History
+          <Divider />
+        </Typography>
             <EducationHistoryForm />
           </Grid>
           <Grid my={5}>
+          <Typography variant="h4" mb={3}>
+          Service History
+          <Divider />
+        </Typography>
             <ServiceHistroyForm />
           </Grid>
         </Grid>
