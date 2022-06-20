@@ -13,6 +13,7 @@ import SavedOpportunities from './pages/SavedOpportunities';
 import Settings from './pages/Settings';
 import RateCardSetup from './pages/RateCardSetup';
 import WalletSetup from './pages/WalletSetup';
+import AdvisorySessionMeeting from './pages/AdvisorySessionMeeting';
 
 // ----------------------------------------------------------------------
 
@@ -28,6 +29,7 @@ export default function Router() {
         { path: 'profile', element: <Profile /> },
         { path: 'service_requests', element: <ServiceRequests /> },
         { path: 'saved_opportunities', element: <SavedOpportunities /> },
+        { path: 'advisory_session_meeting', element: <AdvisorySessionMeeting /> },
         { path: 'settings', element: <Settings /> },
       ],
     },
