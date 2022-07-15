@@ -3,15 +3,15 @@ import React, { Component } from 'react';
 
 class JitsiComponent extends Component {
 
-    domain = '127.0.0.1:8080/';
+    domain = process.env.REACT_APP_JITSI_DOMAIN;
     api = {};
 
     constructor(props) {
         super(props);
         this.state = {
-            room: 'knowledgeBuyerXWithKnowledgerSellerY',
+            room: 'xxx',
             user: {
-                name: 'Knowledge Buyer'
+                name: 'xxx'
             },
             isAudioMuted: false,
             isVideoMuted: false
@@ -84,6 +84,8 @@ class JitsiComponent extends Component {
             }, 500)
         });
     }
+
+    
 
     // custom events
     executeCommand(command) {
