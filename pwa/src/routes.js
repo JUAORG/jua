@@ -11,6 +11,7 @@ import Profile from './pages/Profile';
 import ServiceRequests from './pages/ServiceRequests';
 import SavedOpportunities from './pages/SavedOpportunities';
 import Settings from './pages/Settings';
+import JuaNetwork from './pages/JuaNetwork';
 import RateCardSetup from './pages/RateCardSetup';
 import WalletSetup from './pages/WalletSetup';
 
@@ -24,6 +25,7 @@ export default function Router() {
       children: [
         { path: 'app', element: <DashboardApp /> },
         { path: 'rate_card_setup', element: <RateCardSetup /> },
+        { path: 'jua_network', element: <JuaNetwork/> },
         { path: 'wallet_setup', element: <WalletSetup /> },
         { path: 'profile', element: <Profile /> },
         { path: 'service_requests', element: <ServiceRequests /> },
