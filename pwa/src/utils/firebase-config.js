@@ -1,9 +1,9 @@
+/* eslint-disable */
 // Import the functions you need from the SDKs you need
-/* eslint no-use-before-define: 0 */
 import { initializeApp } from "firebase/app"
-import "firebase/database";
 import { getAuth } from "firebase/auth"
-// Your web app's Firebase configuration
+import { getDatabase } from "firebase/database"
+// import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -14,7 +14,8 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_FIREBASE_APP_ID
 }
 
-// Initialize Firebase
-export const app = initializeApp(firebaseConfig)
-// export const firebaseDb = getFirestore();
-export const firebaseAuth = getAuth();
+const app = initializeApp(firebaseConfig)
+export const firebaseAuth = getAuth(app)
+export const fbDatabase = getDatabase(app)
+// export const fStore = getFirestore(app);
+// export const fStorage = getStorage(app);

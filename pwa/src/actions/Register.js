@@ -1,6 +1,6 @@
 import { getFirestore, addDoc, collection } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { firebaseAuth } from '../utils/firebase';
+import { firebaseAuth } from '../utils/firebase-config';
 
 export const register = async (email, password, firstName, lastName, country, town, dob) => {
   const firebaseDb = getFirestore();
