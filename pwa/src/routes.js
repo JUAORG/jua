@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Navigate, useRoutes } from 'react-router-dom';
 // layouts
 import DashboardLayout from './layouts/dashboard';
@@ -13,10 +14,17 @@ import SavedOpportunities from './pages/SavedOpportunities';
 import Settings from './pages/Settings';
 import RateCardSetup from './pages/RateCardSetup';
 import WalletSetup from './pages/WalletSetup';
+import { isSignedIn } from './actions/Auth';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
+
+  useEffect(() => {
+    isSignedIn()
+    
+  })
+
   return useRoutes([
     {
       path: '/dashboard',
