@@ -1,4 +1,4 @@
-import { unset, assign } from 'lodash'
+import { get, head, unset, assign } from 'lodash'
 import {
   getAuth,
   signOut,
@@ -6,6 +6,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword
 } from "firebase/auth"
+
 import { firebaseAuth } from '../utils/firebase-config'
 import { createProfile } from './Profile'
 
@@ -27,15 +28,15 @@ export const removeAuthId = () => {
 }
 
 export const isSignedIn = () => {
-    const pathName = window.location.pathname
-    const loginPath = "/login"
-    const registerPath = "/register"
-    const notFoundPath = "/404"
-    const isSignedIn = getAuthId()
+  const pathName = window.location.pathname
+  const loginPath = "/login"
+  const registerPath = "/register"
+  const notFoundPath = "/404"
+  const isSignedIn = getAuthId()
 
-    if (!isSignedIn && pathName !== loginPath && pathName !== registerPath && pathName !== notFoundPath) {
-      window.location.href = registerPath
-    }
+  if (!isSignedIn && pathName !== loginPath && pathName !== registerPath && pathName !== notFoundPath) {
+    window.location.href = registerPath
+  }
 }
 
 export const emailAndPasswordRegister = (values) => {
@@ -50,21 +51,34 @@ export const emailAndPasswordRegister = (values) => {
         }
       })
     })
-  .catch((error) => {
-    const errorMessage = error.message;
-    alert(errorMessage)
-  })
+    .catch((error) => {
+      const errorMessage = error.message;
+      alert(errorMessage)
+    })
+}
+
+export const emailAndPasswordSignIn = (values) => {
+  signInWithEmailAndPassword(auth, values.email, values.password)
+    .then((userCredential) => {
+      const user = userCredential.user
+      setAuthId(get(user, "uid"))
+    })
+    .catch((error) => {
+      const errorCode = error.code
+      const errorMessage = error.message
+      alert(errorMessage)
+    })
 }
 
 export const getUser = () => {
   const user = getAuth().currentUser
-    if (user) {
-      // User is signed in, see docs for a list of available properties
-      // https://firebase.google.com/docs/reference/js/firebase.User
-      // ...
-    } else {
-      // No user is signed in.
-    }
+  if (user) {
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/firebase.User
+    // ...
+  } else {
+    // No user is signed in.
+  }
 }
 
 export const signOutUser = () => {
