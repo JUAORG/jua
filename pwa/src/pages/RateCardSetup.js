@@ -15,7 +15,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
 import Page from '../components/Page';
 import EducationHistoryForm from '../sections/@dashboard/app/EducationHistoryForm';
-import ServiceHistroyForm from '../sections/@dashboard/app/ServiceHistoryForm';
+import WorkHistoryForm from '../sections/@dashboard/app/WorkHistoryForm';
 
 export default function RateCardSetup() {
   const navigate = useNavigate();
@@ -65,7 +65,7 @@ export default function RateCardSetup() {
             )}
             {activeFormTitle !== 'Education History' && (
               <>
-                <ServiceHistroyForm />
+                <WorkHistoryForm />
               </>
             )}
           </Grid>

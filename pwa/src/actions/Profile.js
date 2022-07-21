@@ -1,9 +1,10 @@
 import { getDatabase, ref, set, child, get, onValue, serverTimestamp } from "firebase/database"
 
-const db = getDatabase();
+const db = getDatabase()
 
 export const createProfile = (values) => {
   set(ref(db, `users/${values.uid}/`), {
+    uid: values.uid,
     first_name: values.first_name,
     last_name: values.last_name,
     email: values.email,

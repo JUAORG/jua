@@ -1,14 +1,15 @@
-import react, { useState } from 'react'
+import react, {useEffect, useState} from 'react'
+import { get, head } from 'lodash'
 import { useForm } from "react-hook-form"
 import { Stack, TextField } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import { createId } from '../../../utils/uuid-generator'
-import { addEducation, deleteEducation, editEducation } from '../../../actions/Education'
+import { addWork, deleteWork, editWork } from '../../../actions/Work'
 
-export default function EducationHistoryForm(educationDoc) {
+export default function WorkHistoryForm(workDoc) {
   
-  const [education, setEducation] = useState(educationDoc.educationDoc)
-  const formProps = useForm({ defaultValues: education })
+  const [work, setWork] = useState(workDoc.workDoc)
+  const formProps = useForm({ defaultValues: work })
 
   const {
     reset,
@@ -22,16 +23,18 @@ export default function EducationHistoryForm(educationDoc) {
   } = formProps
 
   const onSubmit = (values) => {
-    if (education) {
-      editEducation(values)
+    if (work) {
+      console.log(work)
+      values.id = get(work, "id")
+      editWork(values)
     }else{
       values.id = createId()
-      addEducation(values)
+      addWork(values)
     }
   }
 
   const deleteItem = () => {
-    deleteEducation(education)
+    deleteWork(work)
   }
   
   return (
@@ -85,7 +88,7 @@ export default function EducationHistoryForm(educationDoc) {
           label="Description (optional)"
           {...register('description')}
         />
-        {education && (
+        {work && (
           <>
           <LoadingButton
             fullWidth
@@ -99,13 +102,13 @@ export default function EducationHistoryForm(educationDoc) {
             fullWidth
             size="large"
             loading={false}
-            onClick={() => deleteItem(education)}
+            onClick={() => deleteItem(work)}
             variant="contained">
             Delete
           </LoadingButton>
           </>
         )}
-        {!education && (
+        {!work && (
           <LoadingButton
             fullWidth
             size="large"
