@@ -13,6 +13,7 @@ import {
   Avatar
 } from '@mui/material';
 import { getDatabase, ref, push, child, getRef, onValue } from "firebase/database"
+import { activeJuaNetworkUsers } from "../actions/JuaNetwork"
 import Page from '../components/Page';
 
 export default function JuaNetwork() {
@@ -22,7 +23,8 @@ export default function JuaNetwork() {
   
   useEffect(() => {
     onValue(ref(db, `/users`), (snapshot) => {
-      const result =  (snapshot.val() && snapshot.val())
+      let result = (snapshot.val() && snapshot.val())
+      result = activeJuaNetworkUsers(result)
       setUsers(result)
   }, {
     onlyOnce: true
