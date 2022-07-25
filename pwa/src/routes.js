@@ -14,6 +14,8 @@ import SavedOpportunities from './pages/SavedOpportunities';
 import Settings from './pages/Settings';
 import RateCardSetup from './pages/RateCardSetup';
 import WalletSetup from './pages/WalletSetup';
+import JuaNetwork from './pages/JuaNetwork';
+import JuaNetworkUser from './pages/JuaNetworkUser';
 import { isSignedIn } from './actions/Auth';
 
 // ----------------------------------------------------------------------
@@ -36,6 +38,8 @@ export default function Router() {
         { path: 'profile', element: <Profile /> },
         { path: 'service_requests', element: <ServiceRequests /> },
         { path: 'saved_opportunities', element: <SavedOpportunities /> },
+        { path: 'jua_network', element: <JuaNetwork /> },
+        { path: `jua_network/:juaNetworkUserId`, element: <JuaNetworkUser /> },
         { path: 'settings', element: <Settings /> },
       ],
     },
@@ -46,10 +50,10 @@ export default function Router() {
         { path: '/', element: <Navigate to="/dashboard/app" /> },
         { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> },
-        { path: '404', element: <NotFound /> },
-        { path: '*', element: <Navigate to="/404" /> },
+        // { path: '404', element: <NotFound /> },
+        // { path: '*', element: <Navigate to="/404" /> },
       ],
     },
-    { path: '*', element: <Navigate to="/404" replace /> },
+    // { path: '*', element: <Navigate to="/404" replace /> },
   ]);
 }

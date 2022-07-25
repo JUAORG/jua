@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getDatabase, ref, push, child, getRef, onValue } from "firebase/database"
-import { get, map } from 'lodash';
+import { get, map, unset } from 'lodash';
 import { Grid, Container, Typography, Divider } from '@mui/material';
 import EducationHistoryForm from '../sections/@dashboard/app/EducationHistoryForm';
 import WorkHistroyForm from '../sections/@dashboard/app/WorkHistoryForm';
@@ -18,14 +18,16 @@ export default function Profile() {
   const onUpdated = () => {
     setRefreshProfileList(true)
   }
-
-
-useEffect(() => {
-  onValue(ref(db, `/users/${getAuthId()}/`), (snapshot) => {
-    const result =  (snapshot.val() && snapshot.val())
-    setProfileList(get(result, "profile"))
-    setEducationList(get(result, "education"))
-    setWorkList(get(result, "work"))
+  
+  
+  useEffect(() => {
+    onValue(ref(db, `/users/${getAuthId()}/`), (snapshot) => {
+      const result =  (snapshot.val() && snapshot.val())
+      setEducationList(get(result, "education"))
+      setWorkList(get(result, "work"))
+      unset(result, "work")
+      unset(result, "education")
+      setProfileList(result)
   }, {
     onlyOnce: true
   })
@@ -67,7 +69,7 @@ useEffect(() => {
         </Typography>
         <Grid>
           <Grid my={5} />
-          <UserProfileForm />
+          <UserProfileForm userProfileDoc={profileList}/>
           <Grid />
           <Grid my={5}>
           <Typography variant="h4" mb={3}>

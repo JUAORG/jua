@@ -1,4 +1,4 @@
-import { getDatabase, ref, set, child, get, onValue, serverTimestamp } from "firebase/database"
+import { getDatabase, ref, set, child, get, update, onValue, serverTimestamp } from "firebase/database"
 
 const db = getDatabase()
 
@@ -14,10 +14,19 @@ export const createProfile = (values) => {
     join_date: serverTimestamp()
   })
   .then((res) => {
-    console.log(values)
       alert("Profile created successfully")
     })
     .catch((error) => {
       alert("Error")
     })
+}
+
+export const editUserProfile = (values) => {
+  update(ref(db, `users/${values.uid}`), values)
+  .then(() => {
+    alert("Record Updated")
+  })
+  .catch(() => {
+    alert("Error")
+  })
 }

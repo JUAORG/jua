@@ -41,13 +41,13 @@ export const isSignedIn = () => {
 
 export const emailAndPasswordRegister = (values) => {
   createUserWithEmailAndPassword(firebaseAuth, values.email, values.password)
-    .then(() => {
+    .then((userCredential) => {
       onAuthStateChanged(firebaseAuth, (user) => {
         if (user) {
+          setAuthId(user.uid)
           unset(values, "password")
           assign(values, {uid: user.uid})
           createProfile(values)
-          setAuthId(user.id)
         }
       })
     })
@@ -83,9 +83,9 @@ export const getUser = () => {
 
 export const signOutUser = () => {
   removeAuthId()
-  // signOut(auth).then(() => {
-  //   alert("Successfully signout")
-  // }).catch((error) => {
-  //   console.error(error)
-  // })
+  signOut(auth).then(() => {
+    alert("Successfully signout")
+  }).catch((error) => {
+    console.error(error)
+  })
 }

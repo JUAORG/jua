@@ -9,9 +9,9 @@ const navConfig = [
     icon: getIcon('eva:file-text-fill'),
   },
   {
-    title: 'My Profile & Rate Card',
-    path: '/dashboard/profile',
-    icon: getIcon('eva:people-fill'),
+    title: 'JUA Network',
+    path: '/dashboard/jua_network',
+    icon: getIcon('eva:file-text-fill'),
   },
   {
     title: 'Service Requests',
@@ -28,6 +28,11 @@ const navConfig = [
   //   path: '/dashboard/settings',
   //   icon: getIcon('eva:file-text-fill'),
   // },
+  {
+    title: 'My Profile & Rate Card',
+    path: '/dashboard/profile',
+    icon: getIcon('eva:people-fill'),
+  },
 ];
 
 export default navConfig;
