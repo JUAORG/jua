@@ -23,11 +23,11 @@ const navConfig = [
     path: '/dashboard/saved_opportunities',
     icon: getIcon('eva:file-text-fill'),
   },
-  {
-    title: 'Settings',
-    path: '/dashboard/settings',
-    icon: getIcon('eva:file-text-fill'),
-  },
+  // {
+  //   title: 'Settings',
+  //   path: '/dashboard/settings',
+  //   icon: getIcon('eva:file-text-fill'),
+  // },
 ];
 
 export default navConfig;
