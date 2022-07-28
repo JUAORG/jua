@@ -1,7 +1,58 @@
-import { map, filter } from "lodash"
-import { getAuthId } from "./Auth"
+import { getDatabase, ref, child, push, update, serverTimestamp, increment } from 'firebase/database'
+import { map, get, size, filter } from 'lodash'
+import { createId } from '../utils/uuid-generator'
+import { getAuthId } from './Auth'
+
+const db = getDatabase()
+const uid = getAuthId()
+
+const serviceRequestStatusOptions = {
+  unread: "Unread",
+  read: "Read",
+  cancelled: "Cancelled",
+  accepted: "Accepted",
+  declined: "Declined"
+}
 
 export const activeJuaNetworkUsers = (users) => {
-  const user = getAuthId()
-  return map(filter(users, (x) => x.uid !== user), (x) => x, "user")
+  return map(
+    filter(users, (x) => x.uid !== uid),
+    (x) => x,
+    'user'
+  )
+}
+
+export const createServiceRequest = (values) => {
+  values.serviceRequester = uid
+  values.status = get(serviceRequestStatusOptions, "unread")
+  values.created_at = serverTimestamp()
+
+  const serviceRequestKey = createId()
+  const updates = {}
+
+  updates[`/service_requests/${serviceRequestKey}`] = values
+  updates[`/users/${uid}/service_requests/${serviceRequestKey}`] = values
+  updates[`/users/${values.serviceProvider}/service_requests/${serviceRequestKey}`] = values
+
+  update(ref(db), updates)
+  .then(() => {
+    alert('Service Request created')
+  })
+  .catch(() => {
+    alert('Error')
+  })
+}
+
+export const getActiveServiceRequests = (serviceRequests) => {
+  return map(
+    filter(serviceRequests, (x) => x.serviceProvider === uid),
+    (x) => x
+  )
+}
+
+export const getNumOfMyServiceRequests = (serviceRequests) => {
+  return size(map(
+    filter(serviceRequests, (x) => x.status !== get(serviceRequestStatusOptions, "declined")),
+    (x) => x
+  ))
 }

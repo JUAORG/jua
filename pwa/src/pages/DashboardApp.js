@@ -1,12 +1,27 @@
-import { faker } from '@faker-js/faker'
+import { useEffect, useState } from 'react'
 import { Grid, Container, Typography } from '@mui/material'
-// components
+import { getDatabase, ref, push, child, getRef, onValue } from "firebase/database"
+import { get, map, size } from "lodash"
+import { getAuthId } from '../actions/Auth';
 import Page from '../components/Page'
 // sections
 import { AppNewsUpdate, AppWidgetSummary } from '../sections/@dashboard/app'
+import { getNumOfMyServiceRequests } from '../actions/JuaNetwork'
 
 
 export default function DashboardApp() {
+  const db = getDatabase()
+  const [numServiceRequests, setNumServiceRequests] = useState()
+
+  useEffect(() => {
+    onValue(ref(db, `/users/${getAuthId()}/service_requests`), (snapshot) => {  
+      let result = (snapshot.val() && snapshot.val())
+      result = getNumOfMyServiceRequests(result)
+      setNumServiceRequests(result)
+  }, {
+    onlyOnce: true
+  })
+}, [db])
 
   return (
     <Page title="Dashboard">
@@ -17,13 +32,8 @@ export default function DashboardApp() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Service Requests" total={0} />
+            <AppWidgetSummary title="Service Requests" total={numServiceRequests} />
           </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Saved Opportunities" total={0} color="info" />
-          </Grid>
-
           {/* <Grid item xs={12} md={6} lg={8}>
             <AppNewsUpdate
               title="News Update"
@@ -36,7 +46,6 @@ export default function DashboardApp() {
               }))}
             />
           </Grid> */}
-
         </Grid>
       </Container>
     </Page>

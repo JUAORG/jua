@@ -1,14 +1,16 @@
-import react, { useState } from 'react'
+import react from 'react'
 import { useForm } from "react-hook-form"
+import { useParams } from 'react-router-dom'
 import { Stack, TextField } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-import { createId } from '../../../utils/uuid-generator'
-import { addEducation, deleteEducation, editEducation } from '../../../actions/Education'
+import { createServiceRequest } from '../../../actions/JuaNetwork'
 
-export default function ServiceRequestForm(juaNetworkUserId) {
-  
-  const [education, setEducation] = useState(juaNetworkUserId)
-  const formProps = useForm({ defaultValues: education })
+export default function ServiceRequestForm(closeDialog) {
+  const { juaNetworkUserId } = useParams()
+  const defaultValues = {
+    serviceProvider: juaNetworkUserId,
+  }
+  const formProps = useForm({ defaultValues })
 
   const {
     reset,
@@ -22,46 +24,34 @@ export default function ServiceRequestForm(juaNetworkUserId) {
   } = formProps
 
   const onSubmit = (values) => {
-    if (education) {
-      editEducation(values)
-    }else{
-      values.id = createId()
-      addEducation(values)
-    }
+    values.serviceProvider = juaNetworkUserId
+    createServiceRequest(values)
+    closeDialog()
   }
-  
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
-        <TextField
+        <TextField 
           fullWidth
-          label="Subject"
-          {...register('subject')}
-        />
-          <TextField
-            fullWidth
-            id="date"
-            label="Date"
-            type="date"
-            {...register('date')}
-            InputLabelProps={{
-              shrink: true,
-            }}
+          required
+          label="Subject" {...register('subject')} 
           />
         <TextField
           fullWidth
-          type="text"
-          label="Description (optional)"
-          {...register('description')}
+          id="date"
+          label="Date"
+          type="date"
+          required
+          {...register('date')}
+          InputLabelProps={{
+            shrink: true,
+          }}
         />
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            loading={false}
-            variant="contained">
-            Send Request
-          </LoadingButton>
+        <TextField required fullWidth type="text" label="Description (optional)" {...register('description')} />
+        <LoadingButton fullWidth size="large" type="submit" loading={false} variant="contained">
+          Send Request
+        </LoadingButton>
       </Stack>
     </form>
   )

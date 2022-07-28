@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react"
 import { useNavigate, useParams } from 'react-router-dom'
-import { get, map } from "lodash"
+import { get, map, size } from "lodash"
 import {
   Grid,
   Container,
@@ -78,7 +78,7 @@ export default function JuaNetworkUser() {
                 />
               </ListItem>
               {openServiceRequestForm &&
-              <CreateServiceRequest handleClose={handleClose} juaNetworkUserId={juaNetworkUserId}/>
+              <CreateServiceRequest isOpen={openServiceRequestForm}/>
               }
               <Button variant="outlined" onClick={handleClickOpen}>
                 Create Service Request
