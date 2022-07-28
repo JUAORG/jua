@@ -17,6 +17,7 @@ import WalletSetup from './pages/WalletSetup';
 import JuaNetwork from './pages/JuaNetwork';
 import JuaNetworkUser from './pages/JuaNetworkUser';
 import { isSignedIn } from './actions/Auth';
+import AdvisorySessionMeeting from './pages/AdvisorySessionMeeting';
 
 // ----------------------------------------------------------------------
 
@@ -40,6 +41,7 @@ export default function Router() {
         { path: 'saved_opportunities', element: <SavedOpportunities /> },
         { path: 'jua_network', element: <JuaNetwork /> },
         { path: `jua_network/:juaNetworkUserId`, element: <JuaNetworkUser /> },
+        { path: 'advisory_session_meeting', element: <AdvisorySessionMeeting /> },
         { path: 'settings', element: <Settings /> },
       ],
     },
