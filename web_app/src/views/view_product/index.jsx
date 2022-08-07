@@ -73,7 +73,7 @@ const ViewProduct = () => {
             </h3>
           </Link>
           <div className="product-modal">
-            {product.imageCollection.length !== 0 && (
+            {/* {product.imageCollection.length !== 0 && (
               <div className="product-modal-image-collection">
                 {product.imageCollection.map((image) => (
                   <div
@@ -89,14 +89,15 @@ const ViewProduct = () => {
                   </div>
                 ))}
               </div>
-            )}
+            )} */}
             <div className="product-modal-image-wrapper">
               {selectedColor && <input type="color" disabled ref={colorOverlay} id="color-overlay" />}
-              <ImageLoader
+              {/* <ImageLoader
                 alt={product.name}
                 className="product-modal-image"
                 src={selectedImage}
-              />
+              /> */}
+              user profile picture
             </div>
             <div className="product-modal-details">
               <br />
@@ -107,7 +108,7 @@ const ViewProduct = () => {
               <br />
               <div className="divider" />
               <br />
-              <div>
+              {/* <div>
                 <span className="text-subtle">Lens Width and Frame Size</span>
                 <br />
                 <br />
@@ -139,10 +140,10 @@ const ViewProduct = () => {
                 >
                   {isItemOnBasket(product.id) ? 'Remove From Basket' : 'Add To Basket'}
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
-          <div style={{ marginTop: '10rem' }}>
+          {/* <div style={{ marginTop: '10rem' }}>
             <div className="display-header">
               <h1>Recommended</h1>
               <Link to={RECOMMENDED_PRODUCTS}>See All</Link>
@@ -156,7 +157,7 @@ const ViewProduct = () => {
             ) : (
               <ProductShowcaseGrid products={recommendedProducts} skeletonCount={3} />
             )}
-          </div>
+          </div> */}
         </div>
       )}
     </main>

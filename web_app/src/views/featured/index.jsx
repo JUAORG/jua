@@ -20,13 +20,13 @@ const FeaturedProducts = () => {
       <div className="featured">
         <div className="banner">
           <div className="banner-desc">
-            <h1>Featured Products</h1>
+            <h1>Service Requests</h1>
           </div>
           <div className="banner-img">
             <img src={bannerImg} alt="" />
           </div>
         </div>
-        <div className="display">
+        {/* <div className="display">
           <div className="product-display-grid">
             {(error && !isLoading) ? (
               <MessageDisplay
@@ -41,7 +41,7 @@ const FeaturedProducts = () => {
               />
             )}
           </div>
-        </div>
+        </div> */}
       </div>
     </main>
   );
