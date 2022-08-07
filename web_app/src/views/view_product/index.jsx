@@ -56,7 +56,7 @@ const ViewProduct = () => {
     <main className="content">
       {isLoading && (
         <div className="loader">
-          <h4>Loading Product...</h4>
+          <h4>Loading Jua User...</h4>
           <br />
           <LoadingOutlined style={{ fontSize: '3rem' }} />
         </div>
@@ -69,7 +69,7 @@ const ViewProduct = () => {
           <Link to={SHOP}>
             <h3 className="button-link d-inline-flex">
               <ArrowLeftOutlined />
-              &nbsp; Back to shop
+              &nbsp; Back to Jua Network
             </h3>
           </Link>
           <div className="product-modal">
@@ -101,8 +101,8 @@ const ViewProduct = () => {
             </div>
             <div className="product-modal-details">
               <br />
-              <span className="text-subtle">{product.brand}</span>
-              <h1 className="margin-top-0">{product.name}</h1>
+              <span className="text-subtle">{product.fullname}</span>
+              <h1 className="margin-top-0">{product.fullname}</h1>
               <span>{product.description}</span>
               <br />
               <br />

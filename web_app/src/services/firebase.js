@@ -102,7 +102,7 @@ class Firebase {
 
   // // PRODUCT ACTIONS --------------
 
-  getSingleProduct = (id) => this.db.collection("products").doc(id).get();
+  getSingleProduct = (id) => this.db.collection("users").doc(id).get();
 
   getProducts = (lastRefKey) => {
     let didTimeout = false;
@@ -112,8 +112,8 @@ class Firebase {
         if (lastRefKey) {
           try {
             const query = this.db
-              .collection("products")
-              .orderBy(app.firestore.FieldPath.documentId())
+              .collection("users")
+              // .orderBy(app.firestore.FieldPath.documentId())
               .startAfter(lastRefKey)
               .limit(12);
 
@@ -135,11 +135,11 @@ class Firebase {
           }, 15000);
 
           try {
-            const totalQuery = await this.db.collection("products").get();
+            const totalQuery = await this.db.collection("users").get();
             const total = totalQuery.docs.length;
             const query = this.db
-              .collection("products")
-              .orderBy(app.firestore.FieldPath.documentId())
+              .collection("users")
+              // .orderBy(app.firestore.FieldPath.documentId())
               .limit(12);
             const snapshot = await query.get();
 
@@ -167,7 +167,7 @@ class Firebase {
 
     return new Promise((resolve, reject) => {
       (async () => {
-        const productsRef = this.db.collection("products");
+        const productsRef = this.db.collection("users");
 
         const timeout = setTimeout(() => {
           didTimeout = true;

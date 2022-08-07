@@ -41,25 +41,25 @@ const ProductItem = ({ product, isItemOnBasket, addToBasket }) => {
           <div className="product-card-img-wrapper">
             {product.image ? (
               <ImageLoader
-                alt={product.name}
+                alt={product.fullname}
                 className="product-card-img"
-                src={product.image}
+                src={product.avatar}
               />
             ) : <Skeleton width="100%" height="90%" />}
           </div>
           <div className="product-details">
             <h5 className="product-card-name text-overflow-ellipsis margin-auto">
-              {product.name || <Skeleton width={80} />}
+              {product.fullname || <Skeleton width={80} />}
             </h5>
             <p className="product-card-brand">
-              {product.brand || <Skeleton width={60} />}
+             Date Joined {product.dateJoined || <Skeleton width={60} />}
             </p>
             <h4 className="product-card-price">
               {product.price ? displayMoney(product.price) : <Skeleton width={40} />}
             </h4>
           </div>
         </div>
-        {product.id && (
+        {/* {product.id && (
           <button
             className={`product-card-button button-small button button-block ${itemOnBasket ? 'button-border button-border-gray' : ''}`}
             onClick={handleAddToBasket}
@@ -67,7 +67,7 @@ const ProductItem = ({ product, isItemOnBasket, addToBasket }) => {
           >
             {itemOnBasket ? 'Remove from basket' : 'Add to basket'}
           </button>
-        )}
+        )} */}
 
       </div>
     </SkeletonTheme>

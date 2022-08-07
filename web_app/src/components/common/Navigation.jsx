@@ -77,17 +77,19 @@ const Navigation = () => {
         <li><NavLink activeClassName="navigation-menu-active" to={ROUTE.FEATURED_PRODUCTS}>Service Requests</NavLink></li>
       </ul>
       {(pathname === ROUTE.SHOP || pathname === ROUTE.SEARCH) && (
+        <>
         <FiltersToggle>
-          <button className="button-muted button-small" type="button">
+          <button disabled className="button-muted button-small" type="button">
             Filters &nbsp;
             <FilterOutlined />
           </button>
         </FiltersToggle>
-      )}
       <SearchBar />
+        </>
+      )}
       <ul className="navigation-menu">
         <li className="navigation-menu-item">
-          <BasketToggle>
+          {/* <BasketToggle>
             {({ onClickToggle }) => (
               <button
                 className="button-link navigation-menu-link basket-toggle"
@@ -101,7 +103,7 @@ const Navigation = () => {
                 </Badge>
               </button>
             )}
-          </BasketToggle>
+          </BasketToggle> */}
         </li>
         {store.user ? (
           <li className="navigation-menu-item">

@@ -73,9 +73,10 @@ const SearchBar = () => {
           onChange={onSearchChange}
           onKeyUp={onKeyUp}
           onFocus={onFocusInput}
-          placeholder="Search product..."
+          placeholder="Search Jua Network..."
           readOnly={isLoading}
           type="text"
+          disabled
           value={searchInput}
         />
         {filter.recent.length !== 0 && (
