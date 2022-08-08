@@ -21,7 +21,10 @@ const SignInSchema = Yup.object().shape({
     .matches(/[A-Z\W]/g, 'Password should contain at least 1 uppercase letter.'),
   fullname: Yup.string()
     .required('Full name is required.')
-    .min(4, 'Name should be at least 4 characters.')
+    .min(4, 'Name should be at least 4 characters.'),
+  dateOfBirth: Yup.string()
+    .required('Date of birth is required.')
+    .matches(/([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}/g, 'Date of birth format should be 25/08/1997')
 });
 
 const SignUp = ({ history }) => {
@@ -44,6 +47,7 @@ const SignUp = ({ history }) => {
   const onFormSubmit = (form) => {
     dispatch(signUp({
       fullname: form.fullname.trim(),
+      dateOfBirth: form.dateOfBirth.trim(),
       email: form.email.trim().toLowerCase(),
       password: form.password.trim()
     }));
@@ -99,6 +103,16 @@ const SignUp = ({ history }) => {
                         type="email"
                         label="* Email"
                         placeholder="test@example.com"
+                        component={CustomInput}
+                      />
+                    </div>
+                    <div className="auth-field">
+                      <Field
+                        disabled={isAuthenticating}
+                        name="dateOfBirth"
+                        type="dateOfBirth"
+                        label="* Date of Birth"
+                        placeholder="25/08/1997"
                         component={CustomInput}
                       />
                     </div>

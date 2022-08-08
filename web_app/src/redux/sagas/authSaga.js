@@ -95,9 +95,12 @@ function* authSaga({ type, payload }) {
           avatar: defaultAvatar,
           banner: defaultBanner,
           email: payload.email,
+          dateOfBirth: payload.dateOfBirth,
           address: '',
           basket: [],
           mobile: { data: {} },
+          work: { data: {} },
+          education: { data: {} },
           role: 'USER',
           dateJoined: ref.user.metadata.creationTime || new Date().getTime()
         };

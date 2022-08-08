@@ -38,6 +38,14 @@ const EditForm = ({ isLoading, authProvider }) => {
         component={CustomInput}
         style={{ textTransform: 'capitalize' }}
       />
+      <Field
+        disabled={isLoading}
+        name="dateOfBirth"
+        type="text"
+        label="Date of Birth"
+        placeholder="1997/08/25"
+        component={CustomInput}
+      />
       <CustomMobileInput
         defaultValue={values.mobile}
         name="mobile"

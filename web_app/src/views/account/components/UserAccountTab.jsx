@@ -48,6 +48,13 @@ const UserProfile = (props) => {
           ) : (
             <h5 className="text-subtle text-italic">Address not set</h5>
           )}
+          <span>Date of Birth</span>
+          <br />
+          {profile.dateOfBirth ? (
+            <h5>{profile.dateOfBirth}</h5>
+          ) : (
+            <h5 className="text-subtle text-italic">Date of Birth</h5>
+          )}
           <span>Mobile</span>
           <br />
           {profile.mobile ? (

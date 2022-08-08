@@ -21,6 +21,9 @@ const FormSchema = Yup.object().shape({
     .email('Email is not valid.')
     .required('Email is required.'),
   address: Yup.string(),
+  dateOfBirth: Yup.string()
+  .required('Date of birth is required.')
+  .matches(/([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}/g, 'Date of birth format should be 25/08/1997'),
   mobile: Yup.object()
     .shape({
       country: Yup.string(),
@@ -50,6 +53,7 @@ const EditProfile = () => {
   const initFormikValues = {
     fullname: profile.fullname || '',
     email: profile.email || '',
+    dateOfBirth: profile.dateOfBirth || '',
     address: profile.address || '',
     mobile: profile.mobile || {}
   };
@@ -67,6 +71,7 @@ const EditProfile = () => {
         email: form.email,
         address: form.address,
         mobile: form.mobile,
+        dateOfBirth: form.dateOfBirth,
         avatar: profile.avatar,
         banner: profile.banner
       },
