@@ -18,6 +18,7 @@ import JuaNetwork from './pages/JuaNetwork';
 import JuaNetworkUser from './pages/JuaNetworkUser';
 import { isSignedIn } from './actions/Auth';
 import AdvisorySessionMeeting from './pages/AdvisorySessionMeeting';
+import AdvisorySessionFeedback from './pages/AdvisorySessionFeedback';
 import ServiceRequest from './pages/ServiceRequest';
 import PasswordChange from './pages/PasswordChange';
 
@@ -45,6 +46,7 @@ export default function Router() {
         { path: 'jua_network', element: <JuaNetwork /> },
         { path: `jua_network/:juaNetworkUserId`, element: <JuaNetworkUser /> },
         { path: 'advisory_session_meeting', element: <AdvisorySessionMeeting /> },
+        { path: 'advisory_session_meeting/feedback', element: <AdvisorySessionFeedback /> },
         { path: 'settings', element: <Settings /> },
         { path: 'password_change', element: <PasswordChange /> },
       ],

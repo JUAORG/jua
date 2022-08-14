@@ -47,7 +47,7 @@ class JitsiComponent extends Component {
 
     handleClose = () => {
         console.log("handleClose");
-        document.location.href = "/dashboard/advisory_session/review";
+        document.location.href = "/dashboard/advisory_session_meeting/feedback";
     }
 
     handleParticipantLeft = async (participant) => {
