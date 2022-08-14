@@ -18,6 +18,7 @@ import JuaNetwork from './pages/JuaNetwork';
 import JuaNetworkUser from './pages/JuaNetworkUser';
 import { isSignedIn } from './actions/Auth';
 import AdvisorySessionMeeting from './pages/AdvisorySessionMeeting';
+import ServiceRequest from './pages/ServiceRequest';
 
 // ----------------------------------------------------------------------
 
@@ -38,6 +39,7 @@ export default function Router() {
         { path: 'wallet_setup', element: <WalletSetup /> },
         { path: 'profile', element: <Profile /> },
         { path: 'service_requests', element: <ServiceRequests /> },
+        { path: `service_request/:serviceRequestId`, element: <ServiceRequest /> },
         { path: 'saved_opportunities', element: <SavedOpportunities /> },
         { path: 'jua_network', element: <JuaNetwork /> },
         { path: `jua_network/:juaNetworkUserId`, element: <JuaNetworkUser /> },

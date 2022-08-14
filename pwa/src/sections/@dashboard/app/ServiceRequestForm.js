@@ -1,17 +1,15 @@
-import react from 'react'
+import react, {useEffect} from 'react'
 import { useForm } from "react-hook-form"
 import { useParams } from 'react-router-dom'
 import { Stack, TextField } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import { createServiceRequest } from '../../../actions/JuaNetwork'
 
-export default function ServiceRequestForm(closeDialog) {
+export default function ServiceRequestForm({closeDialog, serviceRequest}) {
   const { juaNetworkUserId } = useParams()
-  const defaultValues = {
-    serviceProvider: juaNetworkUserId,
-  }
-  const formProps = useForm({ defaultValues })
-
+  
+  const formProps = useForm({ defaultValues: serviceRequest })
+  
   const {
     reset,
     watch,
@@ -35,8 +33,9 @@ export default function ServiceRequestForm(closeDialog) {
         <TextField 
           fullWidth
           required
-          label="Subject" {...register('subject')} 
-          />
+          label="Subject"
+          {...register('subject')} 
+        />
         <TextField
           fullWidth
           id="date"
@@ -48,8 +47,20 @@ export default function ServiceRequestForm(closeDialog) {
             shrink: true,
           }}
         />
-        <TextField required fullWidth type="text" label="Description (optional)" {...register('description')} />
-        <LoadingButton fullWidth size="large" type="submit" loading={false} variant="contained">
+        <TextField
+          required
+          fullWidth
+          type="text"
+          label="Description (optional)"
+          {...register('description')}
+        />
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          loading={false}
+          variant="contained"
+        >
           Send Request
         </LoadingButton>
       </Stack>
