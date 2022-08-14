@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Grid, Container, Typography } from '@mui/material'
 import { getDatabase, ref, push, child, getRef, onValue } from "firebase/database"
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { get, map, size } from "lodash"
 import { getAuthId } from '../actions/Auth';
 import Page from '../components/Page'
@@ -11,6 +12,7 @@ import { getNumOfMyServiceRequests } from '../actions/JuaNetwork'
 
 export default function DashboardApp() {
   const db = getDatabase()
+  const navigate = useNavigate()
   const [numServiceRequests, setNumServiceRequests] = useState()
 
   useEffect(() => {
@@ -21,7 +23,11 @@ export default function DashboardApp() {
   }, {
     onlyOnce: true
   })
-}, [db])
+  }, [db])
+
+  const goToServiceRequestPage = () => {
+    navigate('/dashboard/service_requests', { replace: true });
+  }
 
   return (
     <Page title="Dashboard">
@@ -32,7 +38,7 @@ export default function DashboardApp() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Service Requests" total={numServiceRequests} />
+            <AppWidgetSummary title="Service Requests" total={numServiceRequests} onClick={goToServiceRequestPage} />
           </Grid>
           {/* <Grid item xs={12} md={6} lg={8}>
             <AppNewsUpdate
