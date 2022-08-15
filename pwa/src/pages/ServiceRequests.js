@@ -50,7 +50,7 @@ export default function ServiceRequests() {
                 onClick={() => goToServiceRequest(get(serviceRequest, "id"))}
               >
                 <ListItemText
-                  primary={get(serviceRequest, "serviceRequester")}
+                  primary={"Jua User"}
                   secondary={
                     <>
                       <Typography
@@ -59,9 +59,9 @@ export default function ServiceRequests() {
                         variant="body2"
                         color="text.primary"
                       >
-                      {get(serviceRequest, "subject", "description empty")}
+                      Subject: {get(serviceRequest, "subject", "description empty")}
                       </Typography><br/>
-                      {get(serviceRequest, "description", "description empty")}
+                      Description: {get(serviceRequest, "description", "description empty")}
                     </>
                   }
                 />
