@@ -1,20 +1,14 @@
-// routes
-import Router from './routes';
-// theme
-import ThemeProvider from './theme';
-// components
-import ScrollToTop from './components/ScrollToTop';
-import { AuthProvider } from './components/AuthProvider';
+import Router from './routes'
+import ThemeProvider from './theme'
+import ScrollToTop from './components/ScrollToTop'
 
 // ----------------------------------------------------------------------
 
 export default function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
       <ScrollToTop />
       <Router />
-      </AuthProvider>
     </ThemeProvider>
   );
 }

@@ -1,20 +1,28 @@
-import { getDatabase, ref, set, child, get, update, onValue, serverTimestamp } from "firebase/database"
+import {
+  ref,
+  set,
+  child,
+  update,
+  onValue,
+  getDatabase,
+  serverTimestamp
+} from "firebase/database"
+
+import {
+  get,
+  head,
+  unset,
+  assign
+} from 'lodash'
 
 const db = getDatabase()
 
 export const createProfile = (values) => {
-  set(ref(db, `users/${values.uid}/`), {
-    uid: values.uid,
-    first_name: values.first_name,
-    last_name: values.last_name,
-    email: values.email,
-    country: values.country,
-    town: values.town,
-    date_of_birth: values.date_of_birth,
-    join_date: serverTimestamp()
-  })
+  localStorage.setItem("user_display_name", `${values.first_name} ${values.last_name}`)
+  values.join_date = serverTimestamp()
+  update(ref(db, `users/${values.uid}/`), values)
   .then((res) => {
-      alert("Profile created successfully")
+    window.location.href = '/dashboard/app';
     })
     .catch((error) => {
       alert("Error")

@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles';
 //
 import DashboardNavbar from './DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
-
+import { AuthProvider } from '../../components/AuthProvider';
 // ----------------------------------------------------------------------
 
 const APP_BAR_MOBILE = 64;
@@ -37,11 +37,13 @@ export default function DashboardLayout() {
 
   return (
     <RootStyle>
+      <AuthProvider>
       <DashboardNavbar onOpenSidebar={() => setOpen(true)} />
       <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
       <MainStyle>
         <Outlet />
       </MainStyle>
+      </AuthProvider>
     </RootStyle>
   );
 }

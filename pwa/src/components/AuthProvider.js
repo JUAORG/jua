@@ -17,15 +17,15 @@ const useStyles = makeStyles({
 });
 
 export const AuthProvider = ({ children }) => {
-  const classes = useStyles();
-  const [currentUser, setCurrentUser] = useState(null);
-  const [pending, setPending] = useState(true);
+  const classes = useStyles()
+  const [currentUser, setCurrentUser] = useState(null)
+  const [pending, setPending] = useState(true)
 
   useEffect(() => {
     firebaseAuth.onAuthStateChanged((user) => {
       setCurrentUser(user)
       setPending(false)
-    });
+    })
     if (currentUser) {
       localStorage.setItem("user_display_name", currentUser.displayName)
       localStorage.setItem("user_email", currentUser.email)
