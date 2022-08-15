@@ -8,8 +8,10 @@ import { editUserProfile} from '../../../actions/Profile'
 
 export default function UserProfileForm(userProfileDoc) {
   const [userProfile, setUserProfile] = useState(null)
-  const formProps = useForm({ defaultValues: userProfile })
-  
+  const defaultValues = {
+    first_name: get(userProfileDoc, ['userProfileDoc', 'first_name'])
+  }
+  const formProps = useForm({ defaultValues})
 
   const {
     reset,
@@ -24,7 +26,14 @@ export default function UserProfileForm(userProfileDoc) {
 
   useEffect(() => {
     setUserProfile(userProfileDoc.userProfileDoc)
-  },userProfileDoc)
+     reset({
+       first_name: get(userProfileDoc, ['userProfileDoc', 'first_name']),
+       last_name: get(userProfileDoc, ['userProfileDoc', 'last_name']),
+       town: get(userProfileDoc, ['userProfileDoc', 'town']),
+       date_of_birth: get(userProfileDoc, ['userProfileDoc', 'date_of_birth']),
+  })
+    watch()
+  },[userProfileDoc, reset])
 
   const onSubmit = (values) => {
     if (userProfile) {

@@ -14,6 +14,7 @@ import {
   unset,
   assign
 } from 'lodash'
+import { getAuthId } from "./Auth"
 
 const db = getDatabase()
 
@@ -30,6 +31,7 @@ export const createProfile = (values) => {
 }
 
 export const editUserProfile = (values) => {
+  values.uid = getAuthId()
   update(ref(db, `users/${values.uid}`), values)
   .then(() => {
     alert("Record Updated")
