@@ -28,7 +28,11 @@ export default function ServiceRequest() {
   
 
   const goBack = () => {
-    navigate(`/dashboard/service_requests`, { replace: true });
+    navigate(`/dashboard/service_requests`, { replace: true })
+  }
+
+  const goToServiceRequestMeeting = () => {
+    navigate(`/dashboard/advisory_session_meeting/?room=${serviceRequestId}`, { replace: true })
   }
   
   return (
@@ -39,6 +43,7 @@ export default function ServiceRequest() {
         </Typography>
         <Button onClick={goBack}>Back</Button>
         <ServiceRequestForm serviceRequest={serviceRequest}/>
+        <Button onClick={goToServiceRequestMeeting}>Go To Service Request</Button>
       </Container>
     </Page>
   )
