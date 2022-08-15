@@ -29,7 +29,11 @@ export default function ServiceRequests() {
   }, {
     onlyOnce: true
   })
-}, [db])
+  }, [db])
+
+  const goToServiceRequest = (serviceRequestId) => {    
+    navigate(`/dashboard/service_request/${serviceRequestId}`, { replace: true });
+  }
   
   return (
     <Page title="Service Requests">
@@ -40,7 +44,11 @@ export default function ServiceRequests() {
         <List sx={{ bgcolor: 'background.paper' }}>
           {map(serviceRequests, (serviceRequest) => (
             <>
-              <ListItem id={get(serviceRequest, "id")} alignItems="flex-start">
+              <ListItem
+                id={get(serviceRequest, "id")}
+                alignItems="flex-start"
+                onClick={() => goToServiceRequest(get(serviceRequest, "id"))}
+              >
                 <ListItemText
                   primary={get(serviceRequest, "serviceRequester")}
                   secondary={

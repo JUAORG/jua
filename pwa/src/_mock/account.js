@@ -1,9 +1,9 @@
 // ----------------------------------------------------------------------
 
 const account = {
-  displayName: 'Demo User',
-  email: 'demo@jua.co.za',
-  photoURL: '/static/mock-images/avatars/avatar_5.jpg',
-};
+  displayName: localStorage.getItem("user_display_name"),
+  email: localStorage.getItem("user_email"),
+  photoURL: '/static/mock-images/avatars/mock_avatar.png',
+}
 
 export default account;

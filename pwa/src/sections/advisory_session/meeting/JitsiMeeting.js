@@ -9,9 +9,9 @@ class JitsiComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            room: 'xxx',
+            room: 'Advisory Session',
             user: {
-                name: 'xxx'
+                name: localStorage.getItem("user_display_name")
             },
             isAudioMuted: false,
             isVideoMuted: false
@@ -47,6 +47,7 @@ class JitsiComponent extends Component {
 
     handleClose = () => {
         console.log("handleClose");
+        document.location.href = "/dashboard/advisory_session_meeting/feedback";
     }
 
     handleParticipantLeft = async (participant) => {
@@ -66,7 +67,6 @@ class JitsiComponent extends Component {
 
     handleVideoConferenceLeft = () => {
         console.log("handleVideoConferenceLeft");
-        return this.props.history.push('/thank-you');
     }
 
     handleMuteStatus = (audio) => {

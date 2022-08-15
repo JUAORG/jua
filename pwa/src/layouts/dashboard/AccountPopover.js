@@ -18,6 +18,10 @@ const MENU_OPTIONS = [
     label: 'Settings',
     linkTo: '/dashboard/settings/',
   },
+  {
+    label: 'Password Change',
+    linkTo: '/dashboard/password_change',
+  },
 ];
 
 export default function AccountPopover() {

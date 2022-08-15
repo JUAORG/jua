@@ -23,11 +23,12 @@ export const activeJuaNetworkUsers = (users) => {
 }
 
 export const createServiceRequest = (values) => {
+  const serviceRequestKey = createId()
   values.serviceRequester = uid
+  values.id = serviceRequestKey
   values.status = get(serviceRequestStatusOptions, "unread")
   values.created_at = serverTimestamp()
 
-  const serviceRequestKey = createId()
   const updates = {}
 
   updates[`/service_requests/${serviceRequestKey}`] = values
