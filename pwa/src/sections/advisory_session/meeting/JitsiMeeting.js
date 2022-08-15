@@ -5,17 +5,17 @@ class JitsiComponent extends Component {
 
     domain = process.env.REACT_APP_JITSI_DOMAIN;
     api = {};
-
+    
     constructor(props) {
-        super(props);
-        this.state = {
-            room: 'Advisory Session',
-            user: {
-                name: localStorage.getItem("user_display_name")
-            },
-            isAudioMuted: false,
-            isVideoMuted: false
-        }
+      super(props)
+      this.state = {
+        room: window.location.search.slice(8),
+        user: {
+          name: localStorage.getItem("user_display_name")
+        },
+        isAudioMuted: false,
+        isVideoMuted: false
+      }
     }
 
     startMeet = () => {

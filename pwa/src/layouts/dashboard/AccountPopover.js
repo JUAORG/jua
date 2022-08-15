@@ -4,6 +4,7 @@ import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@mui/material';
 import MenuPopover from '../../components/MenuPopover';
 import account from '../../_mock/account';
+import { signOutUser } from '../../actions/Auth';
 // ----------------------------------------------------------------------
 const MENU_OPTIONS = [
   {
@@ -94,8 +95,7 @@ export default function AccountPopover() {
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
-
-        <MenuItem onClick={handleClose} sx={{ m: 1 }}>
+        <MenuItem onClick={signOutUser} sx={{ m: 1 }}>
           Logout
         </MenuItem>
       </MenuPopover>
