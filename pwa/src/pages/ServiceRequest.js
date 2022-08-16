@@ -6,6 +6,7 @@ import {
   Button
 } from '@mui/material';
 import { getDatabase, ref, push, child, getRef, onValue } from "firebase/database"
+import { get, head } from 'lodash'
 import { getAuthId } from '../actions/Auth'
 import Page from '../components/Page';
 import ServiceRequestForm from "../sections/@dashboard/app/ServiceRequestForm";
@@ -18,7 +19,7 @@ export default function ServiceRequest() {
   
 
   useEffect(() => {
-    onValue(ref(db, `/users/${getAuthId()}/service_requests/${serviceRequestId}`), (snapshot) => {  
+    onValue(ref(db, `service_requests/${serviceRequestId}`), (snapshot) => {  
       const result = (snapshot.val() && snapshot.val())
       setServiceRequest(result)
   }, {
@@ -42,8 +43,16 @@ export default function ServiceRequest() {
           Service Request
         </Typography>
         <Button onClick={goBack}>Back</Button>
-        <ServiceRequestForm serviceRequest={serviceRequest}/>
-        <Button onClick={goToServiceRequestMeeting}>Go To Service Request</Button>
+        <ServiceRequestForm
+          serviceRequest={serviceRequest}
+          isServiceProvider={getAuthId() === get(serviceRequest, "serviceProvider")}
+        />
+        {console.log(serviceRequest.status)}
+        {get(serviceRequest, "status") === "Accepted" && 
+         <Button onClick={goToServiceRequestMeeting}>
+           Go To Service Request
+         </Button>
+        }
       </Container>
     </Page>
   )

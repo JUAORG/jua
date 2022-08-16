@@ -6,7 +6,7 @@ import { getAuthId } from './Auth'
 const db = getDatabase()
 const uid = getAuthId()
 
-const serviceRequestStatusOptions = {
+export const serviceRequestStatusOptions = {
   unread: "Unread",
   read: "Read",
   cancelled: "Cancelled",
@@ -32,8 +32,8 @@ export const createServiceRequest = (values) => {
   const updates = {}
 
   updates[`/service_requests/${serviceRequestKey}`] = values
-  updates[`/users/${uid}/service_requests/${serviceRequestKey}`] = values
-  updates[`/users/${values.serviceProvider}/service_requests/${serviceRequestKey}`] = values
+  // updates[`/users/${uid}/service_requests/${serviceRequestKey}`] = values
+  // updates[`/users/${values.serviceProvider}/service_requests/${serviceRequestKey}`] = values
 
   update(ref(db), updates)
   .then(() => {
@@ -44,12 +44,42 @@ export const createServiceRequest = (values) => {
   })
 }
 
+export const updateServiceRequest = (values) => {
+  values.updated_at = serverTimestamp()
+  console.log(values)
+  update(ref(db, `service_requests/${values.id}/`), 
+    values
+  )
+    .then((res) => {
+      alert('Service Request updated')
+    })
+    .catch((error) => {
+      alert("Error")
+    })
+}
+
 export const getActiveServiceRequests = (serviceRequests) => {
   return map(
     filter(serviceRequests, (x) => x.serviceProvider === uid),
     (x) => x
   )
 }
+
+export const getMySentServiceRequests = (serviceRequests) => {
+  return map(
+    filter(serviceRequests, (x) => x.serviceRequester === uid),
+    (x) => x,
+    'user'
+  )
+}
+export const getMyRecievedServiceRequests = (serviceRequests) => {
+  return map(
+    filter(serviceRequests, (x) => x.serviceProvider === uid),
+    (x) => x,
+    'user'
+  )
+}
+
 
 export const getNumOfMyServiceRequests = (serviceRequests) => {
   return size(map(

@@ -1,15 +1,25 @@
-import react, {useEffect} from 'react'
+import react, {useEffect, useState} from 'react'
+import { get, head } from 'lodash'
 import { useForm } from "react-hook-form"
 import { useParams } from 'react-router-dom'
-import { Stack, TextField } from '@mui/material'
+import {
+  Stack,
+  TextField,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+  FormLabel
+} from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-import { createServiceRequest } from '../../../actions/JuaNetwork'
+import { getAuthId } from '../../../actions/Auth'
+import { createServiceRequest, updateServiceRequest, serviceRequestStatusOptions } from '../../../actions/JuaNetwork'
 
-export default function ServiceRequestForm({closeDialog, serviceRequest}) {
+
+export default function ServiceRequestForm({closeDialog, serviceRequest, isServiceProvider}) {
   const { juaNetworkUserId } = useParams()
-  
   const formProps = useForm({ defaultValues: serviceRequest })
-  
+  const [serviceRequestStatus, setServiceRequestStatusValue] = useState("read")
   const {
     reset,
     watch,
@@ -17,19 +27,61 @@ export default function ServiceRequestForm({closeDialog, serviceRequest}) {
     setValue,
     register,
     getValues,
+    defaultValues,
     handleSubmit,
     formState: { errors },
   } = formProps
 
   const onSubmit = (values) => {
-    values.serviceProvider = juaNetworkUserId
-    createServiceRequest(values)
+    if (get(serviceRequest, "id") && isServiceProvider) {
+      values = {} 
+      values.id = get(serviceRequest, "id")
+      values.status = serviceRequestStatus
+      console.log(values)
+      updateServiceRequest(values)
+    }else if (get(serviceRequest, "id") && !isServiceProvider) {
+      alert("Update feature coming soon")
+    }else{
+      values.serviceProvider = juaNetworkUserId
+      createServiceRequest(values)
+    }
     closeDialog()
   }
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Stack spacing={3}>
+  const handleUpdateServiceRequestStatus = (event) => {
+    setServiceRequestStatusValue(event.target.value)
+    setValue("status", event.target.value)
+    
+  }
+  
+  const renderServiceProviderForm = () => {
+    return (
+      <FormControl>
+        <FormLabel>Status</FormLabel>
+        <RadioGroup
+          row
+          name="status"
+          value={serviceRequestStatus}
+          onChange={handleUpdateServiceRequestStatus}
+        >
+          <FormControlLabel
+            control={<Radio />}
+            value={get(serviceRequestStatusOptions, "accepted" )}
+            label={get(serviceRequestStatusOptions, "accepted" )}
+          />
+          <FormControlLabel
+            control={<Radio />}
+            value={get(serviceRequestStatusOptions, "declined" )}
+            label={get(serviceRequestStatusOptions, "declined" )}
+          />
+        </RadioGroup>
+      </FormControl>
+    )
+  }
+
+  const renderServiceRequesterForm = () => {
+    return (
+      <>
         <TextField 
           fullWidth
           required
@@ -54,14 +106,23 @@ export default function ServiceRequestForm({closeDialog, serviceRequest}) {
           label="Description (optional)"
           {...register('description')}
         />
+      </>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Stack spacing={3}>
+        { !isServiceProvider && renderServiceRequesterForm() }
+        { isServiceProvider && renderServiceProviderForm() }
         <LoadingButton
           fullWidth
           size="large"
           type="submit"
           loading={false}
-          variant="contained"
+          variant="contained"o
         >
-          Send Request
+          {get(serviceRequest, "id") ? "Update" : "Send Request"}
         </LoadingButton>
       </Stack>
     </form>
