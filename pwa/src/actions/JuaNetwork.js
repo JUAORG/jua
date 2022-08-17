@@ -72,6 +72,7 @@ export const getMySentServiceRequests = (serviceRequests) => {
     'user'
   )
 }
+
 export const getMyRecievedServiceRequests = (serviceRequests) => {
   return map(
     filter(serviceRequests, (x) => x.serviceProvider === uid),
@@ -80,10 +81,11 @@ export const getMyRecievedServiceRequests = (serviceRequests) => {
   )
 }
 
-
 export const getNumOfMyServiceRequests = (serviceRequests) => {
-  return size(map(
-    filter(serviceRequests, (x) => x.status !== get(serviceRequestStatusOptions, "declined")),
-    (x) => x
-  ))
+  return size(
+    filter(serviceRequests, (x) =>
+        x.serviceProvider === getAuthId() &&
+        x.status !== get(serviceRequestStatusOptions, "declined")
+    )
+  )
 }

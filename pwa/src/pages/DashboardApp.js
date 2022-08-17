@@ -16,12 +16,11 @@ export default function DashboardApp() {
   const [numServiceRequests, setNumServiceRequests] = useState()
 
   useEffect(() => {
-    onValue(ref(db, `/users/${getAuthId()}/service_requests`), (snapshot) => {  
+    onValue(ref(db, `/service_requests`), (snapshot) => {  
       let result = (snapshot.val() && snapshot.val())
       result = getNumOfMyServiceRequests(result)
       setNumServiceRequests(result)
   }, {
-    onlyOnce: true
   })
   }, [db])
 

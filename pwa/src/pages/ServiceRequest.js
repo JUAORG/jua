@@ -23,7 +23,6 @@ export default function ServiceRequest() {
       const result = (snapshot.val() && snapshot.val())
       setServiceRequest(result)
   }, {
-    onlyOnce: true
   })
   }, [db])
   
@@ -42,14 +41,18 @@ export default function ServiceRequest() {
         <Typography variant="h4" sx={{ mb: 5 }}>
           Service Request
         </Typography>
-        <Button onClick={goBack}>Back</Button>
+        <Button onClick={goBack}>
+          Back
+        </Button>
         <ServiceRequestForm
           serviceRequest={serviceRequest}
           isServiceProvider={getAuthId() === get(serviceRequest, "serviceProvider")}
         />
-        {console.log(serviceRequest.status)}
         {get(serviceRequest, "status") === "Accepted" && 
-         <Button onClick={goToServiceRequestMeeting}>
+         <Button
+           sx={{mt: 5}}
+           variant="contained"
+           onClick={goToServiceRequestMeeting}>
            Go To Service Request
          </Button>
         }
