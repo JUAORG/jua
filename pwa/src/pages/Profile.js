@@ -29,7 +29,6 @@ export default function Profile() {
       unset(result, "education")
       setProfileList(result)
   }, {
-    onlyOnce: true
   })
   setRefreshProfileList(false)
 }, [db, refreshProfileList])
