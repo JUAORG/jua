@@ -27,17 +27,14 @@ export default function ServiceRequests() {
   const [sentServiceRequests, setSentServiceRequests] = useState([])
   const [recievedServiceRequests, setRecievedServiceRequests] = useState([])
   const [value, setValue] = useState(0)
-  console.log(recievedServiceRequests)
+  
   useEffect(() => {
     onValue(ref(db, `/service_requests`), (snapshot) => {  
       const allServiceRequests = (snapshot.val() && snapshot.val())
       setSentServiceRequests(getMySentServiceRequests(allServiceRequests))
       setRecievedServiceRequests(getMyRecievedServiceRequests(allServiceRequests))
-  }, {
-    onlyOnce: true
-  })
+    })
   }, [db])
-
 
   const goToServiceRequest = (serviceRequestId) => {    
     navigate(`/dashboard/service_request/${serviceRequestId}/`, { replace: true });
