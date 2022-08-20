@@ -58,6 +58,14 @@ export const updateServiceRequest = (values) => {
     })
 }
 
+export async function submitServiceRequestFeedback(values) {
+  values.submit_date = serverTimestamp()
+  
+  update(ref(db, `service_requests/${values.id}/feedback/${uid}`), 
+    values
+  )
+}
+
 export const getActiveServiceRequests = (serviceRequests) => {
   return map(
     filter(serviceRequests, (x) => x.serviceProvider === uid),
@@ -84,7 +92,7 @@ export const getMyRecievedServiceRequests = (serviceRequests) => {
 export const getNumOfMyServiceRequests = (serviceRequests) => {
   return size(
     filter(serviceRequests, (x) =>
-        x.serviceProvider === getAuthId() &&
+        x.serviceProvider === uid &&
         x.status !== get(serviceRequestStatusOptions, "declined")
     )
   )
