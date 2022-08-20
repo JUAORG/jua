@@ -18,6 +18,7 @@ import {
 import PropTypes from 'prop-types'
 import { getDatabase, ref, push, child, getRef, onValue } from "firebase/database"
 import Page from '../components/Page'
+import { Calendar } from "../sections/advisory_session/meeting/calendar/Calendar";
 import { getAuthId } from '../actions/Auth'
 import {
   activeJuaNetworkUsers,
@@ -142,7 +143,9 @@ export default function ServiceRequests() {
         <Typography variant="h4" sx={{ mb: 5 }}>
           Service Requests
         </Typography>        
-        {renderServiceRequestTabs()}
+      {renderServiceRequestTabs()}
+      calendar functionality comming soon
+      <Calendar/>
     </Page>
   )
 }
