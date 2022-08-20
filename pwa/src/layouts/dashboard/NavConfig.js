@@ -6,23 +6,23 @@ const navConfig = [
   {
     title: 'JUA Homepage',
     path: '/dashboard/app',
-    icon: getIcon('eva:file-text-fill'),
+    icon: getIcon('eva:home-fill'),
   },
   {
     title: 'JUA Network',
     path: '/dashboard/jua_network',
-    icon: getIcon('eva:file-text-fill'),
+    icon: getIcon('eva:people-fill'),
   },
   {
     title: 'Service Requests',
     path: '/dashboard/service_requests',
-    icon: getIcon('eva:people-fill'),
+    icon: getIcon('eva:inbox-fill'),
   },
-  {
-    title: 'Saved Opportunities',
-    path: '/dashboard/saved_opportunities',
-    icon: getIcon('eva:file-text-fill'),
-  },
+  // {
+  //   title: 'Saved Opportunities',
+  //   path: '/dashboard/saved_opportunities',
+  //   icon: getIcon('eva:file-text-fill'),
+  // },
   // {
   //   title: 'Settings',
   //   path: '/dashboard/settings',
@@ -31,7 +31,7 @@ const navConfig = [
   {
     title: 'My Profile & Rate Card',
     path: '/dashboard/profile',
-    icon: getIcon('eva:people-fill'),
+    icon: getIcon('eva:person-done-fill'),
   },
 ];
 
