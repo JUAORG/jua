@@ -46,7 +46,7 @@ export default function Router() {
         { path: 'jua_network', element: <JuaNetwork /> },
         { path: `jua_network/:juaNetworkUserId`, element: <JuaNetworkUser /> },
         { path: 'advisory_session_meeting', element: <AdvisorySessionMeeting /> },
-        { path: 'advisory_session_meeting/feedback', element: <AdvisorySessionFeedback /> },
+        { path: 'advisory_session_meeting/feedback/:serviceRequestId', element: <AdvisorySessionFeedback /> },
         { path: 'settings', element: <Settings /> },
         { path: 'password_change', element: <PasswordChange /> },
       ],
