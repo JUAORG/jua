@@ -19,7 +19,11 @@ import PropTypes from 'prop-types'
 import { getDatabase, ref, push, child, getRef, onValue } from "firebase/database"
 import Page from '../components/Page'
 import { getAuthId } from '../actions/Auth'
-import { activeJuaNetworkUsers, getMySentServiceRequests, getMyRecievedServiceRequests } from "../actions/JuaNetwork"
+import {
+  activeJuaNetworkUsers,
+  getMySentServiceRequests,
+  getMyRecievedServiceRequests
+} from "../actions/JuaNetwork"
 
 export default function ServiceRequests() {
   const navigate = useNavigate()
@@ -37,11 +41,11 @@ export default function ServiceRequests() {
   }, [db])
 
   const goToServiceRequest = (serviceRequestId) => {    
-    navigate(`/dashboard/service_request/${serviceRequestId}/`, { replace: true });
+    navigate(`/dashboard/service_request/${serviceRequestId}/`, { replace: true })
   }
 
   function TabPanel(props) {
-    const { children, value, index, ...other } = props;
+    const { children, value, index, ...other } = props
   
     return (
       <div
@@ -57,23 +61,23 @@ export default function ServiceRequests() {
           </Box>
         )}
       </div>
-    );
+    )
   }
   TabPanel.propTypes = {
     children: PropTypes.node,
     index: PropTypes.number.isRequired,
     value: PropTypes.number.isRequired,
-  };
+  }
   
   function a11yProps(index) {
     return {
       id: `simple-tab-${index}`,
       'aria-controls': `simple-tabpanel-${index}`,
-    };
+    }
   }
 
   const handleTabChange = (event, newValue) => {
-    setValue(newValue);
+    setValue(newValue)
   }
 
   const renderServiceRequestTab = (serviceRequests) => {

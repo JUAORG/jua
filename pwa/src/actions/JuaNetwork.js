@@ -81,6 +81,23 @@ export const filterExpiredOrDeclinedServiceRequests = (serviceRequests) => {
   )
 }
 
+export const filterOldServiceRequests = (serviceRequests) => {
+  return map(
+    filter(serviceRequests, (x) =>
+        x.status === serviceRequestStatusOptions.expired
+    )
+  )
+}
+
+export const getMyOldRecievedServiceRequests = (serviceRequests) => {
+  const filteredOldServieRequests = filterOldServiceRequests(serviceRequests)
+  return map(
+    filter(filteredOldServieRequests, (x) => x.serviceProvider === uid),
+    (x) => x,
+    'user'
+  )
+}
+
 export const getMySentServiceRequests = (serviceRequests) => {
   return map(
     filter(serviceRequests, (x) => x.serviceRequester === uid),
