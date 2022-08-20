@@ -38,6 +38,8 @@
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@faker-js/faker": "^6.1.2",
+    "@fullcalendar/daygrid": "^5.11.2",
+    "@fullcalendar/react": "^5.11.2",
     "@iconify/react": "^3.2.1",
     "@jitsi/react-sdk": "^1.0.1",
     "@mui/icons-material": "^5.8.0",
