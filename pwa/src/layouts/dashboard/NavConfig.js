@@ -28,6 +28,11 @@ const navConfig = [
     path: '/dashboard/profile',
     icon: getIcon('eva:person-done-fill'),
   },
+  {
+    title: 'About Jua',
+    path: '/dashboard/about',
+    icon: getIcon('eva:heart-fill'),
+  },
 ];
 
 export default navConfig
