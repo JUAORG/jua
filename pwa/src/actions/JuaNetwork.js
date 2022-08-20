@@ -7,11 +7,12 @@ const db = getDatabase()
 const uid = getAuthId()
 
 export const serviceRequestStatusOptions = {
-  unread: "Unread",
-  read: "Read",
-  cancelled: "Cancelled",
-  accepted: "Accepted",
-  declined: "Declined"
+  unread: 'Unread',
+  read: 'Read',
+  cancelled: 'Cancelled',
+  accepted: 'Accepted',
+  declined: 'Declined',
+  expired: 'Expired'
 }
 
 export const activeJuaNetworkUsers = (users) => {
@@ -26,7 +27,7 @@ export const createServiceRequest = (values) => {
   const serviceRequestKey = createId()
   values.serviceRequester = uid
   values.id = serviceRequestKey
-  values.status = get(serviceRequestStatusOptions, "unread")
+  values.status = get(serviceRequestStatusOptions, 'unread')
   values.created_at = serverTimestamp()
 
   const updates = {}
@@ -54,22 +55,29 @@ export const updateServiceRequest = (values) => {
       alert('Service Request updated')
     })
     .catch((error) => {
-      alert("Error")
+      alert('Error')
     })
 }
 
 export async function submitServiceRequestFeedback(values) {
   values.submit_date = serverTimestamp()
-  
-  update(ref(db, `service_requests/${values.id}/feedback/${uid}`), 
-    values
-  )
+  update(ref(db, `service_requests/${values.id}/feedback/${uid}`), values)
+  update(ref(db, `service_requests/${values.id}/`), {status: serviceRequestStatusOptions.expired})
 }
 
 export const getActiveServiceRequests = (serviceRequests) => {
   return map(
     filter(serviceRequests, (x) => x.serviceProvider === uid),
     (x) => x
+  )
+}
+
+export const filterExpiredOrDeclinedServiceRequests = (serviceRequests) => {
+  return map(
+    filter(serviceRequests, (x) =>
+        x.status !== serviceRequestStatusOptions.declined &&
+        x.status !== serviceRequestStatusOptions.expired
+    )
   )
 }
 
@@ -82,18 +90,15 @@ export const getMySentServiceRequests = (serviceRequests) => {
 }
 
 export const getMyRecievedServiceRequests = (serviceRequests) => {
+  const filteredServiceRequests = filterExpiredOrDeclinedServiceRequests(serviceRequests)
   return map(
-    filter(serviceRequests, (x) => x.serviceProvider === uid),
+    filter(filteredServiceRequests, (x) => x.serviceProvider === uid),
     (x) => x,
     'user'
   )
 }
 
 export const getNumOfMyServiceRequests = (serviceRequests) => {
-  return size(
-    filter(serviceRequests, (x) =>
-        x.serviceProvider === uid &&
-        x.status !== get(serviceRequestStatusOptions, "declined")
-    )
-  )
+  const filteredServiceRequests = filterExpiredOrDeclinedServiceRequests(serviceRequests)
+  return size(filter(filteredServiceRequests, (x) => x.serviceProvider === uid))
 }
