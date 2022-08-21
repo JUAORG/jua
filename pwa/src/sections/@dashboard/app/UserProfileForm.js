@@ -116,18 +116,14 @@ export default function UserProfileForm(userProfileDoc) {
             shrink: true,
           }}
         />
-        { userProfile && (
-          <>
-            <LoadingButton
-              fullWidth
-              size="large"
-              type="submit"
-              loading={ false }
-              variant="contained">
-              Update
-            </LoadingButton>
-          </>
-        )}
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          loading={ false }
+          variant="contained">
+            Update
+        </LoadingButton>
       </Stack>
     </form>
   )

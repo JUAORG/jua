@@ -5,6 +5,7 @@ import { Stack, TextField } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import { createId } from '../../../utils/uuid-generator'
 import { editUserProfile} from '../../../actions/Profile'
+import { getUser, updateUserPassword } from '../../../actions/Auth'
 
 export default function PasswordChangeForm() {
   const [userProfile, setUserProfile] = useState(null)
@@ -23,10 +24,12 @@ export default function PasswordChangeForm() {
   } = formProps
 
   const onSubmit = (values) => {
-    if (userProfile) {
-      console.log(values)
-      editUserProfile(values)
-    }
+    updateUserPassword(values).then((res) => {
+      alert("Password update success")
+    }).catch((error) => {
+      alert(`${error}`)
+      console.error(error)
+    })
   }
   
   return (
@@ -50,18 +53,14 @@ export default function PasswordChangeForm() {
           label="Confirm New Password"
           {...register('confirm_new_password')}
         />
-        {/* {userProfile && (
-          <>
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            loading={false}
-            variant="contained">
-            Update Password
-          </LoadingButton>
-          </>
-        )} */}
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          loading={false}
+          variant="contained">
+          Update Password
+        </LoadingButton>
       </Stack>
     </form>
   )

@@ -2,18 +2,30 @@ import { get, head, unset, assign } from 'lodash'
 import {
   getAuth,
   signOut,
+  updatePassword,
   signInWithPopup,
+  EmailAuthProvider,
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  reauthenticateWithCredential,
   createUserWithEmailAndPassword
 } from "firebase/auth"
-
+import {
+  getDatabase,
+  ref,
+  child,
+  push,
+  update,
+  serverTimestamp,
+  increment
+} from 'firebase/database'
 import { firebaseAuth } from '../utils/firebase-config'
 import { createProfile } from './Profile'
-
+import { createId } from '../utils/uuid-generator'
 
 const auth = getAuth()
+const db = getDatabase()
 
 export const setAuthId = (uid) => {
   localStorage.setItem("auth_id", uid)
@@ -96,12 +108,23 @@ export const signInWithGoogle = () => {
 export const getUser = () => {
   const user = getAuth().currentUser
   if (user) {
-    // User is signed in, see docs for a list of available properties
-    // https://firebase.google.com/docs/reference/js/firebase.User
-    // ...
-  } else {
-    // No user is signed in.
+   return user
   }
+}
+
+export async function updateUserPassword(values) {
+  const docId = createId()
+  const credential = EmailAuthProvider.credential(
+    getUser().email,
+    values.current_password
+  )
+  await reauthenticateWithCredential(auth.currentUser, credential);
+  await updatePassword(auth.currentUser, values.new_password)
+  update(ref(db, `users/${auth.currentUser.uid}/activity/${docId}`), {
+    "id": docId,
+    "Account": "Password changed",
+    "Date": serverTimestamp()
+  })
 }
 
 export const signOutUser = () => {
