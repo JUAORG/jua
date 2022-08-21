@@ -7,13 +7,16 @@ import { getDatabase } from "firebase/database"
 // import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID
+  apiKey: "AIzaSyC3Ui3-3aQGbSWLh2SNJFYKA2ywr0STY08",
+  authDomain: "jua-production.firebaseapp.com",
+  databaseURL: "https://jua-production-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "jua-production",
+  storageBucket: "jua-production.appspot.com",
+  messagingSenderId: "614564836453",
+  appId: "1:614564836453:web:ad72a6c02a35247c6bc28c",
+  measurementId: "G-6XCX8VFKNX"
 }
+
 
 const app = initializeApp(firebaseConfig)
 export const firebaseStorage = getStorage(app)
