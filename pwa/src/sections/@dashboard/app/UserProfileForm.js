@@ -11,6 +11,7 @@ import {
 import { LoadingButton } from '@mui/lab'
 import { createId } from '../../../utils/uuid-generator'
 import { editUserProfile} from '../../../actions/Profile'
+import { updateUserAccountProfilePicture } from '../../../actions/Auth';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -63,9 +64,19 @@ export default function UserProfileForm(userProfileDoc) {
       last_name: get(userProfileDoc, ['userProfileDoc', 'last_name']),
       town: get(userProfileDoc, ['userProfileDoc', 'town']),
       date_of_birth: get(userProfileDoc, ['userProfileDoc', 'date_of_birth']),
+      // profle_pic_url: get(userProfileDoc, ['userProfileDoc', 'profile_pic_url']),
     })
     watch()
   },[userProfileDoc, reset])
+
+  // useEffect(() => {
+  //   updateUserAccountProfilePicture()
+  //     .then((res) => {
+  //       console.log(res)
+  //     }).catch((error) => {
+  //       console.log(error)
+  //     })
+  // },[userProfileDoc])
 
   const onSubmit = (values) => {
       editUserProfile(values)
@@ -74,16 +85,22 @@ export default function UserProfileForm(userProfileDoc) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
-        <StyledBadge
-          overlap="circular"
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          variant="dot"
-        >
-          <Avatar
-            alt={get(userProfileDoc, ['userProfileDoc', 'first_name'])}
-            src={get(userProfileDoc, ['userProfileDoc', 'profile_photo_url'])}
-          />
-        </StyledBadge>
+        <div display={"flex"}>
+            <StyledBadge
+              overlap="circular"
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              variant="dot"
+            >
+              <Avatar
+                alt={get(userProfileDoc, ['userProfileDoc', 'first_name'])}
+                src={get(userProfileDoc, ['userProfileDoc', 'profile_photo_url'])}
+              />
+            </StyledBadge>
+          {/* <input
+            type="file"
+            { ...register('profile_pic_url') }
+          /> */}
+        </div>
         <TextField
           fullWidth
           label="First Name"

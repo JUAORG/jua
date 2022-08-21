@@ -4,6 +4,7 @@ import {
   signOut,
   deleteUser,
   updatePassword,
+  updateProfile,
   signInWithPopup,
   EmailAuthProvider,
   GoogleAuthProvider,
@@ -128,6 +129,53 @@ export async function updateUserPassword(values) {
     "Date": serverTimestamp()
   })
 }
+
+
+export async function updateUserAccountProfilePicture() {
+  const auth = getAuth()
+  updateProfile(auth.currentUser, {
+    displayName: "dujiewojdidwiodwendwn", photoURL: "https://example.com/jane-q-user/profile.jpg"
+  }).then((res) => {
+    // Profile updated!
+    // ...
+    console.log(auth)
+  }).catch((error) => {
+    // An error occurred
+    // ...
+});
+  
+  //  await updateProfile({displayName: "Jane Q. User",  photoURL: "https://example.com/jane-q-user/profile.jpg"})
+}
+
+
+// export async function updateUserAccountProfilePicture(values) {
+//   const imgPath = ref(storage, "images/");
+//   const imgUpload = () => {
+//     if (uImg == null) return;
+    
+//     const imgRef = ref(storage, `images/${uImg.name + v4()}`);
+//     uploadBytes(imgRef, uImg).then(() => {
+//       listAll(imgPath).then((response) => {
+//         response.items.forEach((item) => {
+//           getDownloadURL(item).then((url) => {
+//             setImgUrl([url]);
+            
+//             updateProfile(auth.currentUser, {
+//               photoURL: `${imgUrl[0]}`,
+//             })
+//               .then(() => {
+//                 setProfileImg(auth.currentUser.photoURL);
+//                 console.log("success");
+//               })
+//               .catch((error) => {
+//                 console.log(error);
+//               });
+//           });
+//         });
+//       });
+//     });
+//   };
+// }
 
 export async function deleteUserAccount(values) {
   const credential = EmailAuthProvider.credential(
