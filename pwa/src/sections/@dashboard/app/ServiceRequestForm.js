@@ -11,6 +11,9 @@ import {
   FormControl,
   FormLabel
 } from '@mui/material'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LoadingButton } from '@mui/lab'
 import { getAuthId } from '../../../actions/Auth'
 import { createServiceRequest, updateServiceRequest, serviceRequestStatusOptions } from '../../../actions/JuaNetwork'
@@ -19,6 +22,7 @@ import { createServiceRequest, updateServiceRequest, serviceRequestStatusOptions
 export default function ServiceRequestForm({closeDialog, serviceRequest, isServiceProvider}) {
   const { juaNetworkUserId } = useParams()
   const formProps = useForm({ defaultValues: serviceRequest })
+  const [date, setDate] = useState(get(serviceRequest, 'date'))
   const [serviceRequestStatus, setServiceRequestStatusValue] = useState("read")
   const {
     reset,
@@ -52,6 +56,11 @@ export default function ServiceRequestForm({closeDialog, serviceRequest, isServi
     setServiceRequestStatusValue(event.target.value)
     setValue("status", event.target.value)
     
+  }
+
+  const handleDateTimeChange = (newDate) => {
+    setDate(newDate)
+    setValue('date', newDate)
   }
   
   const renderServiceProviderForm = () => {
@@ -88,17 +97,15 @@ export default function ServiceRequestForm({closeDialog, serviceRequest, isServi
           label="Subject"
           {...register('subject')} 
         />
-        <TextField
-          fullWidth
-          id="date"
-          label="Date"
-          type="date"
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <DateTimePicker
+          label="Ideal date time for service request"
           required
-          {...register('date')}
-          InputLabelProps={{
-            shrink: true,
-          }}
+          value={date}
+          onChange={handleDateTimeChange}
+          renderInput={(params) => <TextField {...params} />}
         />
+        </LocalizationProvider>
         <TextField
           required
           fullWidth
