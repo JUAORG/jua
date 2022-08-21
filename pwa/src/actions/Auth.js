@@ -2,6 +2,7 @@ import { get, head, unset, assign } from 'lodash'
 import {
   getAuth,
   signOut,
+  deleteUser,
   updatePassword,
   signInWithPopup,
   EmailAuthProvider,
@@ -16,6 +17,7 @@ import {
   ref,
   child,
   push,
+  remove,
   update,
   serverTimestamp,
   increment
@@ -125,6 +127,16 @@ export async function updateUserPassword(values) {
     "Account": "Password changed",
     "Date": serverTimestamp()
   })
+}
+
+export async function deleteUserAccount(values) {
+  const credential = EmailAuthProvider.credential(
+    getUser().email,
+    values.current_password
+  )
+  await reauthenticateWithCredential(auth.currentUser, credential)
+  remove(ref(db, `users/${auth.currentUser.uid}/`))
+  await deleteUser(credential)
 }
 
 export const signOutUser = () => {
