@@ -7,11 +7,13 @@ import {
   Badge,
   Avatar,
   TextField,
+  MenuItem
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import { createId } from '../../../utils/uuid-generator'
 import { editUserProfile} from '../../../actions/Profile'
 import { updateUserAccountProfilePicture } from '../../../actions/Auth';
+import { industries } from '../../../_mock/industries';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -64,10 +66,11 @@ export default function UserProfileForm(userProfileDoc) {
       last_name: get(userProfileDoc, ['userProfileDoc', 'last_name']),
       town: get(userProfileDoc, ['userProfileDoc', 'town']),
       date_of_birth: get(userProfileDoc, ['userProfileDoc', 'date_of_birth']),
+      industry: get(userProfileDoc, ['userProfileDoc', 'industry']),
       // profle_pic_url: get(userProfileDoc, ['userProfileDoc', 'profile_pic_url']),
     })
     watch()
-  },[userProfileDoc, reset])
+  },[userProfileDoc, reset, industries])
 
   // useEffect(() => {
   //   updateUserAccountProfilePicture()
@@ -78,6 +81,11 @@ export default function UserProfileForm(userProfileDoc) {
   //     })
   // },[userProfileDoc])
 
+  const handleSelectOptionChange = (event) => {
+    console.log(event.target.value)
+//    setIndustry(event.target.value);
+  }
+  
   const onSubmit = (values) => {
       editUserProfile(values)
   }
@@ -130,6 +138,21 @@ export default function UserProfileForm(userProfileDoc) {
             shrink: true,
           }}
         />
+        <TextField
+          select
+          fullWidth
+          label="Select"
+          defaultValue={getValues('industry')}
+          inputProps={register('industry', {
+            required: 'Please enter industry',
+          })}
+        >
+          {industries.map((option, index) => (
+            <MenuItem key={index} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </TextField>
         <LoadingButton
           fullWidth
           size="large"
