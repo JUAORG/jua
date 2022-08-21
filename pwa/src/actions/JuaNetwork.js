@@ -61,10 +61,7 @@ export const createServiceRequest = (values) => {
 
 export const updateServiceRequest = (values) => {
   values.updated_at = serverTimestamp()
-  console.log(values)
-  update(ref(db, `service_requests/${values.id}/`), 
-    values
-  )
+  update(ref(db, `service_requests/${values.id}/`), values)
     .then((res) => {
       alert('Service Request updated')
     })
@@ -90,7 +87,8 @@ export const filterExpiredOrDeclinedServiceRequests = (serviceRequests) => {
   return map(
     filter(serviceRequests, (x) =>
         x.status !== serviceRequestStatusOptions.declined &&
-        x.status !== serviceRequestStatusOptions.expired
+        x.status !== serviceRequestStatusOptions.expired &&
+        x.status !== serviceRequestStatusOptions.cancelled
     )
   )
 }
@@ -113,8 +111,9 @@ export const getMyOldRecievedServiceRequests = (serviceRequests) => {
 }
 
 export const getMySentServiceRequests = (serviceRequests) => {
+  const filteredServiceRequests = filterExpiredOrDeclinedServiceRequests(serviceRequests)
   return map(
-    filter(serviceRequests, (x) => x.serviceRequester === uid),
+    filter(filteredServiceRequests, (x) => x.serviceRequester === uid),
     (x) => x,
     'user'
   )
