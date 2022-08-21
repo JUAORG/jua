@@ -14,6 +14,7 @@ import {
   Box,
   Tab,
   Tabs,
+  Button,
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import { getDatabase, ref, push, child, getRef, onValue } from "firebase/database"
@@ -23,7 +24,9 @@ import { getAuthId } from '../actions/Auth'
 import {
   activeJuaNetworkUsers,
   getMySentServiceRequests,
-  getMyRecievedServiceRequests
+  getMyRecievedServiceRequests,
+  updateServiceRequest,
+  serviceRequestStatusOptions
 } from "../actions/JuaNetwork"
 
 export default function ServiceRequests() {
@@ -80,6 +83,13 @@ export default function ServiceRequests() {
   const handleTabChange = (event, newValue) => {
     setValue(newValue)
   }
+  
+  const onDeleteServiceRequest = (serviceRequestId) => {
+    const values = {}
+    values.id = serviceRequestId
+    values.status = serviceRequestStatusOptions.cancelled
+    updateServiceRequest(values)
+  }
 
   const renderServiceRequestTab = (serviceRequests) => {
     return (
@@ -89,21 +99,27 @@ export default function ServiceRequests() {
               <ListItem
                 id={get(serviceRequest, "id")}
                 alignItems="flex-start"
-                onClick={() => goToServiceRequest(get(serviceRequest, "id"))}
               >
                 <ListItemText
                   primary={"Jua User"}
                   secondary={
                     <>
                       <Typography
-                        sx={{ display: 'inline' }}
+                        sx={{ display: 'inline', cursor: 'pointer' }}
                         component="span"
                         variant="body2"
                         color="text.primary"
+                        onClick={() => goToServiceRequest(get(serviceRequest, "id"))}
                       >
                       Subject: {get(serviceRequest, "subject", "description empty")}
                       </Typography><br/>
                       Description: {get(serviceRequest, "description", "description empty")}
+                      <Button
+                        sx={{float: "right"}}
+                        onClick={() => onDeleteServiceRequest(get(serviceRequest, "id"))}
+                      >
+                        Cancel Request
+                      </Button>
                     </>
                   }
                 />

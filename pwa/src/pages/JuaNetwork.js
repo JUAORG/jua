@@ -27,6 +27,7 @@ export default function JuaNetwork() {
       label: "id",
       options: {
         filter: false,
+        showColumn: false,
         allowToggle: false,
         sort: false,
         display: false,
@@ -44,7 +45,7 @@ export default function JuaNetwork() {
       name: "last_name",
       label: "Last Name",
       options: {
-        filter: false,
+        filter: true,
         sort: true,
       }
     },
@@ -60,8 +61,8 @@ export default function JuaNetwork() {
       name: "industry",
       label: "Industry",
       options: {
-        filter: false,
-        sort: false,
+        filter: true,
+        sort: true,
       }
     },
   ];
