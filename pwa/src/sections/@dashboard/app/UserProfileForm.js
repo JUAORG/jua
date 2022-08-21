@@ -68,10 +68,7 @@ export default function UserProfileForm(userProfileDoc) {
   },[userProfileDoc, reset])
 
   const onSubmit = (values) => {
-    if (userProfile) {
-      console.log(values)
       editUserProfile(values)
-    }
   }
   
   return (

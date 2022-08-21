@@ -1,5 +1,19 @@
-import { getDatabase, ref, child, push, update, serverTimestamp, increment } from 'firebase/database'
-import { map, get, size, filter } from 'lodash'
+import {
+  ref,
+  push,
+  child,
+  update,
+  increment,
+  getDatabase,
+  serverTimestamp
+} from 'firebase/database'
+import {
+  map,
+  get,
+  size,
+  merge,
+  filter,
+} from 'lodash'
 import { createId } from '../utils/uuid-generator'
 import { getAuthId } from './Auth'
 
@@ -118,4 +132,28 @@ export const getMyRecievedServiceRequests = (serviceRequests) => {
 export const getNumOfMyServiceRequests = (serviceRequests) => {
   const filteredServiceRequests = filterExpiredOrDeclinedServiceRequests(serviceRequests)
   return size(filter(filteredServiceRequests, (x) => x.serviceProvider === uid))
+}
+
+export async function processCalendarEvents(sentServiceRequests, recievedServiceRequests) {
+  const events = merge(sentServiceRequests, recievedServiceRequests)
+  const result = map(events,(event) => {
+    return {
+      id: get(event, 'id'),
+      title: get(event, 'subject'),
+      description: get(event, 'description'),
+      address: 'virtual',
+      color: 'green',
+      backgroundColor: "transparent",
+      textColor: "#000",
+      start: get(event, 'date'), 
+      end: get(event, 'event_end'), 
+      allDay: false, 
+      status: get(event, 'status'),
+      meetingLink: get(event, 'meetingLink'),
+      extendedProps: {
+        status: 'done'
+      }
+    }
+  })
+  return result
 }

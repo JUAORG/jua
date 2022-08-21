@@ -144,8 +144,10 @@ export default function ServiceRequests() {
           Service Requests
         </Typography>        
       {renderServiceRequestTabs()}
-      calendar functionality comming soon
-      <Calendar/>
+      <Calendar
+        sentServiceRequests={ sentServiceRequests }
+        recievedServiceRequests={ recievedServiceRequests }
+      />
     </Page>
   )
 }
