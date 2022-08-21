@@ -15,10 +15,10 @@ const MENU_OPTIONS = [
     label: 'Profile',
     linkTo: '/dashboard/profile',
   },
-  {
-    label: 'Settings',
-    linkTo: '/dashboard/settings/',
-  },
+  // {
+  //   label: 'Settings',
+  //   linkTo: '/dashboard/settings/',
+  // },
   {
     label: 'Password Change',
     linkTo: '/dashboard/password_change',
