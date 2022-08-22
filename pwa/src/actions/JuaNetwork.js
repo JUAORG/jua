@@ -29,6 +29,11 @@ export const serviceRequestStatusOptions = {
   expired: 'Expired'
 }
 
+export const serviceRequestUserActions = {
+  joined: 'joined',
+  left: 'left',
+}
+
 export const activeJuaNetworkUsers = (users) => {
   return map(
     filter(users, (x) => x.uid !== uid),
@@ -59,15 +64,31 @@ export const createServiceRequest = (values) => {
   })
 }
 
-export const updateServiceRequest = (values) => {
+export const submitActiveServiceRequestAction = (serviceRequestId, action) => {
+  const serviceRequestActionDocument = {}
+  serviceRequestActionDocument.user = uid
+  serviceRequestActionDocument.action = action
+  serviceRequestActionDocument.id = createId()
+  serviceRequestActionDocument.timestamp = serverTimestamp()
+  update(ref(db, `service_requests/${serviceRequestId}/actions/${serviceRequestActionDocument.id}`), serviceRequestActionDocument)
+}
+
+export async function updateServiceRequest(values) {
   values.updated_at = serverTimestamp()
   update(ref(db, `service_requests/${values.id}/`), values)
-    .then((res) => {
-      alert('Service Request updated')
-    })
-    .catch((error) => {
-      alert('Error')
-    })
+}
+
+export async function completeServiceRequest(values) {
+  const updates = {}
+  const serviceRequestKey = values.id
+
+  values.updated_at = serverTimestamp()
+
+  updates[`/service_requests/${serviceRequestKey}`] = values
+  updates[`/users/${ uid }/ledger/${values}`] = values
+  updates[`/users/${ values.serviceProvider }/ledger/${ serviceRequestKey }`] = values
+
+  await update(ref(db), updates)
 }
 
 export async function submitServiceRequestFeedback(values) {
