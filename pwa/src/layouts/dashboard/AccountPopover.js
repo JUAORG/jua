@@ -27,6 +27,10 @@ const MENU_OPTIONS = [
     label: 'FAQs',
     linkTo: '/dashboard/faq',
   },
+  {
+    label: 'Settings',
+    linkTo: '/dashboard/settings',
+  },
 ];
 
 export default function AccountPopover() {
