@@ -29,14 +29,7 @@ export default function RegisterForm() {
   
   const onSubmit = () => {
     setValue("country", "South Africa")
-     emailAndPasswordRegister(getValues())
-     // .then(() => {
-       //   navigate('/dashboard/rate_card_setup', { replace: true });
-       // })
-       // .catch((error) => {
-         //   console.log(error.message);
-         // });
-         
+    emailAndPasswordRegister(getValues())
   }
 
 
