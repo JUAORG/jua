@@ -14,12 +14,21 @@ export default function DashboardApp() {
   const db = getDatabase()
   const navigate = useNavigate()
   const [numServiceRequests, setNumServiceRequests] = useState()
+  const [userUpdates, setUserUpdates] = useState()
 
   useEffect(() => {
     onValue(ref(db, `/service_requests`), (snapshot) => {  
       let result = (snapshot.val() && snapshot.val())
       result = getNumOfMyServiceRequests(result)
       setNumServiceRequests(result)
+  }, {
+  })
+  }, [db])
+
+  useEffect(() => {
+    onValue(ref(db, `/users/${getAuthId()}/updates`), (snapshot) => {  
+      const result = (snapshot.val() && snapshot.val())
+      setUserUpdates(result)
   }, {
   })
   }, [db])
@@ -39,18 +48,12 @@ export default function DashboardApp() {
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Service Requests" total={numServiceRequests} onClick={goToServiceRequestPage} />
           </Grid>
-          {/* <Grid item xs={12} md={6} lg={8}>
+          <Grid item xs={12} md={6} lg={8}>
             <AppNewsUpdate
-              title="News Update"
-              list={[...Array(5)].map((_, index) => ({
-                id: faker.datatype.uuid(),
-                title: faker.name.jobTitle(),
-                description: faker.name.jobTitle(),
-                image: `/static/mock-images/covers/cover_${index + 1}.jpg`,
-                postedAt: faker.date.recent(),
-              }))}
+              title="Updates"
+              list={userUpdates}
             />
-          </Grid> */}
+          </Grid>
         </Grid>
       </Container>
     </Page>

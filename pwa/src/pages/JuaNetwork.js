@@ -45,7 +45,7 @@ export default function JuaNetwork() {
       name: "last_name",
       label: "Last Name",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       }
     },
@@ -53,7 +53,7 @@ export default function JuaNetwork() {
       name: "current_occupation",
       label: "Occupation",
       options: {
-        filter: false,
+        filter: true,
         sort: false,
       }
     },
