@@ -22,6 +22,8 @@ import AdvisorySessionMeeting from './pages/AdvisorySessionMeeting'
 import AdvisorySessionFeedback from './pages/AdvisorySessionFeedback'
 import ServiceRequest from './pages/ServiceRequest'
 import PasswordChange from './pages/PasswordChange'
+import Wallet from './pages/Wallet'
+import Faq from './pages/Faq'
 
 // ----------------------------------------------------------------------
 
@@ -39,6 +41,7 @@ export default function Router() {
       children: [
         { path: 'app', element: <DashboardApp /> },
         { path: 'rate_card_setup', element: <RateCardSetup /> },
+        { path: 'wallet', element: <Wallet /> },
         { path: 'wallet_setup', element: <WalletSetup /> },
         { path: 'profile', element: <Profile /> },
         { path: 'service_requests', element: <ServiceRequests /> },
@@ -49,6 +52,7 @@ export default function Router() {
         { path: 'advisory_session_meeting', element: <AdvisorySessionMeeting /> },
         { path: 'advisory_session_meeting/feedback/:serviceRequestId', element: <AdvisorySessionFeedback /> },
         { path: 'settings', element: <Settings /> },
+        { path: 'faq', element: <Faq /> },
         { path: 'About', element: <About /> },
         { path: 'password_change', element: <PasswordChange /> },
       ],

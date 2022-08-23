@@ -15,13 +15,17 @@ const MENU_OPTIONS = [
     label: 'Profile',
     linkTo: '/dashboard/profile',
   },
-  // {
-  //   label: 'Settings',
-  //   linkTo: '/dashboard/settings/',
-  // },
+  {
+    label: 'Wallet',
+    linkTo: '/dashboard/wallet',
+  },
   {
     label: 'Password Change',
     linkTo: '/dashboard/password_change',
+  },
+  {
+    label: 'FAQs',
+    linkTo: '/dashboard/faq',
   },
 ];
 
