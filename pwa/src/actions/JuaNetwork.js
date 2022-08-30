@@ -37,8 +37,8 @@ export const serviceRequestUserActions = {
 export const activeJuaNetworkUsers = (users) => {
   return map(
     filter(users, (x) =>
+        x.uid == uid &&
         x.first_name !== null &&
-        x.serviceProvider !== uid &&
         x.profile_visible === true
     )
   )
