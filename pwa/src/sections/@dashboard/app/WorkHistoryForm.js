@@ -3,6 +3,7 @@ import { get, head } from 'lodash'
 import { useForm } from "react-hook-form"
 import { Stack, TextField } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
+import notificationManager from '../../../actions/NotificationManager'
 import { createId } from '../../../utils/uuid-generator'
 import { addWork, deleteWork, editWork } from '../../../actions/Work'
 
@@ -27,14 +28,29 @@ export default function WorkHistoryForm(workDoc) {
       console.log(work)
       values.id = get(work, "id")
       editWork(values)
+        .then(() => {
+          notificationManager.success('Work record updated.', 'Success')
+        }).catch((error) => {
+          notificationManager.error(error, 'Error')
+        })
     }else{
       values.id = createId()
       addWork(values)
+        .then(() => {
+          notificationManager.success('Work record added', 'Success')
+        }).catch((error) => {
+          notificationManager.error(error, 'Error')
+        })
     }
   }
 
   const deleteItem = () => {
     deleteWork(work)
+      .then(() => {
+        notificationManager.success('Work record deleted', 'Success')
+      }).catch((error) => {
+        notificationManager.error(error, 'Error')
+      })
   }
   
   return (
@@ -42,18 +58,13 @@ export default function WorkHistoryForm(workDoc) {
       <Stack spacing={3}>
         <TextField
           fullWidth
-          label="Institution/University"
-          {...register('institution')}
+          label="Company"
+          {...register('company')}
         />
         <TextField
           fullWidth
-          label="Degree"
-          {...register('degree')}
-        />
-        <TextField
-          fullWidth
-          label="Field of study"
-          {...register('field_of_study')}
+          label="title"
+          {...register('title')}
         />
         <Stack
           sx={{float: "right"}}
@@ -63,7 +74,7 @@ export default function WorkHistoryForm(workDoc) {
           <TextField
             fullWidth
             id="start_year"
-            label="Start Year"
+            label="From"
             type="date"
             {...register('start_date')}
             InputLabelProps={{
@@ -73,9 +84,10 @@ export default function WorkHistoryForm(workDoc) {
           <TextField
             fullWidth
             id="end_year"
-            label="End Year"
+            label="To"
             type="date"
             {...register('end_date')}
+            helperText="If present, leave empty"
             InputLabelProps={{
               shrink: true,
             }}

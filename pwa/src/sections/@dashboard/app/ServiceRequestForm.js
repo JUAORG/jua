@@ -15,6 +15,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LoadingButton } from '@mui/lab'
+import notificationManager from '../../../actions/NotificationManager'
 import { getAuthId } from '../../../actions/Auth'
 import { createServiceRequest, updateServiceRequest, serviceRequestStatusOptions } from '../../../actions/JuaNetwork'
 
@@ -41,15 +42,24 @@ export default function ServiceRequestForm({closeDialog, serviceRequest, isServi
       values = {} 
       values.id = get(serviceRequest, "id")
       values.status = serviceRequestStatus
-      console.log(values)
       updateServiceRequest(values)
+        .then(() => {
+          notificationManager.success('Service request updated', 'Success')
+        }).catch((error) => {
+          notificationManager.error(error, 'Error')
+        })
     }else if (get(serviceRequest, "id") && !isServiceProvider) {
       alert("Update feature coming soon")
     }else{
       values.serviceProvider = juaNetworkUserId
       createServiceRequest(values)
+        .then(() => {
+          notificationManager.success('Service request created', 'Success')
+        }).catch((error) => {
+          notificationManager.error(error, 'Error')
+        })
     }
-    closeDialog()
+
   }
 
   const handleUpdateServiceRequestStatus = (event) => {

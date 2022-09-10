@@ -1,4 +1,4 @@
-import react, {useEffect, useState} from 'react'
+import react, { useEffect, useState } from 'react'
 import { get, head } from 'lodash'
 import { styled } from '@mui/material/styles';
 import { useForm } from "react-hook-form"
@@ -6,10 +6,14 @@ import {
   Stack,
   Badge,
   Avatar,
+  Select,
   TextField,
+  InputLabel,
+  FormControl,
   MenuItem
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
+import notificationManager from '../../../actions/NotificationManager'
 import { createId } from '../../../utils/uuid-generator'
 import { editUserProfile} from '../../../actions/Profile'
 import { updateUserAccountProfilePicture } from '../../../actions/Auth';
@@ -47,6 +51,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 export default function UserProfileForm(userProfileDoc) {
   const [userProfile, setUserProfile] = useState(null)
   const formProps = useForm({})
+  const [industry, setIndustry] = useState(get(userProfileDoc, ['userProfileDoc', 'industry']))
 
   const {
     reset,
@@ -67,27 +72,24 @@ export default function UserProfileForm(userProfileDoc) {
       town: get(userProfileDoc, ['userProfileDoc', 'town']),
       date_of_birth: get(userProfileDoc, ['userProfileDoc', 'date_of_birth']),
       industry: get(userProfileDoc, ['userProfileDoc', 'industry']),
+      about: get(userProfileDoc, ['userProfileDoc', 'about']),
       // profle_pic_url: get(userProfileDoc, ['userProfileDoc', 'profile_pic_url']),
     })
     watch()
   },[userProfileDoc, reset, industries])
 
-  // useEffect(() => {
-  //   updateUserAccountProfilePicture()
-  //     .then((res) => {
-  //       console.log(res)
-  //     }).catch((error) => {
-  //       console.log(error)
-  //     })
-  // },[userProfileDoc])
-
-  const handleSelectOptionChange = (event) => {
-    console.log(event.target.value)
-//    setIndustry(event.target.value);
-  }
+  const handleChange = (event) => {
+    setIndustry(event.target.value);
+    setValue('industry', event.target.value)
+  };
   
   const onSubmit = (values) => {
-      editUserProfile(values)
+    editUserProfile(values)
+      .then(() => {
+        notificationManager.success('Profile updated', 'Success')
+      }).catch((error) => {
+        notificationManager.error(error, 'Error')
+      })
   }
   
   return (
@@ -138,28 +140,40 @@ export default function UserProfileForm(userProfileDoc) {
             shrink: true,
           }}
         />
+        <FormControl fullWidth>
+          <InputLabel>
+            Industry
+          </InputLabel>
+          <Select
+            label="Industry"
+            value={ industry }
+            onChange={ handleChange }
+          >
+            {industries.map((option, index) => (
+              <MenuItem
+                key={ index }
+                value={ option }
+              >
+                { option }
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <TextField
-          select
           fullWidth
-          label="Select"
-          defaultValue={getValues('industry')}
-          inputProps={register('industry', {
-            required: 'Please enter industry',
-          })}
-        >
-          {industries.map((option, index) => (
-            <MenuItem key={index} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </TextField>
+          multiline
+          minRows={4}
+          label="About"
+          placeholder="Add summary"
+          { ...register('about') }
+        />
         <LoadingButton
           fullWidth
           size="large"
           type="submit"
           loading={ false }
           variant="contained">
-            Update
+          Update
         </LoadingButton>
       </Stack>
     </form>

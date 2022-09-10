@@ -44,7 +44,7 @@ export const activeJuaNetworkUsers = (users) => {
   )
 }
 
-export const createServiceRequest = (values) => {
+export async function createServiceRequest(values) {
   const serviceRequestKey = createId()
   values.serviceRequester = uid
   values.id = serviceRequestKey
@@ -56,14 +56,6 @@ export const createServiceRequest = (values) => {
   updates[`/service_requests/${serviceRequestKey}`] = values
   // updates[`/users/${uid}/service_requests/${serviceRequestKey}`] = values
   // updates[`/users/${values.serviceProvider}/service_requests/${serviceRequestKey}`] = values
-
-  update(ref(db), updates)
-  .then(() => {
-    alert('Service Request created')
-  })
-  .catch(() => {
-    alert('Error')
-  })
 }
 
 export const submitActiveServiceRequestAction = (serviceRequestId, action) => {
@@ -119,7 +111,7 @@ export const filterExpiredOrDeclinedServiceRequests = (serviceRequests) => {
 export const filterOldServiceRequests = (serviceRequests) => {
   return map(
     filter(serviceRequests, (x) =>
-        x.status === serviceRequestStatusOptions.expired
+      x.status === serviceRequestStatusOptions.expired
     )
   )
 }
