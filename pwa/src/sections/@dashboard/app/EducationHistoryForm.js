@@ -2,8 +2,13 @@ import react, { useState } from 'react'
 import { useForm } from "react-hook-form"
 import { Stack, TextField } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
+import notificationManager from '../../../actions/NotificationManager'
 import { createId } from '../../../utils/uuid-generator'
-import { addEducation, deleteEducation, editEducation } from '../../../actions/Education'
+import {
+  addEducation,
+  editEducation,
+  deleteEducation,
+} from '../../../actions/Education'
 
 export default function EducationHistoryForm(educationDoc) {
   
@@ -24,14 +29,29 @@ export default function EducationHistoryForm(educationDoc) {
   const onSubmit = (values) => {
     if (education) {
       editEducation(values)
+        .then(() => {
+          notificationManager.success('Education record updated', 'Success')
+        }).catch((error) => {
+          notificationManager.error(error, 'Error')
+        })
     }else{
       values.id = createId()
       addEducation(values)
+        .then(() => {
+          notificationManager.success('Education record saved', 'Success')
+        }).catch((error) => {
+          notificationManager.error(error, 'Error')
+        })
     }
   }
-
+  
   const deleteItem = () => {
     deleteEducation(education)
+      .then(() => {
+        notificationManager.success('Education record deleted', 'Success')
+      }).catch((error) => {
+        notificationManager.error(error, 'Error')
+      })
   }
   
   return (

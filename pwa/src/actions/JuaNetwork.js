@@ -37,14 +37,14 @@ export const serviceRequestUserActions = {
 export const activeJuaNetworkUsers = (users) => {
   return map(
     filter(users, (x) =>
-        x.uid == uid &&
-        x.first_name !== null &&
-        x.profile_visible === true
+        x.uid !== uid &&
+        x.first_name !== null
+//        x.pro1file_visible === true
     )
   )
 }
 
-export const createServiceRequest = (values) => {
+export async function createServiceRequest(values) {
   const serviceRequestKey = createId()
   values.serviceRequester = uid
   values.id = serviceRequestKey
@@ -56,14 +56,6 @@ export const createServiceRequest = (values) => {
   updates[`/service_requests/${serviceRequestKey}`] = values
   // updates[`/users/${uid}/service_requests/${serviceRequestKey}`] = values
   // updates[`/users/${values.serviceProvider}/service_requests/${serviceRequestKey}`] = values
-
-  update(ref(db), updates)
-  .then(() => {
-    alert('Service Request created')
-  })
-  .catch(() => {
-    alert('Error')
-  })
 }
 
 export const submitActiveServiceRequestAction = (serviceRequestId, action) => {
@@ -119,7 +111,7 @@ export const filterExpiredOrDeclinedServiceRequests = (serviceRequests) => {
 export const filterOldServiceRequests = (serviceRequests) => {
   return map(
     filter(serviceRequests, (x) =>
-        x.status === serviceRequestStatusOptions.expired
+      x.status === serviceRequestStatusOptions.expired
     )
   )
 }

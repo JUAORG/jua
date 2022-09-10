@@ -3,6 +3,7 @@ import { get, head } from 'lodash'
 import { useForm } from "react-hook-form"
 import { Stack, TextField } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
+import notificationManager from '../../../actions/NotificationManager'
 import { createId } from '../../../utils/uuid-generator'
 import { addWork, deleteWork, editWork } from '../../../actions/Work'
 
@@ -27,14 +28,29 @@ export default function WorkHistoryForm(workDoc) {
       console.log(work)
       values.id = get(work, "id")
       editWork(values)
+        .then(() => {
+          notificationManager.success('Work record updated.', 'Success')
+        }).catch((error) => {
+          notificationManager.error(error, 'Error')
+        })
     }else{
       values.id = createId()
       addWork(values)
+        .then(() => {
+          notificationManager.success('Work record added', 'Success')
+        }).catch((error) => {
+          notificationManager.error(error, 'Error')
+        })
     }
   }
 
   const deleteItem = () => {
     deleteWork(work)
+      .then(() => {
+        notificationManager.success('Work record deleted', 'Success')
+      }).catch((error) => {
+        notificationManager.error(error, 'Error')
+      })
   }
   
   return (

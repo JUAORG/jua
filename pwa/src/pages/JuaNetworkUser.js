@@ -30,7 +30,6 @@ export default function JuaNetworkUser() {
   }
 
   const handleClose = () => {
-    console.log("hhe")
     setOpenServiceRequestForm(false);
   }
 

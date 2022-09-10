@@ -7,7 +7,6 @@ import {
   getDatabase,
   serverTimestamp
 } from "firebase/database"
-
 import {
   get,
   head,
@@ -37,13 +36,7 @@ export const createProfile = (values) => {
     })
 }
 
-export const editUserProfile = (values) => {
+export async function editUserProfile(values) {
   values.uid = getAuthId()
   update(ref(db, `users/${values.uid}`), values)
-  .then(() => {
-    alert("Record Updated")
-  })
-  .catch(() => {
-    alert("Error")
-  })
 }

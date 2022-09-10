@@ -10,6 +10,7 @@ import {
   MenuItem
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
+import notificationManager from '../../../actions/NotificationManager'
 import { createId } from '../../../utils/uuid-generator'
 import { editUserProfile} from '../../../actions/Profile'
 import { updateUserAccountProfilePicture } from '../../../actions/Auth';
@@ -87,7 +88,12 @@ export default function UserProfileForm(userProfileDoc) {
   }
   
   const onSubmit = (values) => {
-      editUserProfile(values)
+    editUserProfile(values)
+      .then(() => {
+        notificationManager.success('Profile updated', 'Success')
+      }).catch((error) => {
+        notificationManager.error(error, 'Error')
+      })
   }
   
   return (

@@ -147,36 +147,6 @@ export async function updateUserAccountProfilePicture() {
   //  await updateProfile({displayName: "Jane Q. User",  photoURL: "https://example.com/jane-q-user/profile.jpg"})
 }
 
-
-// export async function updateUserAccountProfilePicture(values) {
-//   const imgPath = ref(storage, "images/");
-//   const imgUpload = () => {
-//     if (uImg == null) return;
-    
-//     const imgRef = ref(storage, `images/${uImg.name + v4()}`);
-//     uploadBytes(imgRef, uImg).then(() => {
-//       listAll(imgPath).then((response) => {
-//         response.items.forEach((item) => {
-//           getDownloadURL(item).then((url) => {
-//             setImgUrl([url]);
-            
-//             updateProfile(auth.currentUser, {
-//               photoURL: `${imgUrl[0]}`,
-//             })
-//               .then(() => {
-//                 setProfileImg(auth.currentUser.photoURL);
-//                 console.log("success");
-//               })
-//               .catch((error) => {
-//                 console.log(error);
-//               });
-//           });
-//         });
-//       });
-//     });
-//   };
-// }
-
 export async function deleteUserAccount(values) {
   const credential = EmailAuthProvider.credential(
     getUser().email,

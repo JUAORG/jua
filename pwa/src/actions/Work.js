@@ -4,32 +4,14 @@ import { getAuthId } from "./Auth"
 const db = getDatabase()
 const uid = getAuthId()
 
-export const addWork = (data) => {
+export async function addWork(data) {
   set(ref(db, `users/${uid}/work/${data.id}`), data)
-  .then(() => {
-    alert("Recored Created")
-  })
-  .catch(() => {
-    alert("Error")
-  })
 }
 
-export const editWork = (data) => {
+export async function editWork(data) {
   update(ref(db, `users/${uid}/work/${data.id}`), data)
-  .then(() => {
-    alert("Record Updated")
-  })
-  .catch(() => {
-    alert("Error")
-  })
 }
 
-export const deleteWork = (data) => {
+export async function deleteWork(data) {
   remove(ref(db, `users/${uid}/work/${data.id}`))
-  .then(() => {
-    alert("Record Removed")
-  })
-  .catch(() => {
-    alert("Error")
-  })
 }

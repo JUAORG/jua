@@ -9,7 +9,8 @@ import {
   TextField,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-import { submitJuaPlatformFeedback } from '../../../actions/About';
+import { submitJuaPlatformFeedback } from '../../../actions/About'
+import notificationManager from '../../../actions/NotificationManager'
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -49,9 +50,13 @@ export default function JuaPlatformFeedbackForm() {
     formState: { errors },
   } = formProps
 
-  const onSubmit = (values) => {
-    
-      submitJuaPlatformFeedback(values)
+  const onSubmit = (values) => {    
+    submitJuaPlatformFeedback(values)
+      .then(() => {
+        notificationManager.success('Thank you for your feedback.', 'Success')
+      }).catch((error) => {
+        notificationManager.error(error, 'Error')
+      })
   }
   
   return (
