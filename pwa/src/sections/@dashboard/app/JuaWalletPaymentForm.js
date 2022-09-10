@@ -15,6 +15,7 @@ import {
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import { css, Global } from '@emotion/react'
+import notificationManager from '../../../actions/NotificationManager'
 import { createId } from '../../../utils/uuid-generator'
 import { editUserProfile} from '../../../actions/Profile'
 import { makePayment } from '../../../actions/Wallet'
@@ -74,7 +75,7 @@ export default function JuaWalletPaymentForm() {
     if (amount >= 250) {
       makePayment(amount)
     }else{
-      alert('minimum amount R250')
+      notificationManager.error('minimum amount R250')
     }
   }
 

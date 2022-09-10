@@ -14,6 +14,7 @@ import {
   merge,
   filter,
 } from 'lodash'
+import notificationManager from './NotificationManager'
 import { createId } from '../utils/uuid-generator'
 import { getAuthId } from './Auth'
 
@@ -21,11 +22,27 @@ const db = getDatabase()
 const uid = getAuthId()
 
 export const yoco = new window.YocoSDK({
-  publicKey: 'pk_test_ed3c54a6gOol69qa7f45',
+  publicKey: process.env.REACT_APP_YOCO_PUBLIC_KEY,
 })
 
+export async function creditAccount(amount) {
+  const transactionId = createId()
+  const values = {}
+  values.amount = amount
+  values.id = transactionId
+  values.created_at = serverTimestamp()
+ 
+  update(ref(db, `users/${ uid }/updates/${ values.id }/`), {
+    title: 'Jua Wallet Credited',
+    body: `+ R${ values.amount }`,
+    timestamp: values.created_at
+  })
+  update(ref(db, `users/${ uid }/ledger/${ values.id }/`), values)
+  values.creditTo = uid
+  update(ref(db, `ledger/${ values.id }/`), values)
+}
+
 export async function makePayment(amount) {
-  console.log(amount)
   const amountInCents = amount * 100
   yoco.showPopup({
     amountInCents,
@@ -36,13 +53,15 @@ export async function makePayment(amount) {
       // This function returns a token that your server can use to capture a payment
       if (result.error) {
         const errorMessage = result.error.message;
+        notificationManager.error(`${result.error.message}', 'Error`)
         alert(`error occured: ${errorMessage}`);
       } else {
-        // update db
-        alert(`card successfully tokenised: ${result.id}`);
+        creditAccount(amount).then(() => {
+          notificationManager.success(`R${amount} credited to your JUA wallet', 'Success`)
+        })
       }
       // In a real integration - you would now pass this chargeToken back to your
       // server along with the order/basket that the customer has purchased.
     }
-    }) 
+  })
 }
