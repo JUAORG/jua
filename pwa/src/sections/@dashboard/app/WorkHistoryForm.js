@@ -58,18 +58,13 @@ export default function WorkHistoryForm(workDoc) {
       <Stack spacing={3}>
         <TextField
           fullWidth
-          label="Institution/University"
-          {...register('institution')}
+          label="Company"
+          {...register('company')}
         />
         <TextField
           fullWidth
-          label="Degree"
-          {...register('degree')}
-        />
-        <TextField
-          fullWidth
-          label="Field of study"
-          {...register('field_of_study')}
+          label="title"
+          {...register('title')}
         />
         <Stack
           sx={{float: "right"}}
@@ -79,7 +74,7 @@ export default function WorkHistoryForm(workDoc) {
           <TextField
             fullWidth
             id="start_year"
-            label="Start Year"
+            label="From"
             type="date"
             {...register('start_date')}
             InputLabelProps={{
@@ -89,9 +84,10 @@ export default function WorkHistoryForm(workDoc) {
           <TextField
             fullWidth
             id="end_year"
-            label="End Year"
+            label="To"
             type="date"
             {...register('end_date')}
+            helperText="If present, leave empty"
             InputLabelProps={{
               shrink: true,
             }}
