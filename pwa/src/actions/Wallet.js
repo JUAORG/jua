@@ -3,6 +3,7 @@ import {
   push,
   child,
   update,
+  onValue,
   increment,
   getDatabase,
   serverTimestamp
@@ -28,11 +29,13 @@ export const yoco = new window.YocoSDK({
 export async function creditAccount(amount) {
   const transactionId = createId()
   const values = {}
-  values.amount = amount
   values.id = transactionId
+  values.action = 'credit'
+  values.amount = parseFloat(amount)
   values.created_at = serverTimestamp()
  
   update(ref(db, `users/${ uid }/updates/${ values.id }/`), {
+    action: values.action,
     title: 'Jua Wallet Credited',
     body: `+ R${ values.amount }`,
     timestamp: values.created_at
@@ -40,6 +43,14 @@ export async function creditAccount(amount) {
   update(ref(db, `users/${ uid }/ledger/${ values.id }/`), values)
   values.creditTo = uid
   update(ref(db, `ledger/${ values.id }/`), values)
+}
+
+export async function getAvailableFunds(ledgerRecords) {
+  let total = 0
+  const bb = map(ledgerRecords, (x) => {
+    total += get(x, 'amount')
+  })
+  return total
 }
 
 export async function makePayment(amount) {
