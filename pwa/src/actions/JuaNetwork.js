@@ -3,6 +3,7 @@ import {
   push,
   child,
   update,
+  onValue,
   increment,
   getDatabase,
   serverTimestamp
@@ -38,7 +39,7 @@ export const activeJuaNetworkUsers = (users) => {
   return map(
     filter(users, (x) =>
         x.first_name !== null &&
-        x.serviceProvider !== uid
+        x.uid !== uid
 //        x.profile_visible === true
     )
   )
@@ -50,10 +51,8 @@ export async function createServiceRequest(values) {
   values.id = serviceRequestKey
   values.status = get(serviceRequestStatusOptions, 'unread')
   values.created_at = serverTimestamp()
-
-  const updates = {}
-
-  updates[`/service_requests/${serviceRequestKey}`] = values
+  // const updates = {}
+  update(ref(db, `service_requests/${serviceRequestKey}/`), values)
   // updates[`/users/${uid}/service_requests/${serviceRequestKey}`] = values
   // updates[`/users/${values.serviceProvider}/service_requests/${serviceRequestKey}`] = values
 }
