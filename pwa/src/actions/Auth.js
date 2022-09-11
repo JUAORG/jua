@@ -23,7 +23,7 @@ import {
   serverTimestamp,
   increment
 } from 'firebase/database'
-import notificationManager from '../actions/NotificationManager'
+import notificationManager from './NotificationManager'
 import { firebaseAuth } from '../utils/firebase-config'
 import { createProfile } from './Profile'
 import { createId } from '../utils/uuid-generator'
