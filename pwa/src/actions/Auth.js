@@ -23,6 +23,7 @@ import {
   serverTimestamp,
   increment
 } from 'firebase/database'
+import notificationManager from '../actions/NotificationManager'
 import { firebaseAuth } from '../utils/firebase-config'
 import { createProfile } from './Profile'
 import { createId } from '../utils/uuid-generator'
@@ -121,12 +122,16 @@ export async function updateUserPassword(values) {
     getUser().email,
     values.current_password
   )
-  await reauthenticateWithCredential(auth.currentUser, credential);
-  await updatePassword(auth.currentUser, values.new_password)
-  update(ref(db, `users/${auth.currentUser.uid}/activity/${docId}`), {
-    "id": docId,
-    "Account": "Password changed",
-    "Date": serverTimestamp()
+  reauthenticateWithCredential(auth.currentUser, credential)
+  updatePassword(auth.currentUser, values.new_password).then((res) => {
+    update(ref(db, `users/${auth.currentUser.uid}/activity/${docId}`), {
+      "id": docId,
+      "Account": "Password changed",
+      "Date": serverTimestamp()
+    })
+    notificationManager.success('Password updated', 'Success')
+  }).catch((error) => {
+    notificationManager.error(`${error}`, 'Error')
   })
 }
 
