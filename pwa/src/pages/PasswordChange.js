@@ -8,7 +8,6 @@ import PasswordChangeForm from '../sections/@dashboard/app/PasswordChangeForm';
 
 export default function PasswordChange() {
   const db = getDatabase()
-console.log(getUser())
     
       return (
         <Page title="Profile">

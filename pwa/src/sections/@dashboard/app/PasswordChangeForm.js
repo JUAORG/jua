@@ -11,7 +11,6 @@ export default function PasswordChangeForm() {
   const [userProfile, setUserProfile] = useState(null)
   const formProps = useForm({ defaultValues: userProfile })
   
-
   const {
     reset,
     watch,
@@ -24,12 +23,7 @@ export default function PasswordChangeForm() {
   } = formProps
 
   const onSubmit = (values) => {
-    updateUserPassword(values).then((res) => {
-      alert("Password update success")
-    }).catch((error) => {
-      alert(`${error}`)
-      console.error(error)
-    })
+    updateUserPassword(values)
   }
   
   return (
