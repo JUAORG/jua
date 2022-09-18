@@ -72,10 +72,10 @@ export default function JuaWalletPaymentForm() {
   } = formProps
 
   const onSubmit = () => {
-    if (amount >= 250) {
+    if (amount >= 1) {
       makePayment(amount)
     }else{
-      notificationManager.error('minimum amount R250')
+      notificationManager.error('Amount cannot be less than R1')
     }
   }
 
