@@ -26,7 +26,7 @@ export const yoco = new window.YocoSDK({
   publicKey: process.env.REACT_APP_YOCO_PUBLIC_KEY,
 })
 
-export async function creditAccount(amount) {
+export async function creditJuaWallet(amount) {
   const transactionId = createId()
   const values = {}
   values.id = transactionId
@@ -67,12 +67,22 @@ export async function makePayment(amount) {
         notificationManager.error(`${result.error.message}', 'Error`)
         alert(`error occured: ${errorMessage}`);
       } else {
-        creditAccount(amount).then(() => {
-          notificationManager.success(`R${amount} credited to your JUA wallet', 'Success`)
-        })
-      }
-      // In a real integration - you would now pass this chargeToken back to your
-      // server along with the order/basket that the customer has purchased.
+        fetch(process.env.REACT_APP_PAYMENT_ENDPOINT, {
+          body: `${get(result, 'id')},${amountInCents}`,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          method: "POST"
+        }).then((res) => {
+          const statusCode = res.status
+          if (statusCode === 200 || statusCode === 201) {
+           creditJuaWallet(amount).then(() => {
+             notificationManager.success(`R${amount} credited to your JUA wallet', 'Success`)
+            })
+          }
+        }).catch(() => {
+        notificationManager.error('Something went wrong', 'Error')
+      })
     }
-  })
-}
+  }
+})}
