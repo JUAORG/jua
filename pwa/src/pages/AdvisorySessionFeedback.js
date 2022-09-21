@@ -1,13 +1,21 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { Grid, Stack, Container, Typography, TextField } from '@mui/material'
+import { get, map } from 'lodash'
+import {
+  Box,
+  Rating,
+  Grid,
+  Stack,
+  TextField,
+  Container,
+  Typography
+} from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-import Rating from '@mui/material/Rating'
-import Box from '@mui/material/Box'
 import StarIcon from '@mui/icons-material/Star'
 import Page from '../components/Page'
 import { submitServiceRequestFeedback } from '../actions/JuaNetwork'
+import notificationManager from '../actions/NotificationManager'
 
 const labels = {
   0.5: 'Useless',
@@ -22,6 +30,7 @@ const labels = {
   5: 'Excellent+',
 }
 
+
 function getLabelText(rating) {
   return `${rating} Star${rating !== 1 ? 's' : ''}, ${labels[rating]}`
 }
@@ -30,8 +39,45 @@ export default function AdvisorySessionFeedback() {
   const navigate = useNavigate()
   const formProps = useForm({})
   const [hover, setHover] = useState(-1)
-  const [rating, setRating] = useState(4)
+  const [audioRating, setAudioRating] = useState(4)
+  const [videoRating, setVideoRating] = useState(4)
+  const [overallRating, setOverallRating] = useState(4)
+  const [likelyToUseJuaAgainRating, setLikelyToUseJuaAgainRating] = useState(4)
+  const [likelyToRecommendJuaToOthersRating, setLikelyToRecommendJuaToOthersRating] = useState(4)
   const serviceRequestId = window.location.search.slice(6)
+
+  const ratingTypes = [
+    {
+      name: 'audio_rating',
+      value: audioRating,
+      setValue: setAudioRating,
+      label: 'Rate the quality of your audio experience'
+    },
+    {
+      name: 'video_rating',
+      value: videoRating,
+      setValue: setVideoRating,
+      label: 'Rate the quality of your video experience'
+    },
+    {
+      name: 'use_jua_again_rating',
+      value: likelyToUseJuaAgainRating,
+      setValue: setLikelyToUseJuaAgainRating,
+      label: 'How likely are you to use JUA again?'
+    },
+    {
+      name: 'recommend_rating',
+      value: likelyToRecommendJuaToOthersRating,
+      setValue: setLikelyToRecommendJuaToOthersRating,
+      label: 'How likely are you to recommend JUA to others?'
+    },
+    {
+      name: 'overall_rating',
+      value: overallRating,
+      setValue: setOverallRating,
+      label: 'Overall, how valuable was your advisory session?'
+    }
+  ]
 
   const {
     register,
@@ -40,16 +86,19 @@ export default function AdvisorySessionFeedback() {
   } = formProps
 
   const onSubmit = async (values) => {
-    values.rating = rating
     values.id = serviceRequestId
+    values.audioRating = audioRating
+    values.videoRating = videoRating
+    values.overallRating = overallRating
+    values.likelyToUseJuaAgainRating = likelyToUseJuaAgainRating
+    values.likelyToRecommendJuaToOthersRating = likelyToRecommendJuaToOthersRating
 
     await submitServiceRequestFeedback(values)
-      .then((res) => {
-        alert('Feedback submitted thank you')
+      .then(() => {
+        notificationManager.success('Thank you for your feedback', 'Success')
         navigate(`/dashboard/app`, { replace: true })
-      })
-      .catch((error) => {
-        alert('Error')
+      }).catch((error) => {
+        console.error(error)
       })
   }
 
@@ -62,38 +111,44 @@ export default function AdvisorySessionFeedback() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid>
             <Stack spacing={3}>
-              <Box
-                sx={{
-                  width: 200,
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                <Rating
-                  name="rating"
-                  value={rating}
-                  precision={0.5}
-                  getLabelText={getLabelText}
-                  onChange={(event, newRating) => {
-                    setRating(newRating)
-                  }}
-                  onChangeActive={(event, newHover) => {
-                    setHover(newHover)
-                  }}
-                  emptyIcon={
-                    <StarIcon
-                      fontSize="inherit"
-                      style={{ opacity: 0.55 }}
-                    />
-                  }
-                />
-                {
-                  rating !== null &&
-                    <Box sx={{ ml: 2 }}>
-                      {labels[hover !== -1 ? hover : rating]}
+              {map(ratingTypes, (x) => {
+                return (
+                  <>
+                    <Typography component='h5' variant='h5'>{x.label}</Typography>
+                    <Box
+                      sx={{
+                        width: 200,
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Rating
+                        name={x.name}
+                        value={ x.value }
+                        precision={0.5}
+                        getLabelText={ getLabelText }
+                        onChange={(event, newRating) => {
+                          x.setValue(newRating)
+                        }}
+                        emptyIcon={
+                          <StarIcon
+                            fontSize='inherit'
+                            style={{ opacity: 0.55 }}
+                          />
+                        }
+                      />
+                      {
+                        x.value !== null &&
+                          <Box sx={{ ml: 2 }}>
+                            {labels[hover !== -1 ? hover : x.value]}
+                          </Box>
+                      }
                     </Box>
-                }
-              </Box>
+                  </>
+                )})}
+              <Typography component='h5' variant='h5'>
+                Any other feedback?
+              </Typography>
               <TextField
                 rows={4}
                 fullWidth
