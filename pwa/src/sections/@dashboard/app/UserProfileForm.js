@@ -10,6 +10,7 @@ import {
   TextField,
   InputLabel,
   FormControl,
+  InputAdornment,
   MenuItem
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
@@ -73,6 +74,7 @@ export default function UserProfileForm(userProfileDoc) {
       date_of_birth: get(userProfileDoc, ['userProfileDoc', 'date_of_birth']),
       industry: get(userProfileDoc, ['userProfileDoc', 'industry']),
       about: get(userProfileDoc, ['userProfileDoc', 'about']),
+      rate_per_hour: get(userProfileDoc, ['userProfileDoc', 'rate_per_hour']),
       // profle_pic_url: get(userProfileDoc, ['userProfileDoc', 'profile_pic_url']),
     })
     watch()
@@ -166,6 +168,18 @@ export default function UserProfileForm(userProfileDoc) {
           label="About"
           placeholder="Add summary"
           { ...register('about') }
+        />
+        <TextField
+          fullWidth
+          type="number"
+          label='Rate per hour'
+          placeholder="1500"
+          helperText="Amount for an hour of your time. In other words what you charge for a Service Request on JUA"
+          { ...register('rate_per_hour') }
+          InputProps={{
+            startAdornment:
+            <InputAdornment position="start">R</InputAdornment>,
+          }}
         />
         <LoadingButton
           fullWidth
