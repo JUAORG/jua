@@ -14,6 +14,7 @@ import {
   MenuItem
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
+import LinkedInIcon from '@mui/icons-material/LinkedIn'
 import notificationManager from '../../../actions/NotificationManager'
 import { createId } from '../../../utils/uuid-generator'
 import { editUserProfile} from '../../../actions/Profile'
@@ -75,6 +76,8 @@ export default function UserProfileForm(userProfileDoc) {
       industry: get(userProfileDoc, ['userProfileDoc', 'industry']),
       about: get(userProfileDoc, ['userProfileDoc', 'about']),
       rate_per_hour: get(userProfileDoc, ['userProfileDoc', 'rate_per_hour']),
+      linkedIn: get(userProfileDoc, ['userProfileDoc', 'linkedIn']),
+      
       // profle_pic_url: get(userProfileDoc, ['userProfileDoc', 'profile_pic_url']),
     })
     watch()
@@ -174,12 +177,26 @@ export default function UserProfileForm(userProfileDoc) {
           type="number"
           label='Rate per hour'
           placeholder="1500"
-          helperText="Amount for an hour of your time. In other words what you charge for a Service Request on JUA"
+          helperText='Amount for an hour of your time. In other words what you charge for a Service Request on JUA'
           { ...register('rate_per_hour') }
           InputProps={{
             startAdornment:
             <InputAdornment position="start">R</InputAdornment>,
           }}
+        />
+        <TextField
+          fullWidth
+          type='url'
+          label='LinkedIn'
+          { ...register('linkedIn') }
+          placeholder='https://za.linkedin.com/in/...'
+          InputProps={{
+            startAdornment:
+            <InputAdornment position='start'>
+              <LinkedInIcon/>
+            </InputAdornment>,
+          }}
+          helperText='LinkedIn profile URL'
         />
         <LoadingButton
           fullWidth

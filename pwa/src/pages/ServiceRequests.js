@@ -22,11 +22,12 @@ import Page from '../components/Page'
 import { Calendar } from "../sections/advisory_session/meeting/calendar/Calendar";
 import { getAuthId } from '../actions/Auth'
 import {
+  updateServiceRequest,
   activeJuaNetworkUsers,
   getMySentServiceRequests,
+  serviceRequestStatusOptions,
   getMyRecievedServiceRequests,
-  updateServiceRequest,
-  serviceRequestStatusOptions
+  getActiveJuaNetworkUserForId
 } from "../actions/JuaNetwork"
 
 export default function ServiceRequests() {
@@ -100,8 +101,19 @@ export default function ServiceRequests() {
                 id={get(serviceRequest, "id")}
                 alignItems="flex-start"
               >
+                {/* {tgetActiveJuaNetworkUserForId(serviceRequest).then(() => { */}
+                {/*   console.log('hello') */}
+                {/* }).catch(() => { */}
+                {/*   console.log('dede') */}
+                {/* }) */}
+                {/* } */}
+               {/*  {console.log(getActiveJuaNetworkUserForId(serviceRequest).then((res) => { */}
+               {/*    return res */}
+               {/*  }).catch((error) => { */}
+               {/*    console.log(error) */}
+               {/*  }) */}
+               {/* )} */}
                 <ListItemText
-                  primary={"Jua User"}
                   secondary={
                     <>
                       <Typography
