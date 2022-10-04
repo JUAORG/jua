@@ -27,7 +27,6 @@ import {
   getMySentServiceRequests,
   serviceRequestStatusOptions,
   getMyRecievedServiceRequests,
-  getActiveJuaNetworkUserForId
 } from "../actions/JuaNetwork"
 
 export default function ServiceRequests() {
