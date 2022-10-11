@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react'
 import { get, map, unset } from 'lodash'
 import {
   ref,
-  push,
-  child,
-  getRef,
   onValue,
   getDatabase
 } from "firebase/database"
@@ -30,16 +27,15 @@ import Page from '../components/Page'
 import UserProfileForm from '../sections/@dashboard/app/UserProfileForm'
 import { getMyOldRecievedServiceRequests } from "../actions/JuaNetwork"
 import { getAuthId } from '../actions/Auth'
+import { showCustomerView } from '../actions/UI'
 
 export default function Profile() {
   const db = getDatabase()
   const [value, setValue] = useState(0)
+  const [workList, setWorkList] = useState(null)
   const [profileList, setProfileList] = useState(null)
   const [educationList, setEducationList] = useState(null)
-  const [workList, setWorkList] = useState(null)
   const [oldRecievedServiceRequests, setOldRecievedServiceRequests] = useState(null)
-  const [refreshProfileList, setRefreshProfileList] = useState(false)
-  
   
   
   useEffect(() => {
@@ -144,7 +140,7 @@ export default function Profile() {
     setValue(newValue)
   }
 
-  const renderUserProfileTabs = () => {
+  const renderAdvisorProfileTabs = () => {
     return (
       <>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -187,6 +183,34 @@ export default function Profile() {
       </>
     )
   }
+
+  const renderCustomerProfileTabs = () => {
+    return (
+      <>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs
+            value={value}
+            scrollButtons
+            variant="scrollable"
+            allowScrollButtonsMobile
+            onChange={handleTabChange}
+          >
+            <Tab label="Personal Details"/>
+            <Tab label="Old Service Requests"/>
+          </Tabs>
+        </Box>
+        <TabPanel value={ value } index={ 0 }>
+          <UserProfileForm userProfileDoc={ profileList }/>
+        </TabPanel>
+        <TabPanel value={ value } index={ 3 }>
+          <Typography variant="h4" mb={3}>
+            My old recieved Service Requests
+          </Typography>
+          { renderOldServiceRequests() }
+        </TabPanel>
+      </>
+    )
+  }
   
   return (
     <Page title="Profile">
@@ -195,7 +219,8 @@ export default function Profile() {
           Profile
         </Typography>
         <Grid>
-          { renderUserProfileTabs() }
+          {!showCustomerView() && renderAdvisorProfileTabs() }
+          {showCustomerView() && renderCustomerProfileTabs() }
         </Grid>
       </Container>
     </Page>
