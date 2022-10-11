@@ -14,7 +14,6 @@ const firebaseConfig = {
   storageBucket: 'jua-production.appspot.com',
   appId: '1:614564836453:web:ad72a6c02a35247c6bc28c',
 }
-console.log(process.env)
 
 const app = initializeApp(firebaseConfig)
 export const firebaseStorage = getStorage(app)
