@@ -16,7 +16,9 @@ import {
   getAvailableFunds
 } from '../actions/Wallet'
 import JuaWalletPaymentForm from '../sections/@dashboard/app/JuaWalletPaymentForm'
+import ReusableTabs from '../components/reusables/Tabs'
 import { getAuthId } from '../actions/Auth'
+import { FEATURE_NOT_READY_YET } from '../utils/messages'
 
 const db = getDatabase()
 
@@ -35,17 +37,25 @@ export default function Wallet() {
   return (
     <Page title='Profile'>
       <Container maxWidth='xl'>
-        <Typography variant='h4'>
+        <Typography align='Center' variant="h4">
             Jua Wallet
         </Typography>
         <Typography
           variant='p'
           component='h6'
-          sx={{ mb: 5 }}
+          align='center'
+          sx={{ mb:5 }}
         >
           Available: R{ availableFunds }
         </Typography>
-        <JuaWalletPaymentForm/>
+        <ReusableTabs
+          tabHeadings={['Add Funds', 'History']}
+          tabContents={[
+            <JuaWalletPaymentForm/>,
+            FEATURE_NOT_READY_YET
+          ]}
+        />
+        
       </Container>
     </Page>
   )
