@@ -24,38 +24,40 @@ import ServiceRequest from './pages/ServiceRequest'
 import PasswordChange from './pages/PasswordChange'
 import Wallet from './pages/Wallet'
 import Faq from './pages/Faq'
+import { showCustomerView } from './actions/UI'
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
-
+  const shouldShowCustomerView = showCustomerView()
+  
   useEffect(() => {
-    isSignedIn()
-    
-  })
+    isSignedIn()  
+  },[])
 
+  
   return useRoutes([
     {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
-        { path: 'app', element: <DashboardApp /> },
-        { path: 'rate_card_setup', element: <RateCardSetup /> },
-        { path: 'wallet', element: <Wallet /> },
-        { path: 'wallet_setup', element: <WalletSetup /> },
-        { path: 'profile', element: <Profile /> },
-        { path: 'service_requests', element: <ServiceRequests /> },
-        { path: `service_request/:serviceRequestId`, element: <ServiceRequest /> },
-        { path: 'saved_opportunities', element: <SavedOpportunities /> },
-        { path: 'jua_network', element: <JuaNetwork /> },
-        { path: `jua_network/:juaNetworkUserId`, element: <JuaNetworkUser /> },
-        { path: 'advisory_session_meeting', element: <AdvisorySessionMeeting /> },
-        { path: 'advisory_session_meeting/feedback/:serviceRequestId', element: <AdvisorySessionFeedback /> },
-        { path: 'settings', element: <Settings /> },
         { path: 'faq', element: <Faq /> },
         { path: 'About', element: <About /> },
+        { path: 'wallet', element: <Wallet /> },
+        { path: 'profile', element: <Profile /> },
+        { path: 'app', element: <DashboardApp /> },
+        { path: 'settings', element: <Settings /> },
         { path: 'password_change', element: <PasswordChange /> },
-      ],
+        { path: 'service_requests', element: <ServiceRequests /> },
+        { path: 'saved_opportunities', element: <SavedOpportunities /> },
+        { path: `jua_network/:juaNetworkUserId`, element: <JuaNetworkUser /> },
+        { path: `service_request/:serviceRequestId`, element: <ServiceRequest /> },
+        { path: 'advisory_session_meeting', element: <AdvisorySessionMeeting /> },
+        { path: 'advisory_session_meeting/feedback/:serviceRequestId', element: <AdvisorySessionFeedback /> },
+        { path: 'jua_network', element:  shouldShowCustomerView ? <Navigate to="/404" replace /> : <JuaNetwork /> },
+        { path: 'wallet_setup', element:  shouldShowCustomerView ? <Navigate to="/404" replace /> : <WalletSetup /> },
+        { path: 'rate_card_setup', element: shouldShowCustomerView ? <Navigate to="/404" replace /> : <RateCardSetup /> }
+      ]
     },
     {
       path: '/',
@@ -64,7 +66,7 @@ export default function Router() {
         { path: '/', element: <Navigate to="/dashboard/app" /> },
         { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> },
-        // { path: '404', element: <NotFound /> },
+        { path: '404', element: <NotFound /> },
         // { path: '*', element: <Navigate to="/404" /> },
       ],
     },
