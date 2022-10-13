@@ -14,8 +14,9 @@ import { getAuthId } from '../actions/Auth';
 import Page from '../components/Page'
 // sections
 import UserContext from '../contexts/User'
-import { AppNewsUpdate, AppWidgetSummary } from '../sections/@dashboard/app'
+import { showCustomerView } from '../actions/UI'
 import { getNumOfMyServiceRequests } from '../actions/JuaNetwork'
+import { AppNewsUpdate, AppWidgetSummary } from '../sections/@dashboard/app'
 
 const availableServices = [
   {
@@ -45,10 +46,9 @@ export default function DashboardApp() {
   const db = getDatabase()
   const navigate = useNavigate()
   const user = useContext(UserContext)
-  const showCustomerView = get(user, 'viewType')
-  const [numServiceRequests, setNumServiceRequests] = useState()
+  const shouldShowCustomerView = showCustomerView()
   const [userUpdates, setUserUpdates] = useState()
-  console.log(user)
+  const [numServiceRequests, setNumServiceRequests] = useState()
 
   useEffect(() => {
     onValue(ref(db, `/service_requests`), (snapshot) => {  
@@ -132,10 +132,9 @@ export default function DashboardApp() {
         <Typography variant="h4" sx={{ mb: 5 }}>
           Hi, User Name
         </Typography>
-
         <Grid container spacing={3}>
-          {!showCustomerView && renderAdvisorHomePage()}
-          {showCustomerView && renderCustomerHomePage()}
+          { !shouldShowCustomerView && renderAdvisorHomePage() }
+          { shouldShowCustomerView && renderCustomerHomePage() }
           <Grid item xs={12} md={6} lg={8}>
             <Typography variant="h6" mb={2}>
               Updates
