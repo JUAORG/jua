@@ -7,13 +7,15 @@ import { getDatabase } from "firebase/database"
 // import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyC3Ui3-3aQGbSWLh2SNJFYKA2ywr0STY08',
-  authDomain: '1:614564836453:web:ad72a6c02a35247c6bc28c',
-  databaseURL: 'https://jua-production-default-rtdb.europe-west1.firebasedatabase.app',
-  projectId: 'jua-production',
-  storageBucket: 'jua-production.appspot.com',
-  appId: '1:614564836453:web:ad72a6c02a35247c6bc28c',
-}
+  apiKey: "AIzaSyC3Ui3-3aQGbSWLh2SNJFYKA2ywr0STY08",
+  authDomain: "jua-production.firebaseapp.com",
+  databaseURL: "https://jua-production-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "jua-production",
+  storageBucket: "jua-production.appspot.com",
+  messagingSenderId: "614564836453",
+  appId: "1:614564836453:web:ad72a6c02a35247c6bc28c",
+  measurementId: "G-6XCX8VFKNX"
+};
 
 const app = initializeApp(firebaseConfig)
 export const firebaseStorage = getStorage(app)
