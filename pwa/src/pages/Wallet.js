@@ -38,7 +38,13 @@ export default function Wallet() {
     <Page title='Profile'>
       <Container maxWidth='xl'>
         <Typography align='Center' variant="h4">
-            Jua Wallet
+          <img
+            alt='FAQs'
+            width={ 150 }
+            style={{margin: 'auto'}}
+            src='/static/illustrations/undraw_pay_online.svg'
+          />
+          Jua Wallet
         </Typography>
         <Typography
           variant='p'

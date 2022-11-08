@@ -7,10 +7,16 @@ export default function About() {
   return (
     <Page title="About">
       <Container maxWidth="xl">
-        <Typography variant="h4" sx={{ mb: 2 }}>
+        <Typography variant="h4" sx={{ mb: 2, textAlign: 'center' }}>
+          <img
+            alt='FAQs'
+            width={ 150 }
+            style={{margin: 'auto'}}
+            src='/static/illustrations/undraw_team.svg'
+          />
             About Jua
         </Typography>
-        <Typography variant="p">
+        <Typography variant="p" component='p' sx={{ mb: 2, textAlign: 'center' }}>
         With JUA, anyone with any skills or knowledge has value to share and will be paid for their advice and/or services.
         </Typography>
         <Divider sx={{ my: 2 }}/>

@@ -1,4 +1,5 @@
 import react, { useState } from 'react'
+import { get } from 'lodash'
 import { useForm } from "react-hook-form"
 import { Stack, TextField } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
@@ -9,9 +10,16 @@ import {
   editEducation,
   deleteEducation,
 } from '../../../actions/Education'
+import {
+  addRecordUnderUserDoc,
+  updateRecordUnderUserDoc,
+  deleteRecordUnderUserSubDoc
+} from '../../../actions/GeneralFunctions'
+
+const SUB_DOCUMENT = 'education'
 
 export default function EducationHistoryForm(educationDoc) {
-  
+
   const [education, setEducation] = useState(educationDoc.educationDoc)
   const formProps = useForm({ defaultValues: education })
 
@@ -28,30 +36,16 @@ export default function EducationHistoryForm(educationDoc) {
 
   const onSubmit = (values) => {
     if (education) {
-      editEducation(values)
-        .then(() => {
-          notificationManager.success('Education record updated', 'Success')
-        }).catch((error) => {
-          notificationManager.error(error, 'Error')
-        })
+      values.id = get(education, "id")
+      updateRecordUnderUserDoc(values, SUB_DOCUMENT)
     }else{
       values.id = createId()
-      addEducation(values)
-        .then(() => {
-          notificationManager.success('Education record saved', 'Success')
-        }).catch((error) => {
-          notificationManager.error(error, 'Error')
-        })
+      addRecordUnderUserDoc(values, SUB_DOCUMENT)
     }
   }
-  
-  const deleteItem = () => {
-    deleteEducation(education)
-      .then(() => {
-        notificationManager.success('Education record deleted', 'Success')
-      }).catch((error) => {
-        notificationManager.error(error, 'Error')
-      })
+
+  const deleteItem = (values) => {
+    deleteRecordUnderUserSubDoc(values, SUB_DOCUMENT)
   }
   
   return (

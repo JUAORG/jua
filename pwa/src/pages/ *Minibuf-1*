@@ -1,0 +1,10 @@
+43   Switch to buffer: 
+App.js
+*ag search text:Bookings dir:/home/awi/id/aside/jua++/pwa/src/*
+DashboardApp.js
+*ag search text:More dir:/home/awi/id/aside/jua++/pwa/src/*
+Settings.js
+Wallet.js
+*ag search text:settings dir:/home/awi/id/aside/jua++/pwa/src/*
+Faq.js
+ServiceRequests.js

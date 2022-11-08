@@ -78,10 +78,10 @@ export default function Register() {
 
         {mdUp && (
           <SectionStyle>
-            <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
+            <Typography variant="h4" sx={{ px: 5, mb: 2 }}>
             With JUA, anyone with any skills or knowledge has value to share and will be paid for their advice and/or services
             </Typography>
-            <img alt="register" src="/static/illustrations/illustration_register.png" />
+            <img alt="register" src="/static/illustrations/undraw_team_spirit.svg" />
           </SectionStyle>
         )}
 
@@ -90,8 +90,9 @@ export default function Register() {
             <Typography variant="h4" gutterBottom>
               Get started absolutely free.
             </Typography>
-
-            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Free forever. No credit card needed.</Typography>
+            <Typography sx={{ color: 'text.secondary', mb: 5 }}>
+              Democratising Access To Intellectual Capital
+            </Typography>
 
             <AuthSocial />
 

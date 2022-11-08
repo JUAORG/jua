@@ -15,6 +15,8 @@ import Settings from './pages/Settings'
 import RateCardSetup from './pages/RateCardSetup'
 import About from './pages/About'
 import WalletSetup from './pages/WalletSetup'
+import Services from './pages/Services'
+import Service from './pages/Service'
 import JuaNetwork from './pages/JuaNetwork'
 import JuaNetworkUser from './pages/JuaNetworkUser'
 import { isSignedIn } from './actions/Auth'
@@ -35,7 +37,7 @@ export default function Router() {
     isSignedIn()  
   },[])
 
-  
+
   return useRoutes([
     {
       path: '/dashboard',
@@ -50,8 +52,10 @@ export default function Router() {
         { path: 'password_change', element: <PasswordChange /> },
         { path: 'service_requests', element: <ServiceRequests /> },
         { path: 'saved_opportunities', element: <SavedOpportunities /> },
-        { path: `jua_network/:juaNetworkUserId`, element: <JuaNetworkUser /> },
-        { path: `service_request/:serviceRequestId`, element: <ServiceRequest /> },
+        { path: 'services', element: <Services /> },
+        { path: 'service/:serviceName', element: <Service /> },
+        { path: 'jua_network/:juaNetworkUserId', element: <JuaNetworkUser /> },
+        { path: 'service_request/:serviceRequestId', element: <ServiceRequest /> },
         { path: 'advisory_session_meeting', element: <AdvisorySessionMeeting /> },
         { path: 'advisory_session_meeting/feedback/:serviceRequestId', element: <AdvisorySessionFeedback /> },
         { path: 'jua_network', element:  shouldShowCustomerView ? <Navigate to="/404" replace /> : <JuaNetwork /> },

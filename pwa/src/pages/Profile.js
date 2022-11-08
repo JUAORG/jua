@@ -25,15 +25,18 @@ import EducationHistoryForm from '../sections/@dashboard/app/EducationHistoryFor
 import WorkHistroyForm from '../sections/@dashboard/app/WorkHistoryForm'
 import Page from '../components/Page'
 import UserProfileForm from '../sections/@dashboard/app/UserProfileForm'
+import ServiceListForm from '../sections/@dashboard/app/ServiceListForm'
 import { getMyOldRecievedServiceRequests } from "../actions/JuaNetwork"
 import { getAuthId } from '../actions/Auth'
 import { showCustomerView } from '../actions/UI'
+import ReusableTab from '../components/reusables/Tabs'
 
 export default function Profile() {
   const db = getDatabase()
   const [value, setValue] = useState(0)
   const [workList, setWorkList] = useState(null)
   const [profileList, setProfileList] = useState(null)
+  const [servicesList, setServicesList] = useState(null)
   const [educationList, setEducationList] = useState(null)
   const [oldRecievedServiceRequests, setOldRecievedServiceRequests] = useState(null)
   
@@ -41,8 +44,10 @@ export default function Profile() {
   useEffect(() => {
     onValue(ref(db, `/users/${getAuthId()}/`), (snapshot) => {
       const result =  (snapshot.val() && snapshot.val())
-      setEducationList(get(result, "education"))
       setWorkList(get(result, "work"))
+      setWorkList(get(result, "services"))
+      setServicesList(get(result, "services"))
+      setEducationList(get(result, "education"))
       unset(result, "work")
       unset(result, "education")
       setProfileList(result)
@@ -103,7 +108,7 @@ export default function Profile() {
       </>
     )
   }
-  
+
   function TabPanel(props) {
     const { children, value, index, ...other } = props
     
@@ -140,46 +145,36 @@ export default function Profile() {
     setValue(newValue)
   }
 
+  const renderServices = () => {
+    return (
+      <>
+        {map(servicesList, (doc) => 
+          <>
+            <ServiceListForm key={get(doc, "id")} serviceDoc={ doc }/>
+          </>
+        )}
+        <ServiceListForm/>
+      </>
+    )
+}
+
   const renderAdvisorProfileTabs = () => {
     return (
       <>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs
-            value={value}
+          <ReusableTab
             scrollButtons
             variant="scrollable"
             allowScrollButtonsMobile
-            onChange={handleTabChange}
-          >
-            <Tab label="Personal Details"/>
-            <Tab label="Education"/>
-            <Tab label="Work"/>
-            <Tab label="Old Service Requests"/>
-          </Tabs>
+            tabHeadings={['Personal Details', 'Education', 'Work', 'Services']}
+            tabContents={[
+              <UserProfileForm userProfileDoc={ profileList }/>,
+              renderEducationHistory(),
+              renderWorkHistory(),
+              renderServices()
+            ]}
+        />
         </Box>
-        <TabPanel value={ value } index={ 0 }>
-          <UserProfileForm userProfileDoc={ profileList }/>
-        </TabPanel>
-        <TabPanel value={ value } index={ 1 }>
-          <Typography variant="h4" mb={ 3 }>
-            Education History
-            <Divider />
-          </Typography>
-          { renderEducationHistory() }
-        </TabPanel>
-        <TabPanel value={ value } index={ 2 }>
-          <Typography variant="h4" mb={3}>
-            Service History
-            <Divider />
-          </Typography>
-          { renderWorkHistory() }
-        </TabPanel>
-        <TabPanel value={ value } index={ 3 }>
-          <Typography variant="h4" mb={3}>
-            My old recieved Service Requests
-          </Typography>
-          { renderOldServiceRequests() }
-        </TabPanel>
       </>
     )
   }
@@ -188,26 +183,17 @@ export default function Profile() {
     return (
       <>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs
-            value={value}
+          <ReusableTab
             scrollButtons
             variant="scrollable"
             allowScrollButtonsMobile
-            onChange={handleTabChange}
-          >
-            <Tab label="Personal Details"/>
-            <Tab label="Old Service Requests"/>
-          </Tabs>
+            tabHeadings={['Personal Details', 'Old Service Requests']}
+            tabContents={[
+              <UserProfileForm userProfileDoc={ profileList }/>,
+              renderOldServiceRequests() 
+            ]}
+          />
         </Box>
-        <TabPanel value={ value } index={ 0 }>
-          <UserProfileForm userProfileDoc={ profileList }/>
-        </TabPanel>
-        <TabPanel value={ value } index={ 3 }>
-          <Typography variant="h4" mb={3}>
-            My old recieved Service Requests
-          </Typography>
-          { renderOldServiceRequests() }
-        </TabPanel>
       </>
     )
   }
@@ -215,7 +201,13 @@ export default function Profile() {
   return (
     <Page title="Profile">
       <Container maxWidth="xl">
-        <Typography variant="h3" sx={{ mb: 5 }}>
+        <Typography variant="h4" sx={{ mb: 5, textAlign: 'center' }}>
+          <img
+            alt='FAQs'
+            width={ 200 }
+            style={{margin: 'auto'}}
+            src='/static/illustrations/undraw_profile.svg'
+          />
           Profile
         </Typography>
         <Grid>

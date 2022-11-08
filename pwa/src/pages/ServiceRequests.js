@@ -128,8 +128,14 @@ export default function ServiceRequests() {
   }
   
   return (
-    <Page title='Service Requests'>
+    <Page title={ shouldShowCustomerView ? 'Bookings' :  'Service Requests' }>
       <Typography align='Center' variant='h4' sx={{ mb: 5 }}>
+        <img
+          alt='Booking'
+          width={ 150 }
+          style={{margin: 'auto'}}
+          src='/static/illustrations/undraw_booking.svg'
+        />
         { shouldShowCustomerView ? 'Bookings' : 'Service Requests' }
       </Typography>
       { shouldShowCustomerView ? renderCustomerBookings() : renderServiceRequestTabs() }

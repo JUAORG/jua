@@ -10,7 +10,7 @@ export default function Faq() {
         <Typography variant="h4" sx={{ mb: 5, textAlign: 'center', margin: 'auto' }}>
           <img
             alt='FAQs'
-            width={ 200 }
+            width={ 150 }
             style={{margin: 'auto'}}
             src='/static/illustrations/undraw_questions.svg'
           />
