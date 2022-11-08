@@ -80,8 +80,13 @@ export default function LoginForm() {
         {/*   control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />} */}
         {/*   label="Remember me" */}
         {/* /> */}
-        <Link 
-          component={RouterLink} variant="subtitle2" to="#" underline="hover" onClick={() => alert("Comming soon")}>
+        <Link
+          to='#'
+          underline='hover'
+          variant='subtitle2'
+          component={ RouterLink }
+          onClick={ () => alert('Comming soon') }
+        >
           Forgot password?
         </Link>
       </Stack>

@@ -9,14 +9,20 @@ import {
   getDatabase,
   serverTimestamp
 } from 'firebase/database'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import ListSubheader from '@mui/material/ListSubheader'
-import Switch from '@mui/material/Switch'
+import {
+  Grid,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+  Container,
+  Switch,
+  Typography
+} from '@mui/material'
 import PersonIcon from '@mui/icons-material/Person'
 import BluetoothIcon from '@mui/icons-material/Bluetooth'
+import Page from '../components/Page'
 import { editUserProfile } from '../actions/Profile'
 import { getAuthId } from '../actions/Auth'
 
@@ -61,21 +67,34 @@ export default function Settings() {
   }
 
   return (
-    <List
-      sx={{
-        width: '100%',
-        maxWidth: 360,
-        bgcolor: 'background.paper'
-      }}
-      subheader={
-        <ListSubheader>
+    <Page title='Profile'>
+      <Container maxWidth='xl'>
+        <Typography align='Center' variant="h4">
+          <img
+            alt='FAQs'
+            width={ 150 }
+            style={{margin: 'auto'}}
+            src='/static/illustrations/undraw_settings.svg'
+          />
           Settings
-        </ListSubheader>
-      }
-    >
-    {user &&
-     renderProfileVisibilitySetting()
-    }
-    </List>
+        </Typography>
+        <List
+          sx={{
+            width: '100%',
+            maxWidth: 360,
+            bgcolor: 'background.paper'
+          }}
+          subheader={
+            <ListSubheader>
+              Settings
+            </ListSubheader>
+          }
+        >
+          {user &&
+           renderProfileVisibilitySetting()
+          }
+        </List>
+      </Container>
+    </Page>
   )
 }

@@ -35,15 +35,28 @@ export const serviceRequestUserActions = {
   left: 'left',
 }
 
+
 export const activeJuaNetworkUsers = (users) => {
   return map(
     filter(users, (x) =>
+        x.industry &&
         x.first_name !== null &&
         x.uid !== uid
 //        x.profile_visible === true
     )
   )
 }
+
+export const activeJuaNetworkUsersForThisService = (service, users) => {
+  const activeUsers = activeJuaNetworkUsers(users)
+  return map(
+    filter(activeUsers, (x) =>
+      x.industry === get(service, 'name')
+    )
+  )
+}
+
+
 
 export async function createServiceRequest(values) {
   const serviceRequestKey = createId()

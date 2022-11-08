@@ -7,9 +7,11 @@ import {
   ImageListItem,
   ImageListItemBar
 } from '@mui/material'
+import Joyride from 'react-joyride'
 import { getDatabase, ref, push, child, getRef, onValue } from "firebase/database"
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { get, map, size } from "lodash"
+import { fromPairs, get, map, size } from "lodash"
+import { SERVICES } from '../content/services'
 import { getAuthId } from '../actions/Auth';
 import Page from '../components/Page'
 // sections
@@ -17,36 +19,35 @@ import UserContext from '../contexts/User'
 import { showCustomerView } from '../actions/UI'
 import { getNumOfMyServiceRequests } from '../actions/JuaNetwork'
 import { AppNewsUpdate, AppWidgetSummary } from '../sections/@dashboard/app'
-
-const availableServices = [
-  {
-    id: 1,
-    name: 'Service 1',
-    body: 'Service 1 is about x y and z',
-    thumbnailUri: 'https://images.unsplash.com/photo-1600132806370-bf17e65e942f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=994&q=80',
-    thumbnailAlt: 'Service 1 image'
-  },
-  {
-    id: 2,
-    name: 'Service 2',
-    body: 'Service 2 is about x y and z',
-    thumbnailUri: 'https://images.unsplash.com/photo-1600132806370-bf17e65e942f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=994&q=80',
-    thumbnailAlt: 'Service 2 image'
-  },
-  {
-    id: 3,
-    name: 'Service 3',
-    body: 'Service 3 is about x y and z',
-    thumbnailUri: 'https://images.unsplash.com/photo-1600132806370-bf17e65e942f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=994&q=80',
-    thumbnailAlt: 'Service 2 image'
-  }
-]
+import CircularIndeterminate from '../components/reusables/CircularIndeterminate'
 
 export default function DashboardApp() {
   const db = getDatabase()
   const navigate = useNavigate()
   const user = useContext(UserContext)
+  const userIsNewToJua = true
+  const [customerInfoSteps, setCustomerInfoSteps] = useState(
+    [
+      {
+        title: 'Welcome',
+        placement: 'auto',
+        target: '.MuiTypography-h4',
+        content: 'This is my awesome feature!',
+      },
+      {
+        target: '.simplebar-content',
+        content: 'This another awesome feature!',
+      },
+      {
+        title: 'Welcome',
+        placement: 'auto',
+        target: '.MuiTypography-h4',
+        content: 'This is my awesome feature!',
+      },
+    ])
+  const [advisorInfoSteps, setAdvisorInfoSteps] = useState()
   const shouldShowCustomerView = showCustomerView()
+  const [dataLoading, setDataLoading] = useState()
   const [userUpdates, setUserUpdates] = useState()
   const [numServiceRequests, setNumServiceRequests] = useState()
 
@@ -55,7 +56,6 @@ export default function DashboardApp() {
       let result = (snapshot.val() && snapshot.val())
       result = getNumOfMyServiceRequests(result)
       setNumServiceRequests(result)
-  }, {
   })
   }, [db])
 
@@ -70,8 +70,13 @@ export default function DashboardApp() {
     navigate('/dashboard/service_requests', { replace: true });
   }
 
-  const goToServiceDetailPage = () => {
-    navigate('/dashboard/service/:service_1', { replace: true });
+  const goToServiceDetailPage = (service) => {
+    const serviceSlug = get(service, 'slug')
+    navigate(`/dashboard/service/${serviceSlug}`, { replace: true });
+  }
+
+  const goToServicesPage = () => {
+    navigate('/dashboard/services/', { replace: true });
   }
 
   const renderAdvisorHomePage = () => {
@@ -85,28 +90,29 @@ export default function DashboardApp() {
   }
 
   const renderAvailiableServices = () => {
+    const availableServices = SERVICES
     return (
       <ImageList
         sx={{
           gridAutoFlow: "column",
-          gridTemplateColumns: "repeat(auto-fit, minmax(160px,1fr)) !important",
-          gridAutoColumns: "minmax(160px, 1fr)"
+          gridAutoColumns: "minmax(100px, 1fr)",
+          gridTemplateColumns: "repeat(auto-fit, minmax(100px,1fr)) !important"
         }}
       >
         {map(availableServices, (service) => (
           <ImageListItem
             key={get(service, 'id')}
-            sx={{cursor: 'pointer'}}
-            onClick={goToServiceDetailPage}
+            sx={{cursor: 'pointer' }}
+            onClick={ () => goToServiceDetailPage(service) }
           >
             <img
-              alt={get(service, 'thumbnailAlt')}
-              src={get(service, 'thumbnailUri')}
+              alt={get(service, 'thumbnail_alt')}
+              src='https://images.unsplash.com/photo-1600132806370-bf17e65e942f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=994&q=20'
             />
             <ImageListItemBar title={get(service, 'name')}/>
           </ImageListItem>
         ))}
-        <ImageListItem sx={{cursor: 'pointer', background: '#e9e9e9'}}>
+        <ImageListItem sx={{cursor: 'pointer', background: '#e9e9e9'}} onClick={ () => goToServicesPage() }>
           <ImageListItemBar title='More'/>
         </ImageListItem>
       </ImageList>
@@ -116,7 +122,7 @@ export default function DashboardApp() {
   const renderCustomerHomePage = () => {
     return (
       <>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={12}>
           <Typography variant="h6" mb={2}>
             Services
           </Typography>
@@ -128,6 +134,12 @@ export default function DashboardApp() {
 
   return (
     <Page title="Dashboard">
+       <Joyride 
+         showProgress 
+         showSkipButton 
+         disableCloseOnEsc 
+         steps={userIsNewToJua && shouldShowCustomerView ? customerInfoSteps : advisorInfoSteps } 
+      /> 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
           Hi, User Name
@@ -139,9 +151,7 @@ export default function DashboardApp() {
             <Typography variant="h6" mb={2}>
               Updates
             </Typography>
-            <AppNewsUpdate
-              list={userUpdates}
-            />
+            <AppNewsUpdate list={ userUpdates }/>
           </Grid>
         </Grid>
       </Container>

@@ -1,0 +1,10 @@
+39   Switch to buffer: 
+Services.js<actions>
+Service.js<2>
+*ag search text:addWork dir:/home/awi/id/aside/jua++/pwa/src/*
+Service.js
+DashboardApp.js
+AuthProvider.js
+CircularIndeterminate.js
+*ag search text:circular dir:/home/awi/id/aside/jua++/pwa/*
+*ag search text:loading dir:/home/awi/id/aside/jua++/pwa/*

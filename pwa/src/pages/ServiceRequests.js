@@ -12,9 +12,8 @@ import {
   ListItemAvatar,
   Avatar,
   Box,
-  Tab,
-  Tabs,
   Button,
+  ButtonGroup
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import { getDatabase, ref, push, child, getRef, onValue } from "firebase/database"
@@ -28,13 +27,16 @@ import {
   serviceRequestStatusOptions,
   getMyRecievedServiceRequests,
 } from "../actions/JuaNetwork"
+import { showCustomerView } from "../actions/UI"
+import ReusableTab from "../components/reusables/Tabs"
 
 export default function ServiceRequests() {
   const navigate = useNavigate()
   const db = getDatabase()
+  const shouldShowCustomerView = showCustomerView()
+  const [calendarView, setCalendarView] = useState([])
   const [sentServiceRequests, setSentServiceRequests] = useState([])
   const [recievedServiceRequests, setRecievedServiceRequests] = useState([])
-  const [value, setValue] = useState(0)
   
   useEffect(() => {
     onValue(ref(db, `/service_requests`), (snapshot) => {  
@@ -48,41 +50,6 @@ export default function ServiceRequests() {
     navigate(`/dashboard/service_request/${serviceRequestId}/`, { replace: true })
   }
 
-  function TabPanel(props) {
-    const { children, value, index, ...other } = props
-  
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box sx={{ p: 3 }}>
-            <Typography>{children}</Typography>
-          </Box>
-        )}
-      </div>
-    )
-  }
-  TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.number.isRequired,
-    value: PropTypes.number.isRequired,
-  }
-  
-  function a11yProps(index) {
-    return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
-    }
-  }
-
-  const handleTabChange = (event, newValue) => {
-    setValue(newValue)
-  }
   
   const onDeleteServiceRequest = (serviceRequestId) => {
     const values = {}
@@ -100,18 +67,6 @@ export default function ServiceRequests() {
                 id={get(serviceRequest, "id")}
                 alignItems="flex-start"
               >
-                {/* {tgetActiveJuaNetworkUserForId(serviceRequest).then(() => { */}
-                {/*   console.log('hello') */}
-                {/* }).catch(() => { */}
-                {/*   console.log('dede') */}
-                {/* }) */}
-                {/* } */}
-               {/*  {console.log(getActiveJuaNetworkUserForId(serviceRequest).then((res) => { */}
-               {/*    return res */}
-               {/*  }).catch((error) => { */}
-               {/*    console.log(error) */}
-               {/*  }) */}
-               {/* )} */}
                 <ListItemText
                   secondary={
                     <>
@@ -146,35 +101,52 @@ export default function ServiceRequests() {
   const renderServiceRequestTabs = () => {
     return (
       <>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={value} onChange={handleTabChange} aria-label="basic tabs example">
-              <Tab label="Inbox"/>
-              <Tab label="OutBox"/>
-            </Tabs>
-          </Box>
-          <TabPanel value={value} index={0}>
-            {renderServiceRequestTab(recievedServiceRequests)}
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            {renderServiceRequestTab(sentServiceRequests)}
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            Item Three
-          </TabPanel>
+        <ReusableTab
+          scrollButtons
+          variant='scrollable'
+          allowScrollButtonsMobile
+          tabHeadings={['Upcoming', 'Inbox', 'Pending', 'History']}
+          tabContents={[
+            'Upcoming',
+            renderServiceRequestTab(recievedServiceRequests),
+            renderServiceRequestTab(sentServiceRequests),
+            'Pending',
+            'History'
+          ]}
+        />
       </>
       )
-    }
+  }
+
+  const renderCustomerBookings = () => {
+    return (
+      <ReusableTab
+        tabHeadings={['Upcoming', 'Pending', 'History']}
+        tabContents={['Upcoming', 'Pending', 'History']}
+      />
+    )
+  }
   
   return (
-    <Page title="Service Requests">
-        <Typography variant="h4" sx={{ mb: 5 }}>
-          Service Requests
-        </Typography>        
-      {renderServiceRequestTabs()}
-      <Calendar
-        sentServiceRequests={ sentServiceRequests }
-        recievedServiceRequests={ recievedServiceRequests }
-      />
+    <Page title={ shouldShowCustomerView ? 'Bookings' :  'Service Requests' }>
+      <Typography align='Center' variant='h4' sx={{ mb: 5 }}>
+        <img
+          alt='Booking'
+          width={ 150 }
+          style={{margin: 'auto'}}
+          src='/static/illustrations/undraw_booking.svg'
+        />
+        { shouldShowCustomerView ? 'Bookings' : 'Service Requests' }
+      </Typography>
+      { shouldShowCustomerView ? renderCustomerBookings() : renderServiceRequestTabs() }
+      { !shouldShowCustomerView &&
+        <>
+          <Calendar
+            sentServiceRequests={ sentServiceRequests }
+            recievedServiceRequests={ recievedServiceRequests }
+          />
+        </>
+      }
     </Page>
   )
 }

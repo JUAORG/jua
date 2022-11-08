@@ -98,7 +98,7 @@ export const Calendar = (
         events={events}
         progressiveEventRendering
         displayEventEnd={false}
-        initialView={calendarView}
+        /* initialView={calendarView} */
       />
       { renderCalendarEventModal() }
     </>

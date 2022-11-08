@@ -6,6 +6,13 @@ import { LoadingButton } from '@mui/lab'
 import notificationManager from '../../../actions/NotificationManager'
 import { createId } from '../../../utils/uuid-generator'
 import { addWork, deleteWork, editWork } from '../../../actions/Work'
+import {
+  addRecordUnderUserDoc,
+  updateRecordUnderUserDoc,
+  deleteRecordUnderUserSubDoc
+} from '../../../actions/GeneralFunctions'
+
+const SUB_DOCUMENT = 'work'
 
 export default function WorkHistoryForm(workDoc) {
   
@@ -23,34 +30,19 @@ export default function WorkHistoryForm(workDoc) {
     formState: { errors },
   } = formProps
 
+
   const onSubmit = (values) => {
     if (work) {
-      console.log(work)
       values.id = get(work, "id")
-      editWork(values)
-        .then(() => {
-          notificationManager.success('Work record updated.', 'Success')
-        }).catch((error) => {
-          notificationManager.error(error, 'Error')
-        })
+      updateRecordUnderUserDoc(values, SUB_DOCUMENT)
     }else{
       values.id = createId()
-      addWork(values)
-        .then(() => {
-          notificationManager.success('Work record added', 'Success')
-        }).catch((error) => {
-          notificationManager.error(error, 'Error')
-        })
+      addRecordUnderUserDoc(values, SUB_DOCUMENT)
     }
   }
-
-  const deleteItem = () => {
-    deleteWork(work)
-      .then(() => {
-        notificationManager.success('Work record deleted', 'Success')
-      }).catch((error) => {
-        notificationManager.error(error, 'Error')
-      })
+  
+  const deleteItem = (values) => {
+    deleteRecordUnderUserSubDoc(values, SUB_DOCUMENT)
   }
   
   return (
@@ -67,9 +59,9 @@ export default function WorkHistoryForm(workDoc) {
           {...register('title')}
         />
         <Stack
-          sx={{float: "right"}}
+          spacing={ 2 }
+          sx={{ float: "right" }}
           direction={{ xs: 'column', sm: 'row' }}
-          spacing={2}
         >
           <TextField
             fullWidth

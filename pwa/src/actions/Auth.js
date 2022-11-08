@@ -65,7 +65,7 @@ export const emailAndPasswordRegister = (values) => {
           setAuthId(user.uid)
           unset(values, "password")
           assign(values, {uid: user.uid})
-          createProfile(values)
+     //     createProfile(values)
         }
       })
     })
