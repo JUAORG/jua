@@ -81,25 +81,25 @@ export const Calendar = (
   
   return (
     <>
-      <FullCalendar
-        plugins={[
-          listPlugin,
-          dayGridPlugin,
-          interactionPlugin
-        ]}
-        headerToolbar={{
-          left: "prev",
-          center: "title",
-          right: "next",
-        }}
-        eventClick={
-          (eventClickInfo) => openCalendarEvent(eventClickInfo)
-        }
-        events={events}
-        progressiveEventRendering
-        displayEventEnd={false}
-        /* initialView={calendarView} */
-      />
+      {/* <FullCalendar */}
+      {/*   plugins={[ */}
+      {/*     listPlugin, */}
+      {/*     dayGridPlugin, */}
+      {/*     interactionPlugin */}
+      {/*   ]} */}
+      {/*   headerToolbar={{ */}
+      {/*     left: "prev", */}
+      {/*     center: "title", */}
+      {/*     right: "next", */}
+      {/*   }} */}
+      {/*   eventClick={ */}
+      {/*     (eventClickInfo) => openCalendarEvent(eventClickInfo) */}
+      {/*   } */}
+      {/*   events={events} */}
+      {/*   progressiveEventRendering */}
+      {/*   displayEventEnd={false} */}
+      {/*   /\* initialView={calendarView} *\/ */}
+      {/* /> */}
       { renderCalendarEventModal() }
     </>
   )

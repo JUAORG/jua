@@ -71,6 +71,10 @@ class JitsiComponent extends Component {
     console.log("Video Conference Left")
     const roomAsServiceRequestKey = window.location.search.slice(6)
     await submitActiveServiceRequestAction(roomAsServiceRequestKey, serviceRequestUserActions.left)
+    setTimeout(() => {
+      console.log(roomAsServiceRequestKey, serviceRequestUserActions)
+      window.location.href=`/dashboard/advisory_session_meeting/feedback/${roomAsServiceRequestKey}`
+    },[1000])
   }
 
   handleMuteStatus = (audio) => {

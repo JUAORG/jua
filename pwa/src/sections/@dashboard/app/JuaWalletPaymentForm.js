@@ -17,7 +17,6 @@ import { LoadingButton } from '@mui/lab'
 import { css, Global } from '@emotion/react'
 import notificationManager from '../../../actions/NotificationManager'
 import { createId } from '../../../utils/uuid-generator'
-import { editUserProfile} from '../../../actions/Profile'
 import { makePayment } from '../../../actions/Wallet'
 
 

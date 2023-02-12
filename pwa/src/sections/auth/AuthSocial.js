@@ -1,5 +1,4 @@
 import { Stack, Button, Divider, Typography } from '@mui/material'
-import { signInWithGoogle } from '../../actions/Auth'
 import Iconify from '../../components/Iconify'
 // ----------------------------------------------------------------------
 export default function AuthSocial() {
@@ -14,7 +13,6 @@ export default function AuthSocial() {
           size="large"
           color="inherit"
           variant="outlined"
-          onClick={ signInWithGoogle }
         >
           <Iconify
             icon="eva:google-fill"

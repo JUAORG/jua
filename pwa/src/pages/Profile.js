@@ -1,10 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { get, map, unset } from 'lodash'
-import {
-  ref,
-  onValue,
-  getDatabase
-} from "firebase/database"
 import {
   Grid,
   List,
@@ -30,42 +25,17 @@ import { getMyOldRecievedServiceRequests } from "../actions/JuaNetwork"
 import { getAuthId } from '../actions/Auth'
 import { showCustomerView } from '../actions/UI'
 import ReusableTab from '../components/reusables/Tabs'
+import { UserContext } from '../contexts/User'
 
 export default function Profile() {
-  const db = getDatabase()
+  const user = useContext(UserContext)
   const [value, setValue] = useState(0)
-  const [workList, setWorkList] = useState(null)
-  const [profileList, setProfileList] = useState(null)
+  const [experienceList, setExperienceList] = useState(get(user, ['profile','experiences_related_to_user_profile']))
+  const [userProfile, setUserProfile] = useState(get(user, 'profile'))
   const [servicesList, setServicesList] = useState(null)
-  const [educationList, setEducationList] = useState(null)
+  const [educationList, setEducationList] = useState(get(user, ['profile','educations_related_to_user_profile']))
   const [oldRecievedServiceRequests, setOldRecievedServiceRequests] = useState(null)
-  
-  
-  useEffect(() => {
-    onValue(ref(db, `/users/${getAuthId()}/`), (snapshot) => {
-      const result =  (snapshot.val() && snapshot.val())
-      setWorkList(get(result, "work"))
-      setWorkList(get(result, "services"))
-      setServicesList(get(result, "services"))
-      setEducationList(get(result, "education"))
-      unset(result, "work")
-      unset(result, "education")
-      setProfileList(result)
-    }, {
-    })
-
-    onValue(ref(db, `/service_requests`), (snapshot) => {  
-      const allServiceRequests = (snapshot.val() && snapshot.val())
-      setOldRecievedServiceRequests(getMyOldRecievedServiceRequests(allServiceRequests))
-    })
-  }, [db])
-
-  useEffect(() => {
-    onValue(ref(db, `/service_requests`), (snapshot) => {  
-      const allServiceRequests = (snapshot.val() && snapshot.val())
-      setOldRecievedServiceRequests(getMyOldRecievedServiceRequests(allServiceRequests))
-    })
-  }, [db])
+  console.log(user)
 
   const renderEducationHistory = () => {
     return (
@@ -83,7 +53,7 @@ export default function Profile() {
   const renderWorkHistory = () => {
     return (
       <>
-        {map(workList, (doc) => 
+        {map(experienceList, (doc) => 
           <>
             <WorkHistroyForm key={get(doc, "id")} workDoc={doc}/>
           </>
@@ -166,9 +136,9 @@ export default function Profile() {
             scrollButtons
             variant="scrollable"
             allowScrollButtonsMobile
-            tabHeadings={['Personal Details', 'Education', 'Work', 'Services']}
+            tabHeadings={['Personal Details', 'Education', 'Experience', 'Services']}
             tabContents={[
-              <UserProfileForm userProfileDoc={ profileList }/>,
+              <UserProfileForm userProfile={ userProfile }/>,
               renderEducationHistory(),
               renderWorkHistory(),
               renderServices()
@@ -189,7 +159,7 @@ export default function Profile() {
             allowScrollButtonsMobile
             tabHeadings={['Personal Details', 'Old Service Requests']}
             tabContents={[
-              <UserProfileForm userProfileDoc={ profileList }/>,
+              <UserProfileForm userProfileDoc={ userProfile }/>,
               renderOldServiceRequests() 
             ]}
           />

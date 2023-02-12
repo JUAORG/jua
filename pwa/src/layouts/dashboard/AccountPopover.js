@@ -1,10 +1,12 @@
+import { get } from 'lodash'
 import { useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@mui/material';
 import MenuPopover from '../../components/MenuPopover';
 import account from '../../_mock/account';
-import { signOutUser } from '../../actions/Auth';
+import notificationManager from '../../actions/NotificationManager'
+import { logout, removeAuthId } from '../../actions/Auth';
 // ----------------------------------------------------------------------
 const MENU_OPTIONS = [
   {
@@ -33,7 +35,7 @@ const MENU_OPTIONS = [
   },
 ];
 
-export default function AccountPopover() {
+export default function AccountPopover({user}) {
   const anchorRef = useRef(null);
 
   const [open, setOpen] = useState(null);
@@ -46,7 +48,18 @@ export default function AccountPopover() {
     setOpen(null);
   };
 
-  return (
+  const doLogout = () => {
+    logout().then(() => {
+      notificationManager.success('Logged out', 'Success')
+    }).catch((error) => {
+      console.error(error.response)
+    }).finally(() => {
+      removeAuthId()
+      localStorage.clear()
+    })
+  }
+  
+return (
     <>
       <IconButton
         ref={anchorRef}
@@ -85,7 +98,7 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {get(user, 'username')}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
             {account.email}
@@ -103,7 +116,7 @@ export default function AccountPopover() {
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
-        <MenuItem onClick={signOutUser} sx={{ m: 1 }}>
+        <MenuItem onClick={logout} sx={{ m: 1 }}>
           Logout
         </MenuItem>
       </MenuPopover>

@@ -18,20 +18,11 @@ import {
   ListItemText,
   ListItemAvatar,
 } from '@mui/material';
-import {
-  ref,
-  push,
-  child,
-  getRef,
-  onValue,
-  getDatabase,
-} from 'firebase/database'
 import Page from '../components/Page';
 import CreateServiceRequest from '../sections/@dashboard/app/CreateServiceRequest';
 
 export default function JuaNetworkUser() {
   const navigate = useNavigate()
-  const db = getDatabase()
   const { juaNetworkUserId } = useParams()
   const [openServiceRequestForm, setOpenServiceRequestForm] = React.useState(false);
   const [juaNetworkUser, setJuaNetworkUser] = useState(null)
@@ -45,13 +36,8 @@ export default function JuaNetworkUser() {
   }
 
   useEffect(() => {
-    onValue(ref(db, `/users/${juaNetworkUserId}`), (snapshot) => {
-      const result =  (snapshot.val() && snapshot.val())
-      setJuaNetworkUser(result)
-    }, {
-      onlyOnce: true
-    })
-  }, [db])
+
+  }, [])
   
 
   const goBack = (uid) => {

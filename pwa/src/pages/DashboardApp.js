@@ -8,24 +8,23 @@ import {
   ImageListItemBar
 } from '@mui/material'
 import Joyride from 'react-joyride'
-import { getDatabase, ref, push, child, getRef, onValue } from "firebase/database"
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { fromPairs, get, map, size } from "lodash"
 import { SERVICES } from '../content/services'
 import { getAuthId } from '../actions/Auth';
 import Page from '../components/Page'
 // sections
-import UserContext from '../contexts/User'
+import { UserContext } from '../contexts/User'
 import { showCustomerView } from '../actions/UI'
 import { getNumOfMyServiceRequests } from '../actions/JuaNetwork'
 import { AppNewsUpdate, AppWidgetSummary } from '../sections/@dashboard/app'
 import CircularIndeterminate from '../components/reusables/CircularIndeterminate'
 
 export default function DashboardApp() {
-  const db = getDatabase()
   const navigate = useNavigate()
-  const user = useContext(UserContext)
-  const userIsNewToJua = true
+    const user = useContext(UserContext)
+    const userIsNewToJua = true
+
   const [customerInfoSteps, setCustomerInfoSteps] = useState(
     [
       {
@@ -51,20 +50,7 @@ export default function DashboardApp() {
   const [userUpdates, setUserUpdates] = useState()
   const [numServiceRequests, setNumServiceRequests] = useState()
 
-  useEffect(() => {
-    onValue(ref(db, `/service_requests`), (snapshot) => {  
-      let result = (snapshot.val() && snapshot.val())
-      result = getNumOfMyServiceRequests(result)
-      setNumServiceRequests(result)
-  })
-  }, [db])
 
-  useEffect(() => {
-    onValue(ref(db, `/users/${getAuthId()}/updates`), (snapshot) => {  
-      const result = (snapshot.val() && snapshot.val())
-      setUserUpdates(result)
-    })
-  }, [db])
 
   const goToServiceRequestPage = () => {
     navigate('/dashboard/service_requests', { replace: true });
@@ -142,7 +128,7 @@ export default function DashboardApp() {
       /> 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Hi, User Name
+          {get(user, 'first_name') && `Hi ${get(user, 'first_name')}`}
         </Typography>
         <Grid container spacing={3}>
           { !shouldShowCustomerView && renderAdvisorHomePage() }

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react"
+import React, {useState, useEffect, useContext} from "react"
 import { useNavigate } from 'react-router-dom'
 import { get, map, head } from "lodash"
 import {
@@ -13,17 +13,41 @@ import {
   Avatar
 } from '@mui/material';
 import MUIDataTable from "mui-datatables";
-import { getDatabase, ref, push, child, getRef, onValue } from "firebase/database"
-import { activeJuaNetworkUsers } from "../actions/JuaNetwork"
+import "../App.css";
+import { UserContext, UserDispatchContext } from "../contexts/User";
+import { fetchJuaNetworkUsers, fetchJuaNetworkUser } from "../actions/JuaNetwork"
 import Page from '../components/Page';
+import { UserDetail } from '../components/UserDetail';
+
 
 export default function JuaNetwork() {
   const navigate = useNavigate();
-  const db = getDatabase()
   const [users, setUsers] = useState([])
+  const [selectedUser, setSelectedUser] = useState(false)
+  const [openUserDetailView, setOpenUserDetailView] = useState(false)
+
+  useEffect(() => {
+    fetchJuaNetworkUsers()
+      .then((response) => {
+        setUsers(response.data)
+      }).catch((error) => {
+        console.error(error)
+      })
+  }, [])
+
+  console.log(selectedUser)
+  const onClickJuaNetworkUser = (id) => {
+    fetchJuaNetworkUser(id).then((response) => {
+      setSelectedUser(response.data)
+    }).catch((error) => {
+      console.error(error)
+    })
+  }
+
+    
   const columns = [
     {
-      name: "uid",
+      name: "id",
       label: "id",
       options: {
         filter: false,
@@ -68,17 +92,16 @@ export default function JuaNetwork() {
   ];
 
   useEffect(() => {
-    onValue(ref(db, `/users`), (snapshot) => {
-      let result = (snapshot.val() && snapshot.val())
-      result = activeJuaNetworkUsers(result)
-      setUsers(result)
-    })
-  }, [db])
+
+  }, [])
 
   const goToUserProfile = (rowData) => {
     const juaNetworkUserId = head(rowData)
-    navigate(`/dashboard/jua_network/${juaNetworkUserId}`, { replace: true });    
+    onClickJuaNetworkUser(juaNetworkUserId)
+    setOpenUserDetailView(true)
   }
+
+  const closeUserDetailView = () => setOpenUserDetailView(false)
   
   const options = {
     filterType: 'checkbox',
@@ -102,7 +125,13 @@ export default function JuaNetwork() {
           data={users}
           columns={columns}
           options={options}
-        />     
+        />
+        {openUserDetailView &&
+         <UserDetail
+           user={head(selectedUser)}
+           handleClose={closeUserDetailView}
+         />
+        }
       </Container>
     </Page>
   )

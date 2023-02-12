@@ -4,8 +4,7 @@ import { useForm } from "react-hook-form"
 import { Stack, TextField } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import { createId } from '../../../utils/uuid-generator'
-import { editUserProfile} from '../../../actions/Profile'
-import { getUser, updateUserPassword } from '../../../actions/Auth'
+import { getUser } from '../../../actions/Auth'
 
 export default function PasswordChangeForm() {
   const [userProfile, setUserProfile] = useState(null)
@@ -23,7 +22,7 @@ export default function PasswordChangeForm() {
   } = formProps
 
   const onSubmit = (values) => {
-    updateUserPassword(values)
+
   }
   
   return (

@@ -5,11 +5,11 @@ const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
 
 
 const advisorNavConfig = [
-  {
-    title: 'My Calendar',
-    path: '/dashboard/service_requests',
-    icon: getIcon('eva:calendar-fill'),
-  },
+  // {
+  //   title: 'My Calendar',
+  //   path: '/dashboard/service_requests',
+  //   icon: getIcon('eva:calendar-fill'),
+  // },
   {
     title: 'JUA Homepage',
     path: '/dashboard/app',
