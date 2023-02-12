@@ -6,7 +6,7 @@ import { getAuthTokenCookie, defaultHeaders } from "./Auth"
 export async function editUserProfile(values) {
   return axios({
     method: 'PUT',
-    url: `http://localhost:8000/api/user_profile/`,
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile/`,
     withCredentials: false,
     headers: defaultHeaders,
     data: values
@@ -16,7 +16,7 @@ export async function editUserProfile(values) {
 export async function createUserEducation(values) {
   return axios({
     method: 'POST',
-    url: `http://localhost:8000/api/user_profile_education/`,
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_education/`,
     withCredentials: false,
     headers: defaultHeaders,
     data: values
@@ -26,7 +26,7 @@ export async function createUserEducation(values) {
 export async function updateUserEducation(values) {
   return axios({
     method: 'PUT',
-    url: `http://localhost:8000/api/user_profile_education/${get(values, 'ref')}/`,
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_education/${get(values, 'ref')}/`,
     withCredentials: false,
     headers: defaultHeaders,
     data: values
@@ -36,7 +36,7 @@ export async function updateUserEducation(values) {
 export async function deleteUserEducation(values) {
   return axios({
     method: 'DELETE',
-    url: `http://localhost:8000/api/user_profile_education/${get(values, 'ref')}/`,
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_education/${get(values, 'ref')}/`,
     withCredentials: false,
     headers: defaultHeaders,
   })
@@ -46,7 +46,7 @@ export async function deleteUserEducation(values) {
 export async function createUserExperience(values) {
   return axios({
     method: 'POST',
-    url: `http://localhost:8000/api/user_profile_experience/`,
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_experience/`,
     withCredentials: false,
     headers: defaultHeaders,
     data: values
@@ -56,7 +56,7 @@ export async function createUserExperience(values) {
 export async function updateUserExperience(values) {
   return axios({
     method: 'PUT',
-    url: `http://localhost:8000/api/user_profile_experience/${get(values, 'ref')}/`,
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_experience/${get(values, 'ref')}/`,
     withCredentials: false,
     headers: defaultHeaders,
     data: values
@@ -66,7 +66,7 @@ export async function updateUserExperience(values) {
 export async function deleteUserExperience(values) {
   return axios({
     method: 'DELETE',
-    url: `http://localhost:8000/api/user_profile_experience/${get(values, 'ref')}/`,
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_experience/${get(values, 'ref')}/`,
     withCredentials: false,
     headers: defaultHeaders
   })

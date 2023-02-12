@@ -48,7 +48,7 @@ export const activeJuaNetworkUsersForThisService = (service, users) => {
 export async function fetchJuaNetworkUsers() {
   return axios({
     method: 'GET',
-    url: `http://localhost:8000/api/jua_network/`,
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/jua_network/`,
     withCredentials: false,
     headers: defaultHeaders
   })
@@ -57,7 +57,7 @@ export async function fetchJuaNetworkUsers() {
 export async function fetchJuaNetworkUser(id) {
   return axios({
     method: 'GET',
-    url: `http://localhost:8000/api/jua_network/${id}`,
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/jua_network/${id}`,
     withCredentials: false,
     headers: defaultHeaders
   })
@@ -67,7 +67,7 @@ export async function fetchJuaNetworkUser(id) {
 export async function createServiceRequest(values) {
   return axios({
     method: 'POST',
-    url: `http://localhost:8000/api/service_requests/`,
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/service_requests/`,
     withCredentials: false,
     headers: defaultHeaders,
     data: values
@@ -77,7 +77,7 @@ export async function createServiceRequest(values) {
 export async function fetchServiceRequests() {
   return axios({
     method: 'GET',
-    url: `http://localhost:8000/api/service_requests/`,
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/service_requests/`,
     withCredentials: false,
     headers: defaultHeaders
   })

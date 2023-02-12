@@ -30,7 +30,7 @@ export const defaultHeaders = {
 export async function getUser() {
   return axios({
     method: 'GET',
-    url: `http://localhost:8000/api/user/`,
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user/`,
     withCredentials: false,
     headers: defaultHeaders,
   })
@@ -57,7 +57,7 @@ export const isSignedIn = () => {
 export async function emailAndPasswordRegister(values) {
   return axios({
     method: 'POST',
-    url: `http://localhost:8000/api/register/`,
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/register/`,
     data: {
       first_name: values.first_name,
       last_name: values.last_name,
@@ -70,7 +70,7 @@ export async function emailAndPasswordRegister(values) {
 export async function emailAndPasswordSignIn(values) {
   return axios({
     method: 'POST',
-    url: `http://localhost:8000/api/login/`,
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/login/`,
     data: {
       username: values.email,
       password: values.password
@@ -81,7 +81,7 @@ export async function emailAndPasswordSignIn(values) {
 export async function logout(){
   return axios({
     method: 'POST',
-    url: `http://localhost:8000/api/logout/`,
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/logout/`,
     headers: defaultHeaders
   })
 }
