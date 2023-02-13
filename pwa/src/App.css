@@ -1,0 +1,6 @@
+#user-detail-modal .MuiDialog-container .MuiDialog-paperScrollPaper {
+    max-width: 1000px;
+}
+.MuiFormGroup-root label:first-of-type {
+    display: none;
+}

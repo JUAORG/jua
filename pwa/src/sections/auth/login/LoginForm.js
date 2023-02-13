@@ -5,7 +5,9 @@ import { useForm, Controller } from "react-hook-form"
 // material
 import { Link, Stack, Checkbox, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { emailAndPasswordSignIn } from '../../../actions/Auth';
+import { emailAndPasswordSignIn, setAuthId, setAuthTokenCookie } from '../../../actions/Auth'
+import notificationManager from '../../../actions/NotificationManager'
+import { SimpleBackdrop } from '../../../components/reusables/Backdrop'
 // component
 import Iconify from '../../../components/Iconify';
 
@@ -15,7 +17,7 @@ export default function LoginForm() {
   const navigate = useNavigate()
 
   const [showPassword, setShowPassword] = useState(false)
-
+  const [showLoadingBackdrop, setShowLoadingBackdrop] = useState(false)
   const defaultValues = {}
   const formProps = useForm({ defaultValues })
 
@@ -35,15 +37,22 @@ export default function LoginForm() {
   }
 
   const onSubmit = () => {
+    setShowLoadingBackdrop(true)
     emailAndPasswordSignIn(getValues())
-    //   .then((res) => {
-    //     console.log(res)
-    //      navigate('/dashboard/rate_card_setup', { replace: true });
-    // })
-    // .catch((error) => {
-    //   console.log(error.message);
-    // });
-    
+      .then((res) => {
+        setAuthId(res.data.token)
+        setShowLoadingBackdrop(false)
+        setAuthTokenCookie(res.data.token)
+        notificationManager.success('Succesfully authenticated', 'Success')
+        navigate('/dashboard/app', { replace: true });
+      })
+      .catch((error) => {
+        setShowLoadingBackdrop(false)
+        if (error.response) {
+          notificationManager.error(error.response.data.non_field_errors, 'Error')
+        }
+        notificationManager.error('Something went wrong. Please try again later.', 'Error')
+      })
   }
   
   return (
@@ -75,21 +84,21 @@ export default function LoginForm() {
         />
       </Stack>
       
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-        {/* <FormControlLabel */}
-        {/*   control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />} */}
-        {/*   label="Remember me" */}
-        {/* /> */}
-        <Link
-          to='#'
-          underline='hover'
-          variant='subtitle2'
-          component={ RouterLink }
-          onClick={ () => alert('Comming soon') }
-        >
-          Forgot password?
-        </Link>
-      </Stack>
+      {/* <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}> */}
+      {/*   {/\* <FormControlLabel *\/} */}
+      {/*   {/\*   control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />} *\/} */}
+      {/*   {/\*   label="Remember me" *\/} */}
+      {/*   {/\* /> *\/} */}
+      {/*   <Link */}
+      {/*     to='#' */}
+      {/*     underline='hover' */}
+      {/*     variant='subtitle2' */}
+      {/*     component={ RouterLink } */}
+      {/*     onClick={ () => alert('Comming soon') } */}
+      {/*   > */}
+      {/*     Forgot password? */}
+      {/*   </Link> */}
+      {/* </Stack> */}
       <LoadingButton
         fullWidth
         size="large"

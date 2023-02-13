@@ -1,42 +1,73 @@
-import {
-  ref,
-  set,
-  child,
-  update,
-  onValue,
-  getDatabase,
-  serverTimestamp
-} from "firebase/database"
-import {
-  get,
-  head,
-  unset,
-  assign
-} from 'lodash'
-import { createId } from "../utils/uuid-generator"
-import { getAuthId } from "./Auth"
+import axios from "axios"
+import { get } from 'lodash'
+import { getAuthTokenCookie, defaultHeaders } from "./Auth"
 
-const db = getDatabase()
-
-export const createProfile = (values) => {
-  localStorage.setItem("user_display_name", `${values.first_name} ${values.last_name}`)
-  const uid = createId()
-  values.join_date = serverTimestamp()
-  update(ref(db, `users/${values.uid}/`), values)
-  update(ref(db, `users/${ values.uid }/updates/${ uid }/`), {
-      title: 'Joined Jua',
-      body: 'Welcome to Jua',
-      timestamp: serverTimestamp()
-    })
-  .then((res) => {
-    window.location.href = '/dashboard/app';
-    })
-    .catch((error) => {
-      alert("Error")
-    })
-}
 
 export async function editUserProfile(values) {
-  values.uid = getAuthId()
-  update(ref(db, `users/${values.uid}`), values)
+  return axios({
+    method: 'PUT',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile/`,
+    withCredentials: false,
+    headers: defaultHeaders,
+    data: values
+  })
+}
+
+export async function createUserEducation(values) {
+  return axios({
+    method: 'POST',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_education/`,
+    withCredentials: false,
+    headers: defaultHeaders,
+    data: values
+  })
+}
+
+export async function updateUserEducation(values) {
+  return axios({
+    method: 'PUT',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_education/${get(values, 'ref')}/`,
+    withCredentials: false,
+    headers: defaultHeaders,
+    data: values
+  })
+}
+
+export async function deleteUserEducation(values) {
+  return axios({
+    method: 'DELETE',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_education/${get(values, 'ref')}/`,
+    withCredentials: false,
+    headers: defaultHeaders,
+  })
+}
+
+
+export async function createUserExperience(values) {
+  return axios({
+    method: 'POST',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_experience/`,
+    withCredentials: false,
+    headers: defaultHeaders,
+    data: values
+  })
+}
+
+export async function updateUserExperience(values) {
+  return axios({
+    method: 'PUT',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_experience/${get(values, 'ref')}/`,
+    withCredentials: false,
+    headers: defaultHeaders,
+    data: values
+  })
+}
+
+export async function deleteUserExperience(values) {
+  return axios({
+    method: 'DELETE',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_experience/${get(values, 'ref')}/`,
+    withCredentials: false,
+    headers: defaultHeaders
+  })
 }

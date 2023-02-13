@@ -20,7 +20,7 @@ import { getAuthId } from '../../../actions/Auth'
 import { createServiceRequest, updateServiceRequest, serviceRequestStatusOptions } from '../../../actions/JuaNetwork'
 
 
-export default function ServiceRequestForm({closeDialog, serviceRequest, isServiceProvider}) {
+export default function ServiceRequestForm({closeDialog, serviceRequest, isServiceProvider, userId}) {
   const { juaNetworkUserId } = useParams()
   const formProps = useForm({ defaultValues: serviceRequest })
   const [date, setDate] = useState(get(serviceRequest, 'date'))
@@ -38,28 +38,24 @@ export default function ServiceRequestForm({closeDialog, serviceRequest, isServi
   } = formProps
 
   const onSubmit = (values) => {
-    if (get(serviceRequest, "id") && isServiceProvider) {
-      values = {} 
-      values.id = get(serviceRequest, "id")
-      values.status = serviceRequestStatus
-      updateServiceRequest(values)
-        .then(() => {
-          notificationManager.success('Service request updated', 'Success')
-        }).catch((error) => {
-          notificationManager.error(error, 'Error')
-        })
-    }else if (get(serviceRequest, "id") && !isServiceProvider) {
-      alert("Update feature coming soon")
-    }else{
-      values.serviceProvider = juaNetworkUserId
-      createServiceRequest(values)
-        .then(() => {
-          notificationManager.success('Service request created', 'Success')
-        }).catch((error) => {
-          notificationManager.error(error, 'Error')
-        })
-    }
-
+    // if (get(serviceRequest, "id") && isServiceProvider) {
+    //   updateServiceRequest(values)
+    //     .then(() => {
+    //       notificationManager.success('Service request updated', 'Success')
+    //     }).catch((error) => {
+    //       notificationManager.error(error, 'Error')
+    //     })
+    // }else if (get(serviceRequest, "id") && !isServiceProvider) {
+    //   alert("Update feature coming soon")
+    // }else{
+    //    values.serviceProvider = juaNetworkUserId
+    values.service_provider = userId
+    createServiceRequest(values)
+      .then(() => {
+        notificationManager.success('Service request created', 'Success')
+      }).catch((error) => {
+        notificationManager.error(error, 'Error')
+      })
   }
 
   const handleUpdateServiceRequestStatus = (event) => {

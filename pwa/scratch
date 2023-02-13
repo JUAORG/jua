@@ -1,0 +1,24 @@
+
+@csrf_exempt
+def process_payment(request):
+    body = request.body.decode("utf-8").split(',')
+    token = body[0]
+    amountInCents = body[1]
+
+    response = requests.post(
+        settings.YOCO_URL,
+        headers={
+            'X-Auth-Secret-Key': settings.YOCO_SECRET_KEY,
+        },
+        json={
+            'token': token,
+            'amountInCents': amountInCents,
+            'currency': 'ZAR',
+        },
+    )
+    response_obj = { 'status_code': response, 'json_response': response.json()}
+
+    return HttpResponse(response.status_code)
+#   return HttpResponse(f'{response.json()}')
+
+@csrf_exempt

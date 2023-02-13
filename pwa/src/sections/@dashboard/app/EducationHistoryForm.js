@@ -15,6 +15,11 @@ import {
   updateRecordUnderUserDoc,
   deleteRecordUnderUserSubDoc
 } from '../../../actions/GeneralFunctions'
+import {
+  createUserEducation,
+  updateUserEducation,
+  deleteUserEducation
+} from '../../../actions/Profile'
 
 const SUB_DOCUMENT = 'education'
 
@@ -36,16 +41,30 @@ export default function EducationHistoryForm(educationDoc) {
 
   const onSubmit = (values) => {
     if (education) {
-      values.id = get(education, "id")
-      updateRecordUnderUserDoc(values, SUB_DOCUMENT)
+      values.ref = get(education, "ref")
+      updateUserEducation(values)
+        .then(() => {
+          notificationManager.success('Profile updated', 'Success')
+        }).catch((error) => {
+          notificationManager.error(error, 'Error')
+        })
     }else{
-      values.id = createId()
-      addRecordUnderUserDoc(values, SUB_DOCUMENT)
+      createUserEducation(values)
+        .then(() => {
+          notificationManager.success('Profile updated', 'Success')
+        }).catch((error) => {
+          notificationManager.error(error, 'Error')
+        })
     }
   }
 
   const deleteItem = (values) => {
-    deleteRecordUnderUserSubDoc(values, SUB_DOCUMENT)
+    deleteUserEducation(values)
+      .then(() => {
+        notificationManager.success('Profile updated', 'Success')
+      }).catch((error) => {
+        notificationManager.error(error, 'Error')
+      })
   }
   
   return (
@@ -58,8 +77,8 @@ export default function EducationHistoryForm(educationDoc) {
         />
         <TextField
           fullWidth
-          label="Degree"
-          {...register('degree')}
+          label="Course"
+          {...register('course')}
         />
         <TextField
           fullWidth

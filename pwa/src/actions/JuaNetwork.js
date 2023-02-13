@@ -1,13 +1,4 @@
-import {
-  ref,
-  push,
-  child,
-  update,
-  onValue,
-  increment,
-  getDatabase,
-  serverTimestamp
-} from 'firebase/database'
+import axios from "axios"
 import {
   map,
   get,
@@ -16,11 +7,9 @@ import {
   filter,
 } from 'lodash'
 import { createId } from '../utils/uuid-generator'
-import { getAuthId } from './Auth'
+import { defaultHeaders, getAuthId } from './Auth'
 
-const db = getDatabase()
 const uid = getAuthId()
-
 export const serviceRequestStatusOptions = {
   unread: 'Unread',
   read: 'Read',
@@ -56,51 +45,82 @@ export const activeJuaNetworkUsersForThisService = (service, users) => {
   )
 }
 
+export async function fetchJuaNetworkUsers() {
+  return axios({
+    method: 'GET',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/jua_network/`,
+    withCredentials: false,
+    headers: defaultHeaders
+  })
+}
+
+export async function fetchJuaNetworkUser(id) {
+  return axios({
+    method: 'GET',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/jua_network/${id}`,
+    withCredentials: false,
+    headers: defaultHeaders
+  })
+}
 
 
 export async function createServiceRequest(values) {
-  const serviceRequestKey = createId()
-  values.serviceRequester = uid
-  values.id = serviceRequestKey
-  values.status = get(serviceRequestStatusOptions, 'unread')
-  values.created_at = serverTimestamp()
-  // const updates = {}
-  update(ref(db, `service_requests/${serviceRequestKey}/`), values)
-  // updates[`/users/${uid}/service_requests/${serviceRequestKey}`] = values
-  // updates[`/users/${values.serviceProvider}/service_requests/${serviceRequestKey}`] = values
+  return axios({
+    method: 'POST',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/service_requests/`,
+    withCredentials: false,
+    headers: defaultHeaders,
+    data: values
+  })
 }
+
+export async function fetchServiceRequests() {
+  return axios({
+    method: 'GET',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/service_requests/`,
+    withCredentials: false,
+    headers: defaultHeaders
+  })
+}
+
+// export async function createServiceRequest(values) {
+//   const serviceRequestKey = createId()
+//   values.serviceRequester = uid
+//   values.id = serviceRequestKey
+//   values.status = get(serviceRequestStatusOptions, 'unread')
+
+//   // Updates[`/users/${uid}/service_requests/${serviceRequestKey}`] = values
+//   // updates[`/users/${values.serviceProvider}/service_requests/${serviceRequestKey}`] = values
+// }
 
 export const submitActiveServiceRequestAction = (serviceRequestId, action) => {
   const serviceRequestActionDocument = {}
   serviceRequestActionDocument.user = uid
   serviceRequestActionDocument.action = action
   serviceRequestActionDocument.id = createId()
-  serviceRequestActionDocument.timestamp = serverTimestamp()
-  update(ref(db, `service_requests/${serviceRequestId}/actions/${serviceRequestActionDocument.id}`), serviceRequestActionDocument)
+  
+  
 }
 
 export async function updateServiceRequest(values) {
-  values.updated_at = serverTimestamp()
-  update(ref(db, `service_requests/${values.id}/`), values)
+
+  alert('update')
 }
 
 export async function completeServiceRequest(values) {
   const updates = {}
   const serviceRequestKey = values.id
 
-  values.updated_at = serverTimestamp()
 
-  updates[`/service_requests/${serviceRequestKey}`] = values
-  updates[`/users/${ uid }/ledger/${values}`] = values
-  updates[`/users/${ values.serviceProvider }/ledger/${ serviceRequestKey }`] = values
 
-  await update(ref(db), updates)
+
+
+  
 }
 
 export async function submitServiceRequestFeedback(values) {
-  values.submit_date = serverTimestamp()
-  update(ref(db, `service_requests/${values.id}/feedback/${uid}`), values)
-  update(ref(db, `service_requests/${values.id}/`), {status: serviceRequestStatusOptions.expired})
+
+alert('submit')
 }
 
 export const getActiveServiceRequests = (serviceRequests) => {

@@ -16,7 +16,6 @@ import {
   ButtonGroup
 } from '@mui/material'
 import PropTypes from 'prop-types'
-import { getDatabase, ref, push, child, getRef, onValue } from "firebase/database"
 import Page from '../components/Page'
 import { Calendar } from "../sections/advisory_session/meeting/calendar/Calendar";
 import { getAuthId } from '../actions/Auth'
@@ -26,29 +25,29 @@ import {
   getMySentServiceRequests,
   serviceRequestStatusOptions,
   getMyRecievedServiceRequests,
+  fetchServiceRequests,
 } from "../actions/JuaNetwork"
 import { showCustomerView } from "../actions/UI"
 import ReusableTab from "../components/reusables/Tabs"
 
 export default function ServiceRequests() {
   const navigate = useNavigate()
-  const db = getDatabase()
+
   const shouldShowCustomerView = showCustomerView()
   const [calendarView, setCalendarView] = useState([])
   const [sentServiceRequests, setSentServiceRequests] = useState([])
   const [recievedServiceRequests, setRecievedServiceRequests] = useState([])
-  
-  useEffect(() => {
-    onValue(ref(db, `/service_requests`), (snapshot) => {  
-      const allServiceRequests = (snapshot.val() && snapshot.val())
-      setSentServiceRequests(getMySentServiceRequests(allServiceRequests))
-      setRecievedServiceRequests(getMyRecievedServiceRequests(allServiceRequests))
-    })
-  }, [db])
 
-  const goToServiceRequest = (serviceRequestId) => {    
-    navigate(`/dashboard/service_request/${serviceRequestId}/`, { replace: true })
-  }
+  useEffect(() => {
+    fetchServiceRequests()
+      .then((response) => {
+        setSentServiceRequests(response.data)
+      }).catch((error) => {
+        console.error(error)
+      })
+  }, [])
+
+  const goToServiceRequest = (serviceRequestId) => navigate(`/dashboard/service_request/${serviceRequestId}/`, { replace: true })
 
   
   const onDeleteServiceRequest = (serviceRequestId) => {

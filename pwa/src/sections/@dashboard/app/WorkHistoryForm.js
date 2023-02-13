@@ -11,13 +11,17 @@ import {
   updateRecordUnderUserDoc,
   deleteRecordUnderUserSubDoc
 } from '../../../actions/GeneralFunctions'
+import {
+  createUserExperience,
+  updateUserExperience,
+  deleteUserExperience
+} from '../../../actions/Profile'
 
 const SUB_DOCUMENT = 'work'
 
 export default function WorkHistoryForm(workDoc) {
-  
-  const [work, setWork] = useState(workDoc.workDoc)
-  const formProps = useForm({ defaultValues: work })
+  const [experience, setExperience] = useState(workDoc.workDoc)
+  const formProps = useForm({ defaultValues: experience })
 
   const {
     reset,
@@ -32,17 +36,31 @@ export default function WorkHistoryForm(workDoc) {
 
 
   const onSubmit = (values) => {
-    if (work) {
-      values.id = get(work, "id")
-      updateRecordUnderUserDoc(values, SUB_DOCUMENT)
+    if (experience) {
+      values.ref = get(experience, "ref")
+      updateUserExperience(values)
+        .then(() => {
+          notificationManager.success('Profile updated', 'Success')
+        }).catch((error) => {
+          notificationManager.error(error, 'Error')
+        })
     }else{
-      values.id = createId()
-      addRecordUnderUserDoc(values, SUB_DOCUMENT)
+      createUserExperience(values)
+        .then(() => {
+          notificationManager.success('Profile updated', 'Success')
+        }).catch((error) => {
+          notificationManager.error(error, 'Error')
+        })
     }
   }
   
   const deleteItem = (values) => {
-    deleteRecordUnderUserSubDoc(values, SUB_DOCUMENT)
+    deleteUserExperience(values)
+      .then(() => {
+        notificationManager.success('Profile updated', 'Success')
+      }).catch((error) => {
+        notificationManager.error(error, 'Error')
+      })
   }
   
   return (
@@ -92,7 +110,7 @@ export default function WorkHistoryForm(workDoc) {
           label="Description (optional)"
           {...register('description')}
         />
-        {work && (
+        {experience && (
           <>
           <LoadingButton
             fullWidth
@@ -106,13 +124,13 @@ export default function WorkHistoryForm(workDoc) {
             fullWidth
             size="large"
             loading={false}
-            onClick={() => deleteItem(work)}
+            onClick={() => deleteItem(experience)}
             variant="contained">
             Delete
           </LoadingButton>
           </>
         )}
-        {!work && (
+        {!experience && (
           <LoadingButton
             fullWidth
             size="large"

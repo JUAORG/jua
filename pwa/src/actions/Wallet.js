@@ -1,14 +1,4 @@
 import {
-  ref,
-  push,
-  child,
-  update,
-  onValue,
-  increment,
-  getDatabase,
-  serverTimestamp
-} from 'firebase/database'
-import {
   map,
   get,
   size,
@@ -19,8 +9,6 @@ import notificationManager from './NotificationManager'
 import { createId } from '../utils/uuid-generator'
 import { getAuthId } from './Auth'
 
-const db = getDatabase()
-const uid = getAuthId()
 
 export const yoco = new window.YocoSDK({
   publicKey: process.env.REACT_APP_YOCO_PUBLIC_KEY,
@@ -32,17 +20,8 @@ export async function creditJuaWallet(amount) {
   values.id = transactionId
   values.action = 'credit'
   values.amount = parseFloat(amount)
-  values.created_at = serverTimestamp()
+
  
-  update(ref(db, `users/${ uid }/updates/${ values.id }/`), {
-    action: values.action,
-    title: 'Jua Wallet Credited',
-    body: `+ R${ values.amount }`,
-    timestamp: values.created_at
-  })
-  update(ref(db, `users/${ uid }/ledger/${ values.id }/`), values)
-  values.creditTo = uid
-  update(ref(db, `ledger/${ values.id }/`), values)
 }
 
 export async function getAvailableFunds(ledgerRecords) {

@@ -17,8 +17,7 @@ import { LoadingButton } from '@mui/lab'
 import LinkedInIcon from '@mui/icons-material/LinkedIn'
 import notificationManager from '../../../actions/NotificationManager'
 import { createId } from '../../../utils/uuid-generator'
-import { editUserProfile} from '../../../actions/Profile'
-import { updateUserAccountProfilePicture } from '../../../actions/Auth';
+import { editUserProfile } from '../../../actions/Profile'
 import { industries } from '../../../_mock/industries';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -50,10 +49,9 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }))
 
-export default function UserProfileForm(userProfileDoc) {
-  const [userProfile, setUserProfile] = useState(null)
+export default function UserProfileForm(user) {
   const formProps = useForm({})
-  const [industry, setIndustry] = useState(get(userProfileDoc, ['userProfileDoc', 'industry']))
+  const userProfile = get(user, 'userProfile')
 
   const {
     reset,
@@ -66,26 +64,21 @@ export default function UserProfileForm(userProfileDoc) {
     formState: { errors },
   } = formProps
 
+
   useEffect(() => {
-    setUserProfile(userProfileDoc.userProfileDoc)
     reset({
-      first_name: get(userProfileDoc, ['userProfileDoc', 'first_name']),
-      last_name: get(userProfileDoc, ['userProfileDoc', 'last_name']),
-      town: get(userProfileDoc, ['userProfileDoc', 'town']),
-      date_of_birth: get(userProfileDoc, ['userProfileDoc', 'date_of_birth']),
-      industry: get(userProfileDoc, ['userProfileDoc', 'industry']),
-      about: get(userProfileDoc, ['userProfileDoc', 'about']),
-      rate_per_hour: get(userProfileDoc, ['userProfileDoc', 'rate_per_hour']),
-      linkedIn: get(userProfileDoc, ['userProfileDoc', 'linkedIn']),
-      
-      // profle_pic_url: get(userProfileDoc, ['userProfileDoc', 'profile_pic_url']),
+      first_name: get(userProfile, 'first_name'),
+      last_name: get(userProfile, 'last_name'),
+      bio: get(userProfile, 'bio'),
+      rate_per_hour_in_rands: get(userProfile, 'rate_per_hour_in_rands'),
+      linkedIn: get(userProfile, 'linkedIn')
     })
     watch()
-  },[userProfileDoc, reset, industries])
+  },[userProfile, reset, industries])
 
   const handleChange = (event) => {
-    setIndustry(event.target.value);
-    setValue('industry', event.target.value)
+//    setIndustry(event.target.value);
+//    setValue('industry', event.target.value)
   };
   
   const onSubmit = (values) => {
@@ -107,8 +100,8 @@ export default function UserProfileForm(userProfileDoc) {
               variant="dot"
             >
               <Avatar
-                alt={get(userProfileDoc, ['userProfileDoc', 'first_name'])}
-                src={get(userProfileDoc, ['userProfileDoc', 'profile_photo_url'])}
+//                alt={get(userProfileDoc, ['userProfileDoc', 'first_name'])}
+//                src={get(userProfileDoc, ['userProfileDoc', 'profile_photo_url'])}
               />
             </StyledBadge>
           {/* <input
@@ -126,51 +119,51 @@ export default function UserProfileForm(userProfileDoc) {
           label="Last Name"
           { ...register('last_name') }
         />
-        <TextField
-          fullWidth
-          label="Country"
-          value="South Afica"
-        />
-        <TextField
-          fullWidth
-          label="Town/City"
-          { ...register('town') }
-        />
-        <TextField
-          fullWidth
-          label="Date of Birth"
-          type="date"
-          { ...register('date_of_birth') }
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
-        <FormControl fullWidth>
-          <InputLabel>
-            Industry
-          </InputLabel>
-          <Select
-            label="Industry"
-            value={ industry }
-            onChange={ handleChange }
-          >
-            {industries.map((option, index) => (
-              <MenuItem
-                key={ index }
-                value={ option }
-              >
-                { option }
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        {/* <TextField */}
+        {/*   fullWidth */}
+        {/*   label="Country" */}
+        {/*   value="South Afica" */}
+        {/* /> */}
+        {/* <TextField */}
+        {/*   fullWidth */}
+        {/*   label="Town/City" */}
+        {/*   { ...register('town') } */}
+        {/* /> */}
+        {/* <TextField */}
+        {/*   fullWidth */}
+        {/*   label="Date of Birth" */}
+        {/*   type="date" */}
+        {/*   { ...register('date_of_birth') } */}
+        {/*   InputLabelProps={{ */}
+        {/*     shrink: true, */}
+        {/*   }} */}
+        {/* /> */}
+        {/* <FormControl fullWidth> */}
+        {/*   <InputLabel> */}
+        {/*     Industry */}
+        {/*   </InputLabel> */}
+        {/*   <Select */}
+        {/*     label="Industry" */}
+        {/*     value={ industry } */}
+        {/*     onChange={ handleChange } */}
+        {/*   > */}
+        {/*     {industries.map((option, index) => ( */}
+        {/*       <MenuItem */}
+        {/*         key={ index } */}
+        {/*         value={ option } */}
+        {/*       > */}
+        {/*         { option } */}
+        {/*       </MenuItem> */}
+        {/*     ))} */}
+        {/*   </Select> */}
+        {/* </FormControl> */}
         <TextField
           fullWidth
           multiline
           minRows={4}
           label="About"
           placeholder="Add summary"
-          { ...register('about') }
+          { ...register('bio') }
         />
         <TextField
           fullWidth
@@ -178,7 +171,7 @@ export default function UserProfileForm(userProfileDoc) {
           label='Rate per hour'
           placeholder="1500"
           helperText='Amount for an hour of your time. In other words what you charge for a Service Request on JUA'
-          { ...register('rate_per_hour') }
+          { ...register('rate_per_hour_in_rands') }
           InputProps={{
             startAdornment:
             <InputAdornment position="start">R</InputAdornment>,
