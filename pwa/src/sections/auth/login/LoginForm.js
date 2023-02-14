@@ -45,6 +45,7 @@ export default function LoginForm() {
         setAuthTokenCookie(res.data.token)
         notificationManager.success('Succesfully authenticated', 'Success')
         navigate('/dashboard/app', { replace: true });
+        window.location.reload()
       })
       .catch((error) => {
         setShowLoadingBackdrop(false)

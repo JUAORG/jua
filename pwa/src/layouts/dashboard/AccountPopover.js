@@ -54,8 +54,8 @@ export default function AccountPopover({user}) {
     }).catch((error) => {
       console.error(error.response)
     }).finally(() => {
-      removeAuthId()
       localStorage.clear()
+      window.location.reload()
     })
   }
   
@@ -116,7 +116,7 @@ return (
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
-        <MenuItem onClick={logout} sx={{ m: 1 }}>
+        <MenuItem onClick={doLogout} sx={{ m: 1 }}>
           Logout
         </MenuItem>
       </MenuPopover>
