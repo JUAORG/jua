@@ -136,12 +136,12 @@ export default function Profile() {
             scrollButtons
             variant="scrollable"
             allowScrollButtonsMobile
-            tabHeadings={['Personal Details', 'Education', 'Experience', 'Services']}
+            tabHeadings={['Personal Details', 'Services', 'Education', 'Experience']}
             tabContents={[
               <UserProfileForm userProfile={ userProfile }/>,
+              renderServices(),
               renderEducationHistory(),
-              renderWorkHistory(),
-              renderServices()
+              renderWorkHistory()
             ]}
         />
         </Box>
