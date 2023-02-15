@@ -14,6 +14,7 @@ import {
   Typography,
   ListItemText,
   ListItemAvatar,
+  Button,
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import EducationHistoryForm from '../sections/@dashboard/app/EducationHistoryForm'
@@ -21,31 +22,28 @@ import WorkHistroyForm from '../sections/@dashboard/app/WorkHistoryForm'
 import Page from '../components/Page'
 import UserProfileForm from '../sections/@dashboard/app/UserProfileForm'
 import ServiceListForm from '../sections/@dashboard/app/ServiceListForm'
-import { getMyOldRecievedServiceRequests } from "../actions/JuaNetwork"
-import { getAuthId } from '../actions/Auth'
-import { showCustomerView } from '../actions/UI'
 import ReusableTab from '../components/reusables/Tabs'
 import { UserContext } from '../contexts/User'
 
 export default function Profile() {
   const user = useContext(UserContext)
   const [value, setValue] = useState(0)
-  const [experienceList, setExperienceList] = useState(get(user, ['profile','experiences_related_to_user_profile']))
+  const [experienceList, setExperienceList] = useState(get(user, ['profile', 'experiences_related_to_user_profile']))
   const [userProfile, setUserProfile] = useState(get(user, 'profile'))
   const [servicesList, setServicesList] = useState(null)
-  const [educationList, setEducationList] = useState(get(user, ['profile','educations_related_to_user_profile']))
+  const [educationList, setEducationList] = useState(get(user, ['profile', 'educations_related_to_user_profile']))
   const [oldRecievedServiceRequests, setOldRecievedServiceRequests] = useState(null)
-  console.log(user)
+
 
   const renderEducationHistory = () => {
     return (
       <>
-        {map(educationList, (doc) => 
+        {map(educationList, (doc) =>
           <>
-            <EducationHistoryForm key={get(doc, "id")} educationDoc={doc}/>
+            <EducationHistoryForm key={get(doc, "id")} educationDoc={doc} />
           </>
         )}
-        <EducationHistoryForm/>
+        <EducationHistoryForm />
       </>
     )
   }
@@ -53,23 +51,23 @@ export default function Profile() {
   const renderWorkHistory = () => {
     return (
       <>
-        {map(experienceList, (doc) => 
+        {map(experienceList, (doc) =>
           <>
-            <WorkHistroyForm key={get(doc, "id")} workDoc={doc}/>
+            <WorkHistroyForm key={get(doc, "id")} workDoc={doc} />
           </>
         )}
-        <WorkHistroyForm/>
+        <WorkHistroyForm />
       </>
     )
   }
-  
+
   const renderOldServiceRequests = () => {
     return (
       <>
         <List
           sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
         >
-          {map(oldRecievedServiceRequests, (doc) => 
+          {map(oldRecievedServiceRequests, (doc) =>
             <ListItem>
               <ListItemText primary={get(doc, "subject")} secondary="Aug 25, 1997" />
             </ListItem>
@@ -81,7 +79,7 @@ export default function Profile() {
 
   function TabPanel(props) {
     const { children, value, index, ...other } = props
-    
+
     return (
       <div
         role="tabpanel"
@@ -103,7 +101,7 @@ export default function Profile() {
     index: PropTypes.number.isRequired,
     value: PropTypes.number.isRequired,
   }
-  
+
   function a11yProps(index) {
     return {
       id: `simple-tab-${index}`,
@@ -118,15 +116,15 @@ export default function Profile() {
   const renderServices = () => {
     return (
       <>
-        {map(servicesList, (doc) => 
+        {map(servicesList, (doc) =>
           <>
-            <ServiceListForm key={get(doc, "id")} serviceDoc={ doc }/>
+            <ServiceListForm key={get(doc, "id")} serviceDoc={doc} />
           </>
         )}
-        <ServiceListForm/>
+        <ServiceListForm />
       </>
     )
-}
+  }
 
   const renderAdvisorProfileTabs = () => {
     return (
@@ -138,12 +136,12 @@ export default function Profile() {
             allowScrollButtonsMobile
             tabHeadings={['Personal Details', 'Services', 'Education', 'Experience']}
             tabContents={[
-              <UserProfileForm userProfile={ userProfile }/>,
+              <UserProfileForm userProfile={userProfile} />,
               renderServices(),
               renderEducationHistory(),
               renderWorkHistory()
             ]}
-        />
+          />
         </Box>
       </>
     )
@@ -153,7 +151,12 @@ export default function Profile() {
     return (
       <>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <ReusableTab
+          <Typography variant="h6" sx={{ mb: 5, textAlign: 'center' }}>
+            <Button>
+              Apply to become an Affiliate Expert
+            </Button>
+          </Typography>
+          {/* <ReusableTab
             scrollButtons
             variant="scrollable"
             allowScrollButtonsMobile
@@ -162,27 +165,26 @@ export default function Profile() {
               <UserProfileForm userProfileDoc={ userProfile }/>,
               renderOldServiceRequests() 
             ]}
-          />
+          /> */}
         </Box>
       </>
     )
   }
-  
+
   return (
     <Page title="Profile">
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5, textAlign: 'center' }}>
           <img
             alt='FAQs'
-            width={ 200 }
-            style={{margin: 'auto'}}
+            width={200}
+            style={{ margin: 'auto' }}
             src='/static/illustrations/undraw_profile.svg'
           />
           Profile
         </Typography>
         <Grid>
-          {!showCustomerView() && renderAdvisorProfileTabs() }
-          {showCustomerView() && renderCustomerProfileTabs() }
+          {get(user, ['profile', 'is_service_provider']) ? renderAdvisorProfileTabs() : renderCustomerProfileTabs()}
         </Grid>
       </Container>
     </Page>

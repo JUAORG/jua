@@ -1,12 +1,9 @@
-import { useEffect, useState, useContext } from 'react';
-import { get } from 'lodash';
+import { useState, useContext } from 'react';
 import { Outlet } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import DashboardNavbar from './DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
-import UsersContext from '../../contexts/Users';
-import { showCustomerView } from '../../actions/UI';
-import { UserProvider, UserContext } from '../../contexts/User';
+import { UserContext } from '../../contexts/User';
 // import { fetchJuaNetwork } from '../../actions/JuaNetwork';
 
 // ----------------------------------------------------------------------
@@ -36,13 +33,8 @@ const MainStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function DashboardLayout() {
-  const [users, setUsers] = useState(null);
   const user = useContext(UserContext)
   const [open, setOpen] = useState(false);
-  const [errors, setErrors] = useState(null);
-  const environment = process.env.NODE_ENV;
-  const viewType = showCustomerView();
-  //  const isInAuthPages = window.location.pathname !== '/login' || window.location.pathname !== '/register'
 
   return (
     <RootStyle>

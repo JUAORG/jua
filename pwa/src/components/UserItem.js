@@ -27,7 +27,7 @@ export default function UserItem({ user }) {
                 variant="body2"
                 color="text.primary"
               >
-                {get(user, ['profile', 'first_name'])}
+                {get(user, ['profile', 'first_name'])} {get(user, ['profile', 'last_name'])}
               </Typography>
               —  {get(user, ['profile', 'bio'], 'empty bio')}
             </>

@@ -6,32 +6,12 @@ import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@
 import MenuPopover from '../../components/MenuPopover';
 import account from '../../_mock/account';
 import notificationManager from '../../actions/NotificationManager'
-import { logout, removeAuthId } from '../../actions/Auth';
+import { logout } from '../../actions/Auth';
 // ----------------------------------------------------------------------
 const MENU_OPTIONS = [
   {
-    label: 'Home',
-    linkTo: '/',
-  },
-  {
-    label: 'Profile',
-    linkTo: '/dashboard/profile',
-  },
-  {
-    label: 'Wallet',
-    linkTo: '/dashboard/wallet',
-  },
-  {
     label: 'Password Change',
     linkTo: '/dashboard/password_change',
-  },
-  {
-    label: 'FAQs',
-    linkTo: '/dashboard/faq',
-  },
-  {
-    label: 'Settings',
-    linkTo: '/dashboard/settings',
   },
 ];
 
@@ -98,7 +78,7 @@ return (
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {get(user, ['profile', 'first_name'])}
+          {get(user, ['profile', 'first_name'])} {get(user, ['profile', 'last_name'])}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
             {get(user, ['profile', 'number_of_notification'], 0)} notifications

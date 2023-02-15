@@ -1,39 +1,23 @@
-import React, {useState, useEffect} from "react"
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from "react"
 import { get, map } from "lodash"
 import {
-  Grid,
-  Container,
   Typography,
   List,
   ListItem,
   Divider,
   ListItemText,
-  ListItemAvatar,
-  Avatar,
-  Box,
   Button,
-  ButtonGroup
 } from '@mui/material'
-import PropTypes from 'prop-types'
 import Page from '../components/Page'
 import { Calendar } from "../sections/advisory_session/meeting/calendar/Calendar";
-import { getAuthId } from '../actions/Auth'
 import {
   updateServiceRequest,
-  activeJuaNetworkUsers,
-  getMySentServiceRequests,
   serviceRequestStatusOptions,
-  getMyRecievedServiceRequests,
   fetchServiceRequests,
 } from "../actions/JuaNetwork"
-import { showCustomerView } from "../actions/UI"
 import ReusableTab from "../components/reusables/Tabs"
 
 export default function ServiceRequests() {
-  const navigate = useNavigate()
-
-  const shouldShowCustomerView = showCustomerView()
   const [calendarView, setCalendarView] = useState([])
   const [sentServiceRequests, setSentServiceRequests] = useState([])
   const [recievedServiceRequests, setRecievedServiceRequests] = useState([])
@@ -47,9 +31,9 @@ export default function ServiceRequests() {
       })
   }, [])
 
-  const goToServiceRequest = (serviceRequestId) => navigate(`/dashboard/service_request/${serviceRequestId}/`, { replace: true })
+  // const goToServiceRequest = (serviceRequestId) => navigate(`/dashboard/service_request/${serviceRequestId}/`, { replace: true })
 
-  
+
   const onDeleteServiceRequest = (serviceRequestId) => {
     const values = {}
     values.id = serviceRequestId
@@ -60,39 +44,39 @@ export default function ServiceRequests() {
   const renderServiceRequestTab = (serviceRequests) => {
     return (
       <List sx={{ bgcolor: 'background.paper' }}>
-          {map(serviceRequests, (serviceRequest) => (
-            <>
-              <ListItem
-                id={get(serviceRequest, "id")}
-                alignItems="flex-start"
-              >
-                <ListItemText
-                  secondary={
-                    <>
-                      <Typography
-                        sx={{ display: 'inline', cursor: 'pointer' }}
-                        component="span"
-                        variant="body2"
-                        color="text.primary"
-                        onClick={() => goToServiceRequest(get(serviceRequest, "id"))}
-                      >
+        {map(serviceRequests, (serviceRequest) => (
+          <>
+            <ListItem
+              id={get(serviceRequest, "id")}
+              alignItems="flex-start"
+            >
+              <ListItemText
+                secondary={
+                  <>
+                    <Typography
+                      sx={{ display: 'inline', cursor: 'pointer' }}
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                      // onClick={() => goToServiceRequest(get(serviceRequest, "id"))}
+                    >
                       Subject: {get(serviceRequest, "subject", "description empty")}
-                      </Typography><br/>
-                      Description: {get(serviceRequest, "description", "description empty")}
-                      <Button
-                        sx={{float: "right"}}
-                        onClick={() => onDeleteServiceRequest(get(serviceRequest, "id"))}
-                      >
-                        Cancel Request
-                      </Button>
-                    </>
-                  }
-                />
-              </ListItem>
-              <Divider variant="inset" component="li" />
-            </>
-          ))}
-        </List>
+                    </Typography><br />
+                    Description: {get(serviceRequest, "description", "description empty")}
+                    <Button
+                      sx={{ float: "right" }}
+                      onClick={() => onDeleteServiceRequest(get(serviceRequest, "id"))}
+                    >
+                      Cancel Request
+                    </Button>
+                  </>
+                }
+              />
+            </ListItem>
+            <Divider variant="inset" component="li" />
+          </>
+        ))}
+      </List>
 
     )
   }
@@ -114,38 +98,27 @@ export default function ServiceRequests() {
           ]}
         />
       </>
-      )
-  }
-
-  const renderCustomerBookings = () => {
-    return (
-      <ReusableTab
-        tabHeadings={['Upcoming', 'Pending', 'History']}
-        tabContents={['Upcoming', 'Pending', 'History']}
-      />
     )
   }
-  
+
   return (
-    <Page title={ shouldShowCustomerView ? 'Bookings' :  'Service Requests' }>
+    <Page title='Service Requests'>
       <Typography align='Center' variant='h4' sx={{ mb: 5 }}>
         <img
           alt='Booking'
-          width={ 150 }
-          style={{margin: 'auto'}}
+          width={150}
+          style={{ margin: 'auto' }}
           src='/static/illustrations/undraw_booking.svg'
         />
-        { shouldShowCustomerView ? 'Bookings' : 'Service Requests' }
+        Service Requests
       </Typography>
-      { shouldShowCustomerView ? renderCustomerBookings() : renderServiceRequestTabs() }
-      { !shouldShowCustomerView &&
-        <>
-          <Calendar
-            sentServiceRequests={ sentServiceRequests }
-            recievedServiceRequests={ recievedServiceRequests }
-          />
-        </>
-      }
+      {renderServiceRequestTabs()}
+      <>
+        <Calendar
+          sentServiceRequests={sentServiceRequests}
+          recievedServiceRequests={recievedServiceRequests}
+        />
+      </>
     </Page>
   )
 }

@@ -1,4 +1,5 @@
-import { useEffect } from 'react'
+import { get } from 'lodash'
+import { useContext } from 'react'
 import { Navigate, useRoutes } from 'react-router-dom'
 // layouts
 import DashboardLayout from './layouts/dashboard'
@@ -19,23 +20,19 @@ import Services from './pages/Services'
 import Service from './pages/Service'
 import JuaNetwork from './pages/JuaNetwork'
 import JuaNetworkUser from './pages/JuaNetworkUser'
-import { isSignedIn } from './actions/Auth'
 import AdvisorySessionMeeting from './pages/AdvisorySessionMeeting'
 import AdvisorySessionFeedback from './pages/AdvisorySessionFeedback'
 import ServiceRequest from './pages/ServiceRequest'
 import PasswordChange from './pages/PasswordChange'
 import Wallet from './pages/Wallet'
 import Faq from './pages/Faq'
-import { showCustomerView } from './actions/UI'
+import { UserContext } from './contexts/User'
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
-  const shouldShowCustomerView = showCustomerView()
-  
-  useEffect(() => {
-    isSignedIn()  
-  },[])
+  const user = useContext(UserContext)
+  const isUserServiceProvider = get(user, ['profile', 'is_service_provider'])
 
 
   return useRoutes([
@@ -58,9 +55,9 @@ export default function Router() {
         { path: 'service_request/:serviceRequestId', element: <ServiceRequest /> },
         { path: 'advisory_session_meeting', element: <AdvisorySessionMeeting /> },
         { path: 'advisory_session_meeting/feedback/:serviceRequestId', element: <AdvisorySessionFeedback /> },
-        { path: 'jua_network', element:  shouldShowCustomerView ? <Navigate to="/404" replace /> : <JuaNetwork /> },
-        { path: 'wallet_setup', element:  shouldShowCustomerView ? <Navigate to="/404" replace /> : <WalletSetup /> },
-        { path: 'rate_card_setup', element: shouldShowCustomerView ? <Navigate to="/404" replace /> : <RateCardSetup /> }
+        { path: 'jua_network', element: <JuaNetwork /> },
+        { path: 'wallet_setup', element: <WalletSetup /> },
+        // { path: 'rate_card_setup', element: isUserServiceProvider ? <Navigate to="/404" replace /> : <RateCardSetup /> }
       ]
     },
     {
@@ -71,9 +68,9 @@ export default function Router() {
         { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
-        // { path: '*', element: <Navigate to="/404" /> },
+        { path: '*', element: <Navigate to="/404" /> },
       ],
     },
-    // { path: '*', element: <Navigate to="/404" replace /> },
+    { path: '*', element: <Navigate to="/404" replace /> },
   ])
 }
