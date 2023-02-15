@@ -5,7 +5,7 @@ import { getAuthTokenCookie, defaultHeaders } from "./Auth"
 
 export async function editUserProfile(values) {
   return axios({
-    method: 'PUT',
+    method: 'PATCH',
     url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile/`,
     withCredentials: false,
     headers: defaultHeaders,
@@ -25,7 +25,7 @@ export async function createUserEducation(values) {
 
 export async function updateUserEducation(values) {
   return axios({
-    method: 'PUT',
+    method: 'PATCH',
     url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_education/${get(values, 'ref')}/`,
     withCredentials: false,
     headers: defaultHeaders,
@@ -55,7 +55,7 @@ export async function createUserExperience(values) {
 
 export async function updateUserExperience(values) {
   return axios({
-    method: 'PUT',
+    method: 'PATCH',
     url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_experience/${get(values, 'ref')}/`,
     withCredentials: false,
     headers: defaultHeaders,
