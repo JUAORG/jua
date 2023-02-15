@@ -11,7 +11,7 @@ const advisorNavConfig = [
   //   icon: getIcon('eva:calendar-fill'),
   // },
   {
-    title: 'JUA Homepage',
+    title: 'Homepage',
     path: '/dashboard/app',
     icon: getIcon('eva:home-fill'),
   },
@@ -26,7 +26,7 @@ const advisorNavConfig = [
     icon: getIcon('eva:inbox-fill'),
   },
   {
-    title: 'My Profile & Rate Card',
+    title: 'My Profile',
     path: '/dashboard/profile',
     icon: getIcon('eva:person-done-fill'),
   },
@@ -36,7 +36,7 @@ const advisorNavConfig = [
     icon: getIcon('eva:info-outline'),
   },
   {
-    title: 'About Jua',
+    title: 'Feedback',
     path: '/dashboard/about',
     icon: getIcon('eva:heart-fill'),
   },
@@ -64,7 +64,7 @@ const customerNavConfig = [
     icon: getIcon('eva:info-outline'),
   },
   {
-    title: 'About',
+    title: 'Feedback',
     path: '/dashboard/about',
     icon: getIcon('eva:heart-fill'),
   },
