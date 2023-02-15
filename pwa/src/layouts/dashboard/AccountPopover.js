@@ -6,32 +6,12 @@ import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@
 import MenuPopover from '../../components/MenuPopover';
 import account from '../../_mock/account';
 import notificationManager from '../../actions/NotificationManager'
-import { logout, removeAuthId } from '../../actions/Auth';
+import { logout } from '../../actions/Auth';
 // ----------------------------------------------------------------------
 const MENU_OPTIONS = [
   {
-    label: 'Home',
-    linkTo: '/',
-  },
-  {
-    label: 'Profile',
-    linkTo: '/dashboard/profile',
-  },
-  {
-    label: 'Wallet',
-    linkTo: '/dashboard/wallet',
-  },
-  {
     label: 'Password Change',
     linkTo: '/dashboard/password_change',
-  },
-  {
-    label: 'FAQs',
-    linkTo: '/dashboard/faq',
-  },
-  {
-    label: 'Settings',
-    linkTo: '/dashboard/settings',
   },
 ];
 
@@ -54,8 +34,8 @@ export default function AccountPopover({user}) {
     }).catch((error) => {
       console.error(error.response)
     }).finally(() => {
-      removeAuthId()
       localStorage.clear()
+      window.location.reload()
     })
   }
   
@@ -98,10 +78,10 @@ return (
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {get(user, 'username')}
+          {get(user, ['profile', 'first_name'])} {get(user, ['profile', 'last_name'])}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {get(user, ['profile', 'number_of_notification'], 0)} notifications
           </Typography>
         </Box>
 
@@ -116,7 +96,7 @@ return (
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
-        <MenuItem onClick={logout} sx={{ m: 1 }}>
+        <MenuItem onClick={doLogout} sx={{ m: 1 }}>
           Logout
         </MenuItem>
       </MenuPopover>

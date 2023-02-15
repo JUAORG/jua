@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react'
+import { useState, useContext } from 'react'
 import {
   Grid,
   Container,
@@ -11,19 +11,14 @@ import Joyride from 'react-joyride'
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { fromPairs, get, map, size } from "lodash"
 import { SERVICES } from '../content/services'
-import { getAuthId } from '../actions/Auth';
 import Page from '../components/Page'
 // sections
 import { UserContext } from '../contexts/User'
-import { showCustomerView } from '../actions/UI'
-import { getNumOfMyServiceRequests } from '../actions/JuaNetwork'
 import { AppNewsUpdate, AppWidgetSummary } from '../sections/@dashboard/app'
-import CircularIndeterminate from '../components/reusables/CircularIndeterminate'
 
 export default function DashboardApp() {
   const navigate = useNavigate()
-    const user = useContext(UserContext)
-    const userIsNewToJua = true
+  const user = useContext(UserContext)
 
   const [customerInfoSteps, setCustomerInfoSteps] = useState(
     [
@@ -44,9 +39,7 @@ export default function DashboardApp() {
         content: 'This is my awesome feature!',
       },
     ])
-  const [advisorInfoSteps, setAdvisorInfoSteps] = useState()
-  const shouldShowCustomerView = showCustomerView()
-  const [dataLoading, setDataLoading] = useState()
+
   const [userUpdates, setUserUpdates] = useState()
   const [numServiceRequests, setNumServiceRequests] = useState()
 
@@ -120,19 +113,18 @@ export default function DashboardApp() {
 
   return (
     <Page title="Dashboard">
-       <Joyride 
+       {/* <Joyride 
          showProgress 
          showSkipButton 
          disableCloseOnEsc 
          steps={userIsNewToJua && shouldShowCustomerView ? customerInfoSteps : advisorInfoSteps } 
-      /> 
+      />  */}
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          {get(user, 'first_name') && `Hi ${get(user, 'first_name')}`}
+          {get(user, 'first_name') && `${get(user, ['profile', 'first_name'])} ${get(user, ['profile', 'last_name'])}`}
         </Typography>
         <Grid container spacing={3}>
-          { !shouldShowCustomerView && renderAdvisorHomePage() }
-          { shouldShowCustomerView && renderCustomerHomePage() }
+          { get(user, ['profile', 'is_service_provider']) ? renderAdvisorHomePage() : renderCustomerHomePage() }
           <Grid item xs={12} md={6} lg={8}>
             <Typography variant="h6" mb={2}>
               Updates

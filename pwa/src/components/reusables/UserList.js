@@ -31,13 +31,13 @@ export default function UsersList(users) {
           onClick={() => openUserProfile(user)}
         >
           <ListItemAvatar>
-            <Avatar
-              alt={ get(user, 'first_name') }
-              src={ get(user, 'gender') === 'female' ? defaultFemaleAvatar : defaultMaleAvatar }
-            />
+            {/* <Avatar */}
+            {/*   alt={ get(user, 'first_name') } */}
+            {/*   src={null} */}
+            {/* /> */}
           </ListItemAvatar>
           <ListItemText
-            primary={`${get(user, 'first_name', 'first')} ${get(user, 'last_name', 'last')}`}
+            primary={`${get(user,['profile','first_name'])} ${get(user, ['profile','last_name'])}`}
             secondary={
             <>
               <Typography

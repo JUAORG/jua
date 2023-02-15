@@ -67,11 +67,13 @@ export default function WorkHistoryForm(workDoc) {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
         <TextField
+          required
           fullWidth
           label="Company"
           {...register('company')}
         />
         <TextField
+          required
           fullWidth
           label="title"
           {...register('title')}
@@ -82,11 +84,12 @@ export default function WorkHistoryForm(workDoc) {
           direction={{ xs: 'column', sm: 'row' }}
         >
           <TextField
+            required
             fullWidth
             id="start_year"
             label="From"
             type="date"
-            {...register('start_date')}
+            {...register('date_from')}
             InputLabelProps={{
               shrink: true,
             }}
@@ -96,7 +99,7 @@ export default function WorkHistoryForm(workDoc) {
             id="end_year"
             label="To"
             type="date"
-            {...register('end_date')}
+            {...register('date_to')}
             helperText="If present, leave empty"
             InputLabelProps={{
               shrink: true,

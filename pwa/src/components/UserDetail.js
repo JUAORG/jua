@@ -85,7 +85,7 @@ export const UserDetail = ({ user, handleClose }) => {
                       Show rate per hour, general avail times and explain that service provider (sp) has x amount of time to confirm
                       update service request status frequently for example show if the sp has read the request etc
                     </Typography>
-                    <ServiceRequestForm userId={get(user, 'id')}/>
+                    <ServiceRequestForm userId={get(user,['profile','ref'])}/>
                   </AccordionDetails>
                 </Accordion>
                 <Divider/>

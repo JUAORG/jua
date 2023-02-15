@@ -94,7 +94,7 @@ export default function Register() {
               Democratising Access To Intellectual Capital
             </Typography>
 
-            <AuthSocial />
+            {/* <AuthSocial /> */}
 
             <RegisterForm />
 
