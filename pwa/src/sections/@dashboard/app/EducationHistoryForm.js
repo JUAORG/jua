@@ -71,16 +71,19 @@ export default function EducationHistoryForm(educationDoc) {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
         <TextField
+          required
           fullWidth
           label="Institution/University"
           {...register('institution')}
         />
         <TextField
+          required
           fullWidth
           label="Course"
           {...register('course')}
         />
         <TextField
+          required
           fullWidth
           label="Field of study"
           {...register('field_of_study')}
@@ -91,11 +94,12 @@ export default function EducationHistoryForm(educationDoc) {
           spacing={2}
         >
           <TextField
+            required
             fullWidth
             id="start_year"
             label="Start Year"
             type="date"
-            {...register('start_date')}
+            {...register('date_from')}
             InputLabelProps={{
               shrink: true,
             }}
@@ -105,7 +109,7 @@ export default function EducationHistoryForm(educationDoc) {
             id="end_year"
             label="End Year"
             type="date"
-            {...register('end_date')}
+            {...register('date_to')}
             InputLabelProps={{
               shrink: true,
             }}
