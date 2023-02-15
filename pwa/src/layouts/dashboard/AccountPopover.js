@@ -98,10 +98,10 @@ return (
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {get(user, 'username')}
+            {get(user, ['profile', 'first_name'])}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {get(user, ['profile', 'number_of_notification'], 0)} notifications
           </Typography>
         </Box>
 

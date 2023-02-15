@@ -63,6 +63,10 @@ export default function JuaNetwork() {
       options: {
         filter: false,
         sort: true,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          console.log(tableMeta)
+          return <div>{get(tableMeta.tableData[tableMeta.rowIndex], ['profile', 'first_name'])}</div>;
+        }
       }
     },
     {
@@ -71,6 +75,9 @@ export default function JuaNetwork() {
       options: {
         filter: false,
         sort: true,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return <div>{get(tableMeta.tableData[tableMeta.rowIndex], ['profile', 'last_name'])}</div>;
+        }
       }
     },
     {
@@ -79,6 +86,9 @@ export default function JuaNetwork() {
       options: {
         filter: true,
         sort: false,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return <div>{get(tableMeta.tableData[tableMeta.rowIndex], ['profile', 'occupation'])}</div>
+        }
       }
     },
     {
@@ -87,6 +97,9 @@ export default function JuaNetwork() {
       options: {
         filter: true,
         sort: true,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return <div>{get(tableMeta.tableData[tableMeta.rowIndex], ['profile', 'industry'])}</div>
+        }
       }
     },
   ];
@@ -114,7 +127,7 @@ export default function JuaNetwork() {
     responsive: 'stacked',
     selectableRowsHideCheckboxes: false
   };
-  
+  console.log(users)  
   return (
     <Page title="Jua Network">
       <Container maxWidth="xl">

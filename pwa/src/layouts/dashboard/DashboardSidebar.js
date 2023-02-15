@@ -71,11 +71,12 @@ export default function DashboardSidebar({ user, isOpenSidebar, onCloseSidebar }
           <AccountStyle>
             <Avatar src={account.photoURL} alt="photoURL" />
             <Box sx={{ ml: 2 }}>
-              <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {get(user, 'username')}
+              <Typography variant="subtitle2" sx={{ color: 'text.primary' }}
+>
+                {get(user, ['profile', 'first_name'])}
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {account.role}
+                {get(user, ['profile', 'number_of_notification'], 0)} notifications
               </Typography>
             </Box>
           </AccountStyle>

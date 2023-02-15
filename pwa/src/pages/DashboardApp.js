@@ -128,7 +128,7 @@ export default function DashboardApp() {
       /> 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          {get(user, 'first_name') && `Hi ${get(user, 'first_name')}`}
+          {get(user, 'first_name') && `Hi ${get(user, ['profile','first_name'], 'there')}`}
         </Typography>
         <Grid container spacing={3}>
           { !shouldShowCustomerView && renderAdvisorHomePage() }
