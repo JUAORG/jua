@@ -59,7 +59,7 @@ return (
           }),
         }}
       >
-        <Avatar src={account.photoURL} alt="photoURL" />
+        <Avatar src={get(user, ['profile', 'profile_picture'])} alt="profile picture" />
       </IconButton>
 
       <MenuPopover

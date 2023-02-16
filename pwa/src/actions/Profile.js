@@ -3,14 +3,29 @@ import { get } from 'lodash'
 import { getAuthTokenCookie, defaultHeaders } from "./Auth"
 
 
+export async function uploadUserProfile(values) {
+    const formData = new FormData()
+    formData.append('file', values)
+    const fileUploadHeaders = defaultHeaders
+    fileUploadHeaders['Content-Type'] = 'multipart/form-data'
+
+    return axios({
+        method: 'PUT',
+        url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_picture/`,
+        withCredentials: false,
+        headers: fileUploadHeaders,
+        data: formData
+    })
+}
+
 export async function editUserProfile(values) {
-  return axios({
-    method: 'PATCH',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile/`,
-    withCredentials: false,
-    headers: defaultHeaders,
-    data: values
-  })
+    return axios({
+        method: 'PATCH',
+        url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile/`,
+        withCredentials: false,
+        headers: defaultHeaders,
+        data: values
+    })
 }
 
 export async function createUserEducation(values) {
