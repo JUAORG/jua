@@ -22,7 +22,6 @@ import ServiceRequestForm from '../sections/@dashboard/app/ServiceRequestForm';
 import IconTextDateList from './reusables/IconTextDateList';
 
 export const UserDetail = ({ user, handleClose }) => {
-  
   const [open, setOpen] = React.useState(true)
   const [scroll, setScroll] = React.useState('paper')
   const [expanded, setExpanded] = React.useState('panel1')
@@ -85,11 +84,11 @@ export const UserDetail = ({ user, handleClose }) => {
                       Show rate per hour, general avail times and explain that service provider (sp) has x amount of time to confirm
                       update service request status frequently for example show if the sp has read the request etc
                     </Typography>
-                    <ServiceRequestForm userId={get(user,['profile','ref'])}/>
+                    <ServiceRequestForm userId={get(user,'ref')}/>
                   </AccordionDetails>
                 </Accordion>
                 <Divider/>
-                <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+                {/* <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1bh-content"
@@ -104,8 +103,8 @@ export const UserDetail = ({ user, handleClose }) => {
                       {<IconTextDateList/>}
                     </Typography>
                   </AccordionDetails>
-                </Accordion>
-                <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+                </Accordion> */}
+                {/* <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel2bh-content"
@@ -116,7 +115,7 @@ export const UserDetail = ({ user, handleClose }) => {
                   <AccordionDetails>
                     {<IconTextDateList/>}
                   </AccordionDetails>
-                </Accordion>
+                </Accordion> */}
                 <Accordion disabled expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
