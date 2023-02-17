@@ -1,20 +1,13 @@
-import React, {useState, useEffect, useContext} from "react"
+import React, {useState, useEffect } from "react"
 import { useNavigate } from 'react-router-dom'
-import { get, map, head } from "lodash"
+import { get, head } from "lodash"
 import {
-  Grid,
+  Avatar,
   Container,
-  Typography,
-  List,
-  ListItem,
-  Divider,
-  ListItemText,
-  ListItemAvatar,
-  Avatar
+  Typography
 } from '@mui/material';
 import MUIDataTable from "mui-datatables";
 import "../App.css";
-import { UserContext, UserDispatchContext } from "../contexts/User";
 import { fetchJuaNetworkUsers, fetchJuaNetworkUser } from "../actions/JuaNetwork"
 import Page from '../components/Page';
 import { UserDetail } from '../components/UserDetail';
@@ -25,7 +18,7 @@ export default function JuaNetwork() {
   const [users, setUsers] = useState([])
   const [selectedUser, setSelectedUser] = useState(false)
   const [openUserDetailView, setOpenUserDetailView] = useState(false)
-console.log(users)
+
   useEffect(() => {
     fetchJuaNetworkUsers()
       .then((response) => {
@@ -35,10 +28,10 @@ console.log(users)
       })
   }, [])
 
-  console.log(selectedUser)
-  const onClickJuaNetworkUser = (id) => {
-    fetchJuaNetworkUser(id).then((response) => {
+  const onClickJuaNetworkUser = (ref) => {
+    fetchJuaNetworkUser(ref).then((response) => {
       setSelectedUser(response.data)
+      setOpenUserDetailView(true)
     }).catch((error) => {
       console.error(error)
     })
@@ -47,8 +40,8 @@ console.log(users)
     
   const columns = [
     {
-      name: "id",
-      label: "id",
+      name: "ref",
+      label: "--",
       options: {
         filter: false,
         showColumn: false,
@@ -58,15 +51,23 @@ console.log(users)
       }
     },
     {
+      name: "profile_picture",
+      label: ' ',
+      options: {
+        filter: false,
+        sort: true,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          const row = tableMeta.tableData[tableMeta.rowIndex]
+          return <div><Avatar src={get(row, 'profile_picture')}/></div>;
+        }
+      }
+    },
+    {
       name: "first_name",
       label: "First Name",
       options: {
         filter: false,
         sort: true,
-        customBodyRender: (value, tableMeta, updateValue) => {
-          console.log(tableMeta)
-          return <div>{get(tableMeta.tableData[tableMeta.rowIndex], ['profile', 'first_name'])}</div>;
-        }
       }
     },
     {
@@ -75,9 +76,6 @@ console.log(users)
       options: {
         filter: false,
         sort: true,
-        customBodyRender: (value, tableMeta, updateValue) => {
-          return <div>{get(tableMeta.tableData[tableMeta.rowIndex], ['profile', 'last_name'])}</div>;
-        }
       }
     },
     {
@@ -86,9 +84,6 @@ console.log(users)
       options: {
         filter: true,
         sort: false,
-        customBodyRender: (value, tableMeta, updateValue) => {
-          return <div>{get(tableMeta.tableData[tableMeta.rowIndex], ['profile', 'occupation'])}</div>
-        }
       }
     },
     {
@@ -97,21 +92,13 @@ console.log(users)
       options: {
         filter: true,
         sort: true,
-        customBodyRender: (value, tableMeta, updateValue) => {
-          return <div>{get(tableMeta.tableData[tableMeta.rowIndex], ['profile', 'industry'])}</div>
-        }
       }
     },
   ];
 
-  useEffect(() => {
-
-  }, [])
-
   const goToUserProfile = (rowData) => {
     const juaNetworkUserId = head(rowData)
     onClickJuaNetworkUser(juaNetworkUserId)
-    setOpenUserDetailView(true)
   }
 
   const closeUserDetailView = () => setOpenUserDetailView(false)
@@ -124,7 +111,7 @@ console.log(users)
     selectableRows: 'none',
     resizableColumns: true,
     onRowClick: goToUserProfile,
-    responsive: 'stacked',
+    responsive: 'vertical',
     selectableRowsHideCheckboxes: false
   };
   console.log(users)  
@@ -141,7 +128,7 @@ console.log(users)
         />
         {openUserDetailView &&
          <UserDetail
-           user={head(selectedUser)}
+           user={selectedUser}
            handleClose={closeUserDetailView}
          />
         }
