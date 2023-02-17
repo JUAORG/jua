@@ -1,16 +1,9 @@
-import react, {useEffect, useState} from 'react'
-import { get, head } from 'lodash'
 import { styled } from '@mui/material/styles';
-import { useForm } from "react-hook-form"
-import {
-  Stack,
-  Badge,
-  Avatar,
-  TextField,
-} from '@mui/material'
-import { LoadingButton } from '@mui/lab'
-import { submitJuaPlatformFeedback } from '../../../actions/About'
-import notificationManager from '../../../actions/NotificationManager'
+import { useForm } from 'react-hook-form';
+import { Stack, Badge, Avatar, TextField } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
+import { submitJuaPlatformFeedback } from '../../../actions/About';
+import notificationManager from '../../../actions/NotificationManager';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -39,53 +32,45 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
       opacity: 0,
     },
   },
-}))
+}));
 
 export default function JuaPlatformFeedbackForm() {
-  const formProps = useForm({})
+  const formProps = useForm({});
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = formProps
+  } = formProps;
 
-  const onSubmit = (values) => {    
+  const onSubmit = (values) => {
     submitJuaPlatformFeedback(values)
       .then(() => {
-        notificationManager.success('Thank you for your feedback.', 'Success')
-      }).catch((error) => {
-        notificationManager.error(error, 'Error')
+        notificationManager.success('Thank you for your feedback.', 'Success');
       })
-  }
-  
+      .catch((error) => {
+        notificationManager.error(error, 'Error');
+      });
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
+        <TextField fullWidth label="Subject" {...register('subject')} />
         <TextField
+          rows={4}
           fullWidth
-          label="Subject"
-          { ...register('subject') }
+          multiline
+          label="We welcome your feedback"
+          {...register('message')}
+          placeholder="Improvement suggestions for Jua/Support?"
         />
-        <TextField
-                rows={4}
-                fullWidth
-                multiline
-                label="We welcome your feedback"
-                {...register('feedback')}
-                placeholder="Improvement suggestions for Jua/Support?"
-              />
-          <>
-            <LoadingButton
-              fullWidth
-              size="large"
-              type="submit"
-              loading={ false }
-              variant="contained">
-              Submit
-            </LoadingButton>
-          </>
+        <>
+          <LoadingButton fullWidth size="large" type="submit" loading={false} variant="contained">
+            Submit
+          </LoadingButton>
+        </>
       </Stack>
     </form>
-  )
+  );
 }
