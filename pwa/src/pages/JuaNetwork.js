@@ -25,7 +25,7 @@ export default function JuaNetwork() {
   const [users, setUsers] = useState([])
   const [selectedUser, setSelectedUser] = useState(false)
   const [openUserDetailView, setOpenUserDetailView] = useState(false)
-
+console.log(users)
   useEffect(() => {
     fetchJuaNetworkUsers()
       .then((response) => {
