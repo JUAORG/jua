@@ -11,3 +11,11 @@ export async function submitJuaPlatformFeedback(values) {
     data: values
   })
 }
+
+export async function fetchFrequentlyAskedQuestions(values) {
+  return axios({
+    method: 'GET',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/frequently_asked_questions/`,
+    withCredentials: false,
+  })
+}

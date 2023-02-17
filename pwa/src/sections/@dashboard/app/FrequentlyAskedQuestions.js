@@ -5,29 +5,38 @@ import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import Typography from '@mui/material/Typography'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { fetchFrequentlyAskedQuestions } from '../../../actions/About'
 
 export default function FrequentlyAskedQuestions() {
-  const [faqs, setFaqs] = useState()
+  const [frequentlyAskedQuestions, setFrequentlyAskedQuestions] = useState()
+
+  useEffect(() => {
+    fetchFrequentlyAskedQuestions()
+      .then((response) => {
+        setFrequentlyAskedQuestions(response.data)
+      }).catch((error) => {
+        console.error(error)
+      })
+  }, [])
 
 
   return (
     <div>
-      Coming soon
-      {/* {map(get(data, 'items'), (faq, index) => (
+      {map(frequentlyAskedQuestions, (faq, index) => (
         <Accordion>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             id={index}
           >
-            <Typography>{get(faq, ['fields', 'question'])}</Typography>
+            <Typography>{get(faq, 'title')}</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <Typography>
-              {get(faq, ['fields', 'answer'])}
+              {get(faq, 'body')}
             </Typography>
           </AccordionDetails>
         </Accordion>
-      ))} */}
+      ))}
     </div>
   )
 }
