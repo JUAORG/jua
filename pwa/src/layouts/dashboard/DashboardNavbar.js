@@ -6,7 +6,7 @@ import { Box, Stack, AppBar, Toolbar, IconButton } from '@mui/material';
 import Iconify from '../../components/Iconify';
 //
 import AccountPopover from './AccountPopover';
-
+import NotificationsPopover from './NotificationsPopover';
 
 const DRAWER_WIDTH = 280;
 const APPBAR_MOBILE = 64;
@@ -46,6 +46,7 @@ export default function DashboardNavbar({ user, onOpenSidebar }) {
         </IconButton>
         <Box sx={{ flexGrow: 1 }} />
         <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
+          <NotificationsPopover user={user} />
           <AccountPopover user={user} />
         </Stack>
       </ToolbarStyle>
