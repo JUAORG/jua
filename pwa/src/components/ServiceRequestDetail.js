@@ -76,9 +76,6 @@ export const ServiceRequestDetail = ({ selectedServiceRequest, handleClose }) =>
           </AppBar>
           <DialogContent dividers={scroll === 'paper'}>
             <DialogContentText id="scroll-dialog-description" ref={descriptionElementRef} tabIndex={-1}>
-              <DialogTitle id="scroll-dialog-title">
-                Subject:  {get(selectedServiceRequest, 'subject')}
-              </DialogTitle>
               <Stack
                 direction="column"
                 justifyContent="space-between"
@@ -86,6 +83,9 @@ export const ServiceRequestDetail = ({ selectedServiceRequest, handleClose }) =>
                 spacing={0.5}
               >
                 <div>
+                  <Typography variant="body2" gutterBottom>
+                    Subject: {get(selectedServiceRequest, 'subject')}
+                  </Typography>
                   <Typography variant="body2" gutterBottom>
                     Description: {get(selectedServiceRequest, 'description')}
                   </Typography>
@@ -110,7 +110,7 @@ export const ServiceRequestDetail = ({ selectedServiceRequest, handleClose }) =>
                     {get(selectedServiceRequest, 'created_at')}
                   </div>
                   <div>
-                    <Button expanded variant='' onClick={goToServiceRequestMeeting}>Start Service Request</Button>
+                    <Button expanded variant='contained' onClick={goToServiceRequestMeeting}>Start Service Request</Button>
                   </div>
                   <Divider/>
                 </div>
@@ -121,10 +121,6 @@ export const ServiceRequestDetail = ({ selectedServiceRequest, handleClose }) =>
               </Stack>
             </DialogContentText>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Close</Button>
-            <Button disabled>Update</Button>
-          </DialogActions>
         </Dialog>
     );
 }
