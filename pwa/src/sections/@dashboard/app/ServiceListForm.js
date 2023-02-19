@@ -1,16 +1,9 @@
-import react, {useEffect, useState} from 'react'
-import { get, head } from 'lodash'
+import { useState } from 'react'
 import { useForm } from "react-hook-form"
 import { Stack, TextField, InputAdornment } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-import {
-  addRecordUnderUserDoc,
-  updateRecordUnderUserDoc,
-  deleteRecordUnderUserSubDoc
-} from '../../../actions/GeneralFunctions'
 import notificationManager from '../../../actions/NotificationManager'
-import { createId } from '../../../utils/uuid-generator'
-import { addWork, deleteWork, editWork } from '../../../actions/Work'
+import { createUserService, deleteUserService, updateUserService } from '../../../actions/Profile'
 
 
 export default function ServiceListForm(serviceDoc) {
@@ -19,28 +12,20 @@ export default function ServiceListForm(serviceDoc) {
   const formProps = useForm({ defaultValues: service })
 
   const {
-    reset,
-    watch,
-    control,
-    setValue,
     register,
-    getValues,
     handleSubmit,
-    formState: { errors },
   } = formProps
 
   const onSubmit = (values) => {
     if (service) {
-      values.id = get(service, "id")
-      updateRecordUnderUserDoc(values, 'services')
+      updateUserService(values, 'services')
     }else{
-      values.id = createId()
-      addRecordUnderUserDoc(values, 'services')
+      createUserService(values, 'services')
     }
   }
 
   const deleteItem = (service) => {
-    deleteRecordUnderUserSubDoc(service, 'services')
+    deleteUserService(service, 'services')
   }
   
   return (

@@ -1,37 +1,22 @@
-import react, {useEffect, useState} from 'react'
-import { get, head } from 'lodash'
+import { useState } from 'react'
+import { get } from 'lodash'
 import { useForm } from "react-hook-form"
 import { Stack, TextField } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import notificationManager from '../../../actions/NotificationManager'
-import { createId } from '../../../utils/uuid-generator'
-import { addWork, deleteWork, editWork } from '../../../actions/Work'
-import {
-  addRecordUnderUserDoc,
-  updateRecordUnderUserDoc,
-  deleteRecordUnderUserSubDoc
-} from '../../../actions/GeneralFunctions'
 import {
   createUserExperience,
   updateUserExperience,
   deleteUserExperience
 } from '../../../actions/Profile'
 
-const SUB_DOCUMENT = 'work'
-
 export default function WorkHistoryForm(workDoc) {
   const [experience, setExperience] = useState(workDoc.workDoc)
   const formProps = useForm({ defaultValues: experience })
 
   const {
-    reset,
-    watch,
-    control,
-    setValue,
     register,
-    getValues,
     handleSubmit,
-    formState: { errors },
   } = formProps
 
 

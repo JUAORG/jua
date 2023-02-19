@@ -1,6 +1,6 @@
 import axios from "axios"
 import { get } from 'lodash'
-import { getAuthTokenCookie, defaultHeaders } from "./Auth"
+import { defaultHeaders } from "./Auth"
 
 
 export async function uploadUserProfile(values) {
@@ -82,6 +82,36 @@ export async function deleteUserExperience(values) {
   return axios({
     method: 'DELETE',
     url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_experience/${get(values, 'ref')}/`,
+    withCredentials: false,
+    headers: defaultHeaders
+  })
+}
+
+
+export async function createUserService(values) {
+  return axios({
+    method: 'POST',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_service/`,
+    withCredentials: false,
+    headers: defaultHeaders,
+    data: values
+  })
+}
+
+export async function updateUserService(values) {
+  return axios({
+    method: 'PATCH',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_service/${get(values, 'ref')}/`,
+    withCredentials: false,
+    headers: defaultHeaders,
+    data: values
+  })
+}
+
+export async function deleteUserService(values) {
+  return axios({
+    method: 'DELETE',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_service/${get(values, 'ref')}/`,
     withCredentials: false,
     headers: defaultHeaders
   })

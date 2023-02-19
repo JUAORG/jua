@@ -1,27 +1,15 @@
-import react, { useState } from 'react'
+import { useState } from 'react'
 import { get } from 'lodash'
 import { useForm } from "react-hook-form"
 import { Stack, TextField } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import notificationManager from '../../../actions/NotificationManager'
-import { createId } from '../../../utils/uuid-generator'
-import {
-  addEducation,
-  editEducation,
-  deleteEducation,
-} from '../../../actions/Education'
-import {
-  addRecordUnderUserDoc,
-  updateRecordUnderUserDoc,
-  deleteRecordUnderUserSubDoc
-} from '../../../actions/GeneralFunctions'
 import {
   createUserEducation,
   updateUserEducation,
   deleteUserEducation
 } from '../../../actions/Profile'
 
-const SUB_DOCUMENT = 'education'
 
 export default function EducationHistoryForm(educationDoc) {
 
@@ -29,14 +17,8 @@ export default function EducationHistoryForm(educationDoc) {
   const formProps = useForm({ defaultValues: education })
 
   const {
-    reset,
-    watch,
-    control,
-    setValue,
     register,
-    getValues,
     handleSubmit,
-    formState: { errors },
   } = formProps
 
   const onSubmit = (values) => {
