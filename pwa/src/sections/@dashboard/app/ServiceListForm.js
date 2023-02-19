@@ -81,6 +81,7 @@ export default function ServiceListForm(serviceDoc) {
         )}
         {!service && (
           <LoadingButton
+          disabled
             fullWidth
             size="large"
             type="submit"
