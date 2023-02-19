@@ -9,7 +9,7 @@ class JitsiComponent extends Component {
 
   domain = process.env.REACT_APP_JITSI_DOMAIN;
   api = {}
-  
+
   constructor(props) {
     super(props)
     this.state = {
@@ -49,9 +49,9 @@ class JitsiComponent extends Component {
     });
   }
 
-  handleClose = () => {
-    document.location.href = `/dashboard/advisory_session_meeting/feedback/:${window.location.search}`
-  }
+    handleClose = () => {
+        document.location.href = `/dashboard/advisory_session_meeting/feedback/:${this.state.room}`
+    }
 
   handleParticipantLeft = async (participant) => {
     console.log("participant left")
@@ -93,7 +93,7 @@ class JitsiComponent extends Component {
     });
   }
 
-  
+
 
   // custom events
   executeCommand(command) {

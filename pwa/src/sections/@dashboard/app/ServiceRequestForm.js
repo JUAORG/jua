@@ -20,7 +20,7 @@ import { getAuthId } from '../../../actions/Auth'
 import { createServiceRequest, updateServiceRequest, serviceRequestStatusOptions } from '../../../actions/JuaNetwork'
 
 
-export default function ServiceRequestForm({closeDialog, serviceRequest, isServiceProvider, userId}) {
+export default function ServiceRequestForm({closeDialog, serviceRequest, isServiceProvider, serviceProvider}) {
   const { juaNetworkUserId } = useParams()
   const formProps = useForm({ defaultValues: serviceRequest })
   const [date, setDate] = useState(get(serviceRequest, 'date'))
@@ -49,7 +49,7 @@ export default function ServiceRequestForm({closeDialog, serviceRequest, isServi
     //   alert("Update feature coming soon")
     // }else{
     //    values.serviceProvider = juaNetworkUserId
-    values.service_provider = userId
+    values.service_provider = get(serviceProvider, 'ref')
     createServiceRequest(values)
       .then(() => {
         notificationManager.success('Service request created', 'Success')

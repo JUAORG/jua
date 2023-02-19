@@ -83,6 +83,24 @@ export async function fetchServiceRequests() {
   })
 }
 
+export async function fetchServiceRequestsForServiceProvider() {
+    return axios({
+        method: 'GET',
+        url: `${process.env.REACT_APP_API_BASE_URL}/api/service_requests/?is_service_provider=True`,
+        withCredentials: false,
+        headers: defaultHeaders
+    })
+}
+
+export async function fetchServiceRequest(ref) {
+    return axios({
+        method: 'GET',
+        url: `${process.env.REACT_APP_API_BASE_URL}/api/service_requests/${ref}`,
+        withCredentials: false,
+        headers: defaultHeaders
+    })
+}
+
 // export async function createServiceRequest(values) {
 //   const serviceRequestKey = createId()
 //   values.serviceRequester = uid
@@ -98,8 +116,8 @@ export const submitActiveServiceRequestAction = (serviceRequestId, action) => {
   serviceRequestActionDocument.user = uid
   serviceRequestActionDocument.action = action
   serviceRequestActionDocument.id = createId()
-  
-  
+
+
 }
 
 export async function updateServiceRequest(values) {
@@ -111,16 +129,16 @@ export async function completeServiceRequest(values) {
   const updates = {}
   const serviceRequestKey = values.id
 
-
-
-
-
-  
 }
 
 export async function submitServiceRequestFeedback(values) {
-
-alert('submit')
+    return axios({
+        method: 'POST',
+        url: `${process.env.REACT_APP_API_BASE_URL}/api/service_request_feedback/`,
+        withCredentials: false,
+        headers: defaultHeaders,
+        data: values
+    })
 }
 
 export const getActiveServiceRequests = (serviceRequests) => {
@@ -191,14 +209,14 @@ export async function processCalendarEvents(sentServiceRequests, recievedService
       color: 'green',
       backgroundColor: "transparent",
       textColor: "#000",
-      start: get(event, 'date'), 
-      end: get(event, 'event_end'), 
-      allDay: false, 
-      status: get(event, 'status'),
-      meetingLink: get(event, 'meetingLink'),
-      extendedProps: {
-        status: 'done'
-      }
+      start: get(event, 'date'),
+        end: get(event, 'event_end'),
+        allDay: false,
+        status: get(event, 'status'),
+        meetingLink: get(event, 'meetingLink'),
+        extendedProps: {
+            status: 'done'
+        }
     }
   })
   return result

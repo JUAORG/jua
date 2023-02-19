@@ -57,7 +57,6 @@ export default function ReusableTab({
         <Tabs
           value={ value }
           variant={ variant }
-          centered={ isCentered }
           onChange={ handleChange }
           scrollButtons={ scrollButtons }
           allowScrollButtonsMobile={ allowScrollButtonsMobile }
