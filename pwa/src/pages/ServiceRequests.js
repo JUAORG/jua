@@ -57,22 +57,54 @@ export default function ServiceRequests() {
       <List sx={{ bgcolor: 'background.paper' }}>
         {map(serviceRequests, (serviceRequest) => (
           <>
-            <ListItem id={get(serviceRequest, 'ref')} alignItems="flex-start">
+            <ListItem
+              id={get(serviceRequest, 'ref')}
+              alignItems="flex-start"
+              sx={{cursor: 'pointer'}}
+              onClick={() => openServiceRequestDetailView(serviceRequest)}
+            >
               <ListItemText
-              // primary={'hello'}
+                primary={get(serviceRequest, 'date', 'No Date Set')}
                 secondary={
                   <>
                     <Typography
-                      sx={{ display: 'inline', cursor: 'pointer' }}
                       component="span"
                       variant="body2"
                       color="text.primary"
-                      onClick={() => openServiceRequestDetailView(serviceRequest)}
                     >
                       Subject: {get(serviceRequest, 'subject', 'description empty')}
-                    </Typography>
-                    <br />
-                    Description: {get(serviceRequest, 'description', 'description empty')}
+                    </Typography><br/>
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      Status: {get(serviceRequest, 'status', 'description empty')}
+                    </Typography><br/>
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      Description: {get(serviceRequest, 'description', 'description empty')}
+                      </Typography><br/>
+                      <Typography
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      Participants: {' '}
+                      {get(serviceRequest, ['service_provider', 'profile', 'first_name'])} {' '}
+                      {get(serviceRequest, ['service_provider', 'profile', 'last_name'])}, 
+                      </Typography>
+                      <Typography
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      {get(serviceRequest, ['service_requester', 'profile', 'first_name'])} {' '}
+                      {get(serviceRequest, ['service_requester', 'profile', 'last_name'])}
+                      </Typography>
                   </>
                 }
               />
