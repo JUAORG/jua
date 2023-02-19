@@ -29,7 +29,7 @@ export const UserDetail = ({ user, handleClose }) => {
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   }
-  
+
   const descriptionElementRef = React.useRef(null);
   React.useEffect(() => {
     if (open) {
@@ -75,7 +75,7 @@ export const UserDetail = ({ user, handleClose }) => {
                     id="panel1bh-header"
                   >
                     <Typography sx={{ width: '33%', flexShrink: 0 }}>
-                      Request 
+                      Request
                     </Typography>
                     <Typography sx={{ color: 'text.secondary' }}>Advisory Session</Typography>
                   </AccordionSummary>
@@ -84,7 +84,7 @@ export const UserDetail = ({ user, handleClose }) => {
                       Show rate per hour, general avail times and explain that service provider (sp) has x amount of time to confirm
                       update service request status frequently for example show if the sp has read the request etc
                     </Typography>
-                    <ServiceRequestForm userId={get(user,'ref')}/>
+                    <ServiceRequestForm serviceProvider={user}/>
                   </AccordionDetails>
                 </Accordion>
                 <Divider/>
@@ -134,7 +134,7 @@ export const UserDetail = ({ user, handleClose }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Close</Button> | 
+          <Button onClick={handleClose}>Close</Button> |
           <Button disabled>Report</Button> |
           <Button disabled>Request Service Request</Button>
         </DialogActions>
