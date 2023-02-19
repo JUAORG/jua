@@ -7,7 +7,7 @@ export default function Faq() {
   return (
     <Page title="FAQ">
       <Container maxWidth="xl">
-        <Typography variant="h4" sx={{ mb: 5, textAlign: 'center', margin: 'auto' }}>
+          <Typography variant="h4" sx={{ mb: 10, textAlign: 'center', margin: 'auto' }}>
           <img
             alt='FAQs'
             width={ 150 }
@@ -15,8 +15,9 @@ export default function Faq() {
             src='/static/illustrations/undraw_questions.svg'
           />
           Frequently Asked Questions
-        </Typography>
-        <FrequentlyAskedQuestions/>
+      </Typography>
+          <br/>
+          <FrequentlyAskedQuestions/>
       </Container>
     </Page>
   )
