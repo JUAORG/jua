@@ -1,34 +1,40 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import SpeedDial from '@mui/material/SpeedDial';
-import SpeedDialIcon from '@mui/material/SpeedDialIcon';
-import SpeedDialAction from '@mui/material/SpeedDialAction';
-import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import PrintIcon from '@mui/icons-material/Print';
+import { useNavigate } from 'react-router-dom';
+import { Box, SpeedDial, SpeedDialIcon, SpeedDialAction } from '@mui/material';
+import FeedbackIcon from '@mui/icons-material/Feedback';
 import ShareIcon from '@mui/icons-material/Share';
 
-const actions = [
-//   { icon: <FileCopyIcon />, name: 'Copy' },
-//   { icon: <SaveIcon />, name: 'Save' },
-//   { icon: <PrintIcon />, name: 'Print' },
-  { icon: <ShareIcon />, name: 'Share', onclick: onShare },
-];
-
-const onShare = (event) => {
-    // console.log(navigator)
-        // if (navigator.share) {
-        //   navigator.share({
-        //     title: 'WebShare API Demo',
-        //     url: 'https://codepen.io/ayoisaiah/pen/YbNazJ'
-        //   }).then(() => {
-        //     console.log('Thanks for sharing!');
-        //   })
-        //   .catch(console.error);
-        // } 
-}
-
 export default function BasicSpeedDial() {
+  const navigate = useNavigate();
+
+  const goToFeedbackPage = () => navigate(`/dashboard/about`, { replace: true });
+
+  const shareJUA = () => {
+    const shareData = {
+      title: 'JUA',
+      text: 'Join JUA today!',
+      url: 'https://jua.one',
+    };
+    try {
+      navigator.share(shareData);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const actions = [
+    {
+      icon: <FeedbackIcon />,
+      name: 'Feedback',
+      onClick: goToFeedbackPage,
+    },
+    {
+      icon: <ShareIcon />,
+      name: 'Share',
+      onClick: shareJUA,
+    },
+  ];
+
   return (
     <Box sx={{ bottom: 10, right: 10, position: 'fixed', transform: 'translateZ(0px)', flexGrow: 1 }}>
       <SpeedDial
@@ -37,11 +43,7 @@ export default function BasicSpeedDial() {
         icon={<SpeedDialIcon />}
       >
         {actions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-          />
+          <SpeedDialAction onClick={action.onClick} key={action.name} icon={action.icon} tooltipTitle={action.name} />
         ))}
       </SpeedDial>
     </Box>
