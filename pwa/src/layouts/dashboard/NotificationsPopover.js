@@ -203,6 +203,7 @@ function NotificationItem({ notification }) {
           >
             <Iconify icon="eva:clock-outline" sx={{ mr: 0.5, width: 16, height: 16 }} />
             {/* {fToNow(get(notification, 'createdAt'))} */}
+            mark as read
           </Typography>
         }
       />
