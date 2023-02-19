@@ -40,10 +40,9 @@ export default function NotificationsPopover() {
     useEffect(() => {
         getUserNotifications()
             .then((res) => {
-                console.debug('success', res)
                 setNotifications(res.data)
             }).catch((err) => {
-                console.debug('error', err)
+                console.error('error', err)
             })
     },[])
 
@@ -215,7 +214,7 @@ function NotificationItem({ notification }) {
 
 function renderContent(notification) {
   const title = (
-    <Typography variant="subtitle2">
+    <Typography key={get(notification, 'ref')} variant="subtitle2">
       {get(notification, 'title')}
       <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
         &nbsp; {(get(notification, 'message'))}

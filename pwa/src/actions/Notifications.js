@@ -26,10 +26,10 @@ export async function markAllUserNotificationsAsRead(values) {
     })
 }
 
-export async function markUserNotificationAsRead(id) {
+export async function markUserNotificationAsRead(ref) {
     return axios({
-        method: 'GET',
-        url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_notifications/${id}`,
+        method: 'PATCH',
+        url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_notifications/${ref}`,
         withCredentials: false,
         headers: defaultHeaders
     })

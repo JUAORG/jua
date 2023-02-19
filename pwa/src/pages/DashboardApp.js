@@ -125,12 +125,12 @@ export default function DashboardApp() {
         </Typography>
         <Grid container spacing={3}>
           { get(user, ['profile', 'is_service_provider']) ? renderAdvisorHomePage() : renderCustomerHomePage() }
-          <Grid item xs={12} md={6} lg={8}>
+          {/* <Grid item xs={12} md={6} lg={8}>
             <Typography variant="h6" mb={2}>
               Updates
             </Typography>
             <AppNewsUpdate list={ userUpdates }/>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Container>
     </Page>
