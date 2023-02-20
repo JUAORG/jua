@@ -9,10 +9,15 @@ import Page from '../components/Page';
 import { UserContext } from '../contexts/User';
 import { AppNewsUpdate, AppWidgetSummary } from '../sections/@dashboard/app';
 import BasicSpeedDial from '../components/SpeedDial';
+import ServiceDetail from './ServiceDetail';
+import BadgesList from '../components/BadgesList'
 
 export default function DashboardApp() {
   const navigate = useNavigate();
   const user = useContext(UserContext);
+  const [openServiceDetailPage, setOpenServiceDetailPage] = useState(true)
+  const [selectedService, setSelectedService] = useState(null)
+
 
   const [customerInfoSteps, setCustomerInfoSteps] = useState([
     {
@@ -40,14 +45,19 @@ export default function DashboardApp() {
     navigate('/dashboard/service_requests', { replace: true });
   };
 
-  const goToServiceDetailPage = (service) => {
+  const openServiceDetailModal = (service) => {
     const serviceSlug = get(service, 'slug');
-    navigate(`/dashboard/service/${serviceSlug}`, { replace: true });
+    setSelectedService(service)
+   // navigate(`/dashboard/service/${serviceSlug}`, { replace: true });
   };
 
   const goToServicesPage = () => {
     navigate('/dashboard/services/', { replace: true });
   };
+
+  const handleCloseServiceDetail = () => {
+    setOpenServiceDetailPage(false)
+  }
 
   const renderAdvisorHomePage = () => {
     return (
@@ -73,7 +83,7 @@ export default function DashboardApp() {
           <ImageListItem
             key={get(service, 'id')}
             sx={{ cursor: 'pointer' }}
-            onClick={() => goToServiceDetailPage(service)}
+            onClick={() => openServiceDetailModal(service)}
           >
             <img
               alt={get(service, 'thumbnail_alt')}
@@ -116,12 +126,16 @@ export default function DashboardApp() {
         </Typography>
         <Grid container spacing={3}>
           {get(user, ['profile', 'is_service_provider']) ? renderAdvisorHomePage() : renderCustomerHomePage()}
-          {/* <Grid item xs={12} md={6} lg={8}>
+          {/*
+          <Grid item xs={12} md={6} lg={8}>
             <Typography variant="h6" mb={2}>
-              Updates
+              Badges
             </Typography>
             <AppNewsUpdate list={ userUpdates }/>
-          </Grid> */}
+            <BadgesList/>
+          </Grid>
+*/}
+        {openServiceDetailPage && <ServiceDetail handleClose={handleCloseServiceDetail} selectedService={selectedService}/>}
         </Grid>
         <BasicSpeedDial />
       </Container>
