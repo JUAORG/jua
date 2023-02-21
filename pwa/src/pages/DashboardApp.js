@@ -3,11 +3,14 @@ import { Grid, Container, Typography, ImageList, ImageListItem, ImageListItemBar
 import Joyride from 'react-joyride';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { fromPairs, get, map, size } from 'lodash';
+import FeedbackIcon from '@mui/icons-material/Feedback';
+import ShareIcon from '@mui/icons-material/Share';
 import { SERVICES } from '../content/services';
 import Page from '../components/Page';
 // sections
 import { UserContext } from '../contexts/User';
 import { AppNewsUpdate, AppWidgetSummary } from '../sections/@dashboard/app';
+
 import BasicSpeedDial from '../components/SpeedDial';
 
 export default function DashboardApp() {
@@ -32,6 +35,33 @@ export default function DashboardApp() {
       content: 'This is my awesome feature!',
     },
   ]);
+
+  const goToFeedbackPage = () => navigate(`/dashboard/about`, { replace: true });
+  const shareJUA = () => {
+    const shareData = {
+      title: 'JUA',
+      text: 'Join JUA today!',
+      url: 'https://jua.one',
+    };
+    try {
+      navigator.share(shareData);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const actions = [
+    {
+      icon: <FeedbackIcon />,
+      name: 'Feedback',
+      onClick: goToFeedbackPage,
+    },
+    {
+      icon: <ShareIcon />,
+      name: 'Share',
+      onClick: shareJUA,
+    },
+  ];
 
   const [userUpdates, setUserUpdates] = useState();
   const [numServiceRequests, setNumServiceRequests] = useState();
@@ -123,7 +153,7 @@ export default function DashboardApp() {
             <AppNewsUpdate list={ userUpdates }/>
           </Grid> */}
         </Grid>
-        <BasicSpeedDial />
+        <BasicSpeedDial actions={actions} />
       </Container>
     </Page>
   );
