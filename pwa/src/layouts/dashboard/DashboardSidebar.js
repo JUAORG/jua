@@ -15,6 +15,7 @@ import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';
 
 import navConfig from './NavConfig';
+import ProfileBadges from '../../components/ProfileBadges';
 
 // ----------------------------------------------------------------------
 
@@ -74,9 +75,9 @@ export default function DashboardSidebar({ user, isOpenSidebar, onCloseSidebar }
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
                 {get(user, ['profile', 'first_name'])} {get(user, ['profile', 'last_name'])}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {get(user, ['profile', 'number_of_notification'], 0)} notifications
-              </Typography>
+              
+                <ProfileBadges/>
+              
             </Box>
           </AccountStyle>
         </Link>

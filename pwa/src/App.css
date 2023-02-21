@@ -4,3 +4,7 @@
 .MuiFormGroup-root label:first-of-type {
     display: none;
 }
+
+.profile-badge span {
+    left: 10px;
+}
