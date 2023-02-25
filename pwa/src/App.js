@@ -2,7 +2,7 @@ import 'react-notifications/lib/notifications.css';
 import { NotificationContainer } from 'react-notifications';
 import * as Sentry from '@sentry/browser';
 import { BrowserTracing } from '@sentry/tracing';
-
+import { ReactQueryDevtools } from "react-query/devtools";
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 import Router from './routes';
@@ -34,6 +34,7 @@ export default function App() {
         <ScrollToTop />
         <Router />
         <NotificationContainer />
+        { !process.env.NODE_ENV || process.env.NODE_ENV === 'development' && <ReactQueryDevtools /> }
       </QueryClientProvider>
     </ThemeProvider>
   );
