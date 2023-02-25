@@ -1,5 +1,5 @@
-import axios from "axios"
-import { defaultHeaders } from "./Auth"
+import axios from 'axios'
+import { defaultHeaders } from './Auth'
 
 
 export async function submitJuaPlatformFeedback(values) {
@@ -9,13 +9,5 @@ export async function submitJuaPlatformFeedback(values) {
     withCredentials: false,
     headers: defaultHeaders,
     data: values
-  })
-}
-
-export async function fetchFrequentlyAskedQuestions(values) {
-  return axios({
-    method: 'GET',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/frequently_asked_questions/`,
-    withCredentials: false,
   })
 }
