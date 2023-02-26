@@ -1,21 +1,21 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { get, map } from 'lodash';
-import { Typography, List, ListItem, Divider, ListItemText, Button, Grow } from '@mui/material';
+import { useQuery } from 'react-query';
+import { Typography, List, ListItem, Divider, ListItemText } from '@mui/material';
 import Page from '../components/Page';
-import { Calendar } from '../sections/advisory_session/meeting/calendar/Calendar';
+// import { Calendar } from '../sections/advisory_session/meeting/calendar/Calendar';
 import {
   updateServiceRequest,
   serviceRequestStatusOptions,
   fetchServiceRequests,
-  fetchServiceRequest,
   fetchServiceRequestsForServiceProvider,
 } from '../actions/JuaNetwork';
 import ReusableTab from '../components/reusables/Tabs';
 import { ServiceRequestDetail } from '../components/ServiceRequestDetail';
-import { UserContext } from '../contexts/User';
 
 export default function ServiceRequests() {
-  const user = useContext(UserContext);
+  const { data } = useQuery(['user']);
+  const user = get(data, 'data', {});
   const isUserServiceProvider = get(user, ['profile', 'is_service_provider']);
   const [calendarView, setCalendarView] = useState([]);
   const [serviceRequests, setServiceRequests] = useState([]);

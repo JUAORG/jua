@@ -1,100 +1,45 @@
-import react, {useEffect, useState} from 'react'
-import { get, head } from 'lodash'
+import { useEffect, useState } from 'react'
+import { get } from 'lodash'
 import { useForm } from "react-hook-form"
-import { useParams } from 'react-router-dom'
+import { useMutation, useQueryClient } from 'react-query';
 import {
   Stack,
   TextField,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
-  FormLabel
 } from '@mui/material'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LoadingButton } from '@mui/lab'
 import notificationManager from '../../../actions/NotificationManager'
-import { getAuthId } from '../../../actions/Auth'
-import { createServiceRequest, updateServiceRequest, serviceRequestStatusOptions } from '../../../actions/JuaNetwork'
+import { createServiceRequest, updateServiceRequest } from '../../../actions/JuaNetwork'
 
 
 export default function ServiceRequestForm({closeDialog, serviceRequest, isServiceProvider, serviceProvider}) {
-  const { juaNetworkUserId } = useParams()
+  const queryClient = useQueryClient();
   const formProps = useForm({ defaultValues: serviceRequest })
+  const { register, reset, setValue, handleSubmit } = formProps;
   const [date, setDate] = useState(get(serviceRequest, 'date'))
-  const [serviceRequestStatus, setServiceRequestStatusValue] = useState("read")
-  const {
-    reset,
-    watch,
-    control,
-    setValue,
-    register,
-    getValues,
-    defaultValues,
-    handleSubmit,
-    formState: { errors },
-  } = formProps
 
-  const onSubmit = (values) => {
-    // if (get(serviceRequest, "id") && isServiceProvider) {
-    //   updateServiceRequest(values)
-    //     .then(() => {
-    //       notificationManager.success('Service request updated', 'Success')
-    //     }).catch((error) => {
-    //       notificationManager.error(error, 'Error')
-    //     })
-    // }else if (get(serviceRequest, "id") && !isServiceProvider) {
-    //   alert("Update feature coming soon")
-    // }else{
-    //    values.serviceProvider = juaNetworkUserId
-    values.service_provider = get(serviceProvider, 'ref')
-    createServiceRequest(values)
-      .then(() => {
-        notificationManager.success('Service request created', 'Success')
-      }).catch((error) => {
-        notificationManager.error(error, 'Error')
-      })
-  }
+  const { mutate, isLoading } = useMutation({
+    mutationFn: (values) => (get(serviceRequest, 'ref') ? updateServiceRequest(values) : createServiceRequest(values)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['service_requests'] });
+      notificationManager.success('Service Request', 'Success');
+    },
+    onError: () => notificationManager.error('something went wrong', 'Error')
+  });
 
-  const handleUpdateServiceRequestStatus = (event) => {
-    setServiceRequestStatusValue(event.target.value)
-    setValue("status", event.target.value)
-    
-  }
+  useEffect(() => {
+    setValue('service_provider', get(serviceProvider, 'ref'))
+  },[])
 
   const handleDateTimeChange = (newDate) => {
     setDate(newDate)
     setValue('date', newDate)
   }
-  
-  const renderServiceProviderForm = () => {
-    return (
-      <FormControl>
-        <FormLabel>Status</FormLabel>
-        <RadioGroup
-          row
-          name="status"
-          value={serviceRequestStatus}
-          onChange={handleUpdateServiceRequestStatus}
-        >
-          <FormControlLabel
-            control={<Radio />}
-            value={get(serviceRequestStatusOptions, "accepted" )}
-            label={get(serviceRequestStatusOptions, "accepted" )}
-          />
-          <FormControlLabel
-            control={<Radio />}
-            value={get(serviceRequestStatusOptions, "declined" )}
-            label={get(serviceRequestStatusOptions, "declined" )}
-          />
-        </RadioGroup>
-      </FormControl>
-    )
-  }
 
-  const renderServiceRequesterForm = () => {
+
+  const renderServiceRequestForm = () => {
     return (
       <>
         <TextField 
@@ -124,10 +69,9 @@ export default function ServiceRequestForm({closeDialog, serviceRequest, isServi
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit((values) => mutate(values))}>
       <Stack spacing={3}>
-        { !isServiceProvider && renderServiceRequesterForm() }
-        { isServiceProvider && renderServiceProviderForm() }
+        { renderServiceRequestForm() }
         <LoadingButton
           fullWidth
           size="large"

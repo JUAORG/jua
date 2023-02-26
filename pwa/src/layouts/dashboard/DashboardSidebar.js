@@ -2,14 +2,9 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash'
 import { useEffect } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-// material
 import { styled } from '@mui/material/styles';
-import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
-// mock
-import account from '../../_mock/account';
-// hooks
+import { Box, Link, Drawer, Typography, Avatar } from '@mui/material';
 import useResponsive from '../../hooks/useResponsive';
-// components
 import Logo from '../../components/Logo';
 import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';

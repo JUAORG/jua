@@ -1,21 +1,21 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
+import { get, map } from 'lodash';
+import { useQuery } from 'react-query';
 import { Grid, Container, Typography, ImageList, ImageListItem, ImageListItemBar } from '@mui/material';
 import Joyride from 'react-joyride';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { fromPairs, get, map, size } from 'lodash';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import ShareIcon from '@mui/icons-material/Share';
 import { SERVICES } from '../content/services';
 import Page from '../components/Page';
-// sections
-import { UserContext } from '../contexts/User';
 import { AppNewsUpdate, AppWidgetSummary } from '../sections/@dashboard/app';
-
 import BasicSpeedDial from '../components/SpeedDial';
+
 
 export default function DashboardApp() {
   const navigate = useNavigate();
-  const user = useContext(UserContext);
+  const { data } = useQuery(['user']);
+  const user = get(data, 'data', {});
 
   const [customerInfoSteps, setCustomerInfoSteps] = useState([
     {
@@ -63,9 +63,6 @@ export default function DashboardApp() {
     },
   ];
 
-  const [userUpdates, setUserUpdates] = useState();
-  const [numServiceRequests, setNumServiceRequests] = useState();
-
   const goToServiceRequestPage = () => {
     navigate('/dashboard/service_requests', { replace: true });
   };
@@ -83,7 +80,8 @@ export default function DashboardApp() {
     return (
       <>
         <Grid item xs={12} sm={6} md={3}>
-          <AppWidgetSummary title="Service Requests" total={numServiceRequests} onClick={goToServiceRequestPage} />
+          Blank
+          {/* <AppWidgetSummary title="Service Requests" total={numServiceRequests} onClick={goToServiceRequestPage} /> */}
         </Grid>
       </>
     );
