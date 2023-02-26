@@ -1,18 +1,19 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
+import { useQuery } from 'react-query';
 import { Grid, Container, Typography, ImageList, ImageListItem, ImageListItemBar } from '@mui/material';
 import Joyride from 'react-joyride';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { fromPairs, get, map, size } from 'lodash';
+import { get, map } from 'lodash';
 import { SERVICES } from '../content/services';
 import Page from '../components/Page';
-// sections
-import { UserContext } from '../contexts/User';
-import { AppNewsUpdate, AppWidgetSummary } from '../sections/@dashboard/app';
+
+import { AppWidgetSummary } from '../sections/@dashboard/app';
 import BasicSpeedDial from '../components/SpeedDial';
 
 export default function DashboardApp() {
   const navigate = useNavigate();
-  const user = useContext(UserContext);
+  const { data } = useQuery(['user']);
+  const user = get(data, 'data', {});
 
   const [customerInfoSteps, setCustomerInfoSteps] = useState([
     {

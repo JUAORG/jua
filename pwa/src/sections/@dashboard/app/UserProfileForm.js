@@ -1,7 +1,8 @@
 import react, { useEffect, useState } from 'react';
 import { get, head } from 'lodash';
-import { styled } from '@mui/material/styles';
 import { useForm } from 'react-hook-form';
+import { styled } from '@mui/material/styles';
+import { useMutation, useQueryClient } from 'react-query';
 import {
     Tooltip,
     Stack,
@@ -52,20 +53,12 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 export default function UserProfileForm(user) {
+    const queryClient = useQueryClient();
     const formProps = useForm({});
     const userProfile = get(user, 'userProfile');
     const [openProfilePictureUploader, setOpenProfilePictureUploader] = useState(false);
 
-    const {
-        reset,
-        watch,
-        control,
-        setValue,
-        register,
-        getValues,
-        handleSubmit,
-        formState: { errors },
-    } = formProps;
+    const { register, reset, handleSubmit } = formProps;
 
     useEffect(() => {
         reset({
@@ -75,34 +68,28 @@ export default function UserProfileForm(user) {
             rate_per_hour_in_rands: get(userProfile, 'rate_per_hour_in_rands'),
             linkedIn: get(userProfile, 'linkedIn'),
         });
-        watch();
     }, [userProfile, reset, industries]);
-
-    const handleChange = (event) => {
-        //    setIndustry(event.target.value);
-        //    setValue('industry', event.target.value)
-    };
 
     const handleCloseProfilePictureUploader = (event) => {
         setOpenProfilePictureUploader(false)
     };
 
-    const onSubmit = (values) => {
-        editUserProfile(values)
-            .then(() => {
-                notificationManager.success('Profile updated', 'Success');
-            })
-            .catch((error) => {
-                notificationManager.error(error, 'Error');
-            });
-    };
+    const { mutate, isLoading } = useMutation({
+      mutationFn: (values) => editUserProfile(values),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['user'] });
+        notificationManager.success('Profile updated', 'Success');
+        reset();
+      },
+      onError: () => alert('Something went wrong'),
+    });
 
     const onClickProfilePicture = () => {
         setOpenProfilePictureUploader(true);
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit((values) => mutate(values))}>
           {openProfilePictureUploader &&
            <ProfilePictureUploader
              handleClose={handleCloseProfilePictureUploader}
@@ -122,6 +109,7 @@ export default function UserProfileForm(user) {
             </div>
             <TextField fullWidth label="First Name" {...register('first_name')} />
             <TextField fullWidth label="Last Name" {...register('last_name')} />
+            <TextField value='Information Technology' fullWidth label="Industry" {...register('industry')} />
 
             {/* <TextField */}
             {/*   fullWidth */}

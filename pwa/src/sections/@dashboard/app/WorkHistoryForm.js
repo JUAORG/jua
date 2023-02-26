@@ -1,73 +1,46 @@
-import { useState } from 'react'
-import { get } from 'lodash'
-import { useForm } from "react-hook-form"
-import { Stack, TextField } from '@mui/material'
-import { LoadingButton } from '@mui/lab'
-import notificationManager from '../../../actions/NotificationManager'
-import {
-  createUserExperience,
-  updateUserExperience,
-  deleteUserExperience
-} from '../../../actions/Profile'
+import { get } from 'lodash';
+import { useForm } from 'react-hook-form';
+import { Stack, TextField } from '@mui/material';
+import { useMutation, useQueryClient } from 'react-query';
+import { LoadingButton } from '@mui/lab';
+import notificationManager from '../../../actions/NotificationManager';
+import { createUserExperience, updateUserExperience, deleteUserExperience } from '../../../actions/Profile';
 
 export default function WorkHistoryForm(workDoc) {
-  const [experience, setExperience] = useState(workDoc.workDoc)
-  const formProps = useForm({ defaultValues: experience })
+  const queryClient = useQueryClient();
+  const experience = get(workDoc, 'workDoc');
+  const formProps = useForm({ defaultValues: experience });
 
-  const {
-    register,
-    handleSubmit,
-  } = formProps
+  const { register, reset, handleSubmit } = formProps;
 
+  const { mutate, isLoading } = useMutation({
+    mutationFn: (values) => (get(experience, 'ref') ? updateUserExperience(values) : createUserExperience(values)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      notificationManager.success('Profile updated', 'Success');
+      reset();
+    },
+    onError: () => alert('Something went wrong'),
+  });
 
-  const onSubmit = (values) => {
-    if (experience) {
-      values.ref = get(experience, "ref")
-      updateUserExperience(values)
-        .then(() => {
-          notificationManager.success('Profile updated', 'Success')
-        }).catch((error) => {
-          notificationManager.error(error, 'Error')
-        })
-    }else{
-      createUserExperience(values)
-        .then(() => {
-          notificationManager.success('Profile updated', 'Success')
-        }).catch((error) => {
-          notificationManager.error(error, 'Error')
-        })
-    }
-  }
-  
   const deleteItem = (values) => {
     deleteUserExperience(values)
       .then(() => {
-        notificationManager.success('Profile updated', 'Success')
-      }).catch((error) => {
-        notificationManager.error(error, 'Error')
+        reset();
+        queryClient.invalidateQueries({ queryKey: ['user'] });
+        notificationManager.success('Profile updated', 'Success');
       })
-  }
-  
+      .catch((error) => {
+        notificationManager.error(error, 'Error');
+      });
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Stack spacing={3}>
-        <TextField
-          required
-          fullWidth
-          label="Company"
-          {...register('company')}
-        />
-        <TextField
-          required
-          fullWidth
-          label="title"
-          {...register('title')}
-        />
-        <Stack
-          spacing={ 2 }
-          sx={{ float: "right" }}
-          direction={{ xs: 'column', sm: 'row' }}
-        >
+    <form onSubmit={handleSubmit((values) => mutate(values))}>
+      <Stack spacing={3} pb={5}>
+        <TextField required fullWidth label="Company" {...register('company')} />
+        <TextField required fullWidth label="title" {...register('title')} />
+        <Stack spacing={2} sx={{ float: 'right' }} direction={{ xs: 'column', sm: 'row' }}>
           <TextField
             required
             fullWidth
@@ -90,45 +63,30 @@ export default function WorkHistoryForm(workDoc) {
               shrink: true,
             }}
           />
-          
         </Stack>
-        <TextField
-          fullWidth
-          type="text"
-          label="Description (optional)"
-          {...register('description')}
-        />
+        <TextField fullWidth type="text" label="Description (optional)" {...register('description')} />
         {experience && (
           <>
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            loading={false}
-            variant="contained">
-            Update
-          </LoadingButton>
-          <LoadingButton
-            fullWidth
-            size="large"
-            loading={false}
-            onClick={() => deleteItem(experience)}
-            variant="contained">
-            Delete
-          </LoadingButton>
+            <LoadingButton fullWidth size="large" type="submit" loading={false} variant="contained">
+              Update
+            </LoadingButton>
+            <LoadingButton
+              fullWidth
+              size="large"
+              loading={false}
+              onClick={() => deleteItem(experience)}
+              variant="contained"
+            >
+              Delete
+            </LoadingButton>
           </>
         )}
         {!experience && (
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            loading={false}
-            variant="contained">
+          <LoadingButton fullWidth disabled={isLoading} size="large" type="submit" loading={false} variant="contained">
             Add
           </LoadingButton>
         )}
       </Stack>
     </form>
-  )
+  );
 }
