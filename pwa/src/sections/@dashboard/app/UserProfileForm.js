@@ -1,5 +1,5 @@
-import react, { useEffect, useState } from 'react';
-import { get, head } from 'lodash';
+import { useEffect, useState } from 'react';
+import { get } from 'lodash';
 import { useForm } from 'react-hook-form';
 import { styled } from '@mui/material/styles';
 import { useMutation, useQueryClient } from 'react-query';
@@ -8,17 +8,12 @@ import {
     Stack,
     Badge,
     Avatar,
-    Select,
     TextField,
-    InputLabel,
-    FormControl,
     InputAdornment,
-    MenuItem,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import notificationManager from '../../../actions/NotificationManager';
-import { createId } from '../../../utils/uuid-generator';
 import { editUserProfile } from '../../../actions/Profile';
 import { industries } from '../../../_mock/industries';
 import ProfilePictureUploader from './ProfilePictureUploadForm';
@@ -70,11 +65,11 @@ export default function UserProfileForm(user) {
         });
     }, [userProfile, reset, industries]);
 
-    const handleCloseProfilePictureUploader = (event) => {
+    const handleCloseProfilePictureUploader = () => {
         setOpenProfilePictureUploader(false)
     };
 
-    const { mutate, isLoading } = useMutation({
+    const { mutate } = useMutation({
       mutationFn: (values) => editUserProfile(values),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['user'] });

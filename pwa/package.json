@@ -60,6 +60,7 @@
         "date-fns": "^2.28.0",
         "history": "^5.2.0",
         "lodash": "^4.17.21",
+        "mui-chat-box": "^0.0.3",
         "mui-datatables": "^4.2.2",
         "numeral": "^2.0.6",
         "prop-types": "^15.8.1",

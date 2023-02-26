@@ -3,7 +3,7 @@ import { get, map } from 'lodash';
 import { useQuery } from 'react-query';
 import { Grid, Container, Typography, ImageList, ImageListItem, ImageListItemBar } from '@mui/material';
 import Joyride from 'react-joyride';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import ShareIcon from '@mui/icons-material/Share';
 import { SERVICES } from '../content/services';
