@@ -35,7 +35,7 @@ const MainStyle = styled('div')(({ theme }) => ({
 
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false)
-  const { data } = useQuery(['user'])
+  const { data, isLoading } = useQuery(['user'])
   const user = get(data, 'data', {})
   
 
