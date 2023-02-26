@@ -1,45 +1,47 @@
-import { get } from 'lodash'
+import { get } from 'lodash';
 import { useRef, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@mui/material';
 import MenuPopover from '../../components/MenuPopover';
-import account from '../../_mock/account';
-import notificationManager from '../../actions/NotificationManager'
-import { logout } from '../../actions/Auth';
+import notificationManager from '../../actions/NotificationManager';
+import { clearAuthTokenCookie, logout } from '../../actions/Auth';
+import PasswordChangeForm from '../../sections/@dashboard/app/PasswordChangeForm';
+import FormDialog from '../../components/FormDialog';
 // ----------------------------------------------------------------------
-const MENU_OPTIONS = [
-  {
-    label: 'Password Change',
-    linkTo: '/dashboard/password_change',
-  },
-];
 
-export default function AccountPopover({user}) {
+const MENU_OPTIONS = [];
+
+export default function AccountPopover({ user }) {
+  const navigate = useNavigate();
   const anchorRef = useRef(null);
-
   const [open, setOpen] = useState(null);
+  const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setOpen(null);
+  const handleClose = () => setOpen(null);
+  const openPasswordChangeForm = () => setShowChangePasswordForm(true);
+  const handleCloseChangePasswordForm = () => setShowChangePasswordForm(false);
+
+  const handleLogout = () => {
+    logout()
+      .then(() => {
+        notificationManager.success('Logged out', 'Success');
+      })
+      .catch((error) => {
+        console.error(error.response);
+      })
+      .finally(() => {
+        localStorage.clear();
+        clearAuthTokenCookie();
+        navigate('/login', { replace: true });
+      });
   };
 
-  const doLogout = () => {
-    logout().then(() => {
-      notificationManager.success('Logged out', 'Success')
-    }).catch((error) => {
-      console.error(error.response)
-    }).finally(() => {
-      localStorage.clear()
-      window.location.reload()
-    })
-  }
-  
-return (
+  return (
     <>
       <IconButton
         ref={anchorRef}
@@ -78,7 +80,7 @@ return (
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-          {get(user, ['profile', 'first_name'])} {get(user, ['profile', 'last_name'])}
+            {get(user, ['profile', 'first_name'])} {get(user, ['profile', 'last_name'])}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
             {get(user, ['profile', 'number_of_notification'], 0)} notifications
@@ -96,10 +98,21 @@ return (
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
-        <MenuItem onClick={doLogout} sx={{ m: 1 }}>
+        <MenuItem onClick={openPasswordChangeForm} sx={{ m: 1 }}>
+          Change Password
+        </MenuItem>
+        <Divider sx={{ borderStyle: 'dashed' }} />
+        <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
           Logout
         </MenuItem>
       </MenuPopover>
+      {showChangePasswordForm && (
+        <FormDialog
+          handleClose={handleCloseChangePasswordForm}
+          title="Change Password"
+          form={<PasswordChangeForm handleClose={handleCloseChangePasswordForm} />}
+        />
+      )}
     </>
   );
 }

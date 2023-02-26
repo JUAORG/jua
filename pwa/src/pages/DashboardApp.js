@@ -34,7 +34,6 @@ export default function DashboardApp() {
     },
   ]);
 
-  const [userUpdates, setUserUpdates] = useState();
   const [numServiceRequests, setNumServiceRequests] = useState();
 
   const goToServiceRequestPage = () => {

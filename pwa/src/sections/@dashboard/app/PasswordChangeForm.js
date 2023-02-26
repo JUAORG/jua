@@ -5,7 +5,7 @@ import { LoadingButton } from '@mui/lab'
 import { updateUserPassword } from '../../../actions/Auth'
 import notificationManager from '../../../actions/NotificationManager'
 
-export default function PasswordChangeForm() {
+export default function PasswordChangeForm({handleClose}) {
   const queryClient = useQueryClient();
   const formProps = useForm({ defaultValues: null });
   const { register, reset, handleSubmit } = formProps;
@@ -16,6 +16,7 @@ export default function PasswordChangeForm() {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       notificationManager.success('Password updated', 'Success');
       reset();
+      handleClose()
     },
     onError: () => notificationManager.error('Something went wrong.', 'Error')
   });

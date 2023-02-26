@@ -1,4 +1,6 @@
-import { Navigate, useRoutes } from 'react-router-dom'
+import { useEffect } from 'react';
+import { useQuery } from 'react-query';
+import { Navigate, useNavigate, useRoutes } from 'react-router-dom'
 // layouts
 import DashboardLayout from './layouts/dashboard'
 import LogoOnlyLayout from './layouts/LogoOnlyLayout'
@@ -22,11 +24,32 @@ import ServiceRequest from './pages/ServiceRequest'
 import PasswordChange from './pages/PasswordChange'
 import Wallet from './pages/Wallet'
 import Faq from './pages/Faq'
+import { clearAuthTokenCookie, getAuthTokenCookie, getUser } from './actions/Auth'
 
 // ----------------------------------------------------------------------
+const LOGIN_PATH = '/login'
+const REGISTER_PATH = '/register'
 
 export default function Router() {
+  const navigate = useNavigate()
+  const hasAuthTokenCookie = Boolean(getAuthTokenCookie())
+  const currentPath = window.location.pathname
+  const isOnAuthPage = Boolean(currentPath === LOGIN_PATH || currentPath === REGISTER_PATH)
+  const { error, isLoading } = useQuery(['user'], getUser, {
+    enabled: true,
+    retry: 2,
+    // retryDelay: 1000,
+    staleTime: 120000,
+    refetchInterval: 120000,
+    refetchIntervalInBackground: false,
+  })
 
+  useEffect(() => {
+    if (!hasAuthTokenCookie || error) {
+      clearAuthTokenCookie()
+      navigate(`/login`, { replace: true });
+    }
+  },[isLoading, error])
 
   return useRoutes([
     {
