@@ -1,11 +1,7 @@
-import React, {useState, useEffect } from "react"
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from "react"
 import { get, head } from "lodash"
-import {
-  Avatar,
-  Container,
-  Typography
-} from '@mui/material';
+import { useQuery } from 'react-query';
+import { Avatar, Container, Typography } from '@mui/material';
 import MUIDataTable from "mui-datatables";
 import "../App.css";
 import { fetchJuaNetworkUsers, fetchJuaNetworkUser } from "../actions/JuaNetwork"
@@ -14,19 +10,15 @@ import { UserDetail } from '../components/UserDetail';
 
 
 export default function JuaNetwork() {
-  const navigate = useNavigate();
-  const [users, setUsers] = useState([])
+  const { data, error, isLoading } = useQuery(['jua_network_users'], fetchJuaNetworkUsers, {
+    enabled: true,
+    refetchInterval: 60000,
+    // Continue to refetch while the tab/window is in the background
+    refetchIntervalInBackground: true,
+  });
+  const users = get(data, 'data', [])
   const [selectedUser, setSelectedUser] = useState(false)
   const [openUserDetailView, setOpenUserDetailView] = useState(false)
-
-  useEffect(() => {
-    fetchJuaNetworkUsers()
-      .then((response) => {
-        setUsers(response.data)
-      }).catch((error) => {
-        console.error(error)
-      })
-  }, [])
 
   const onClickJuaNetworkUser = (ref) => {
     fetchJuaNetworkUser(ref).then((response) => {
@@ -114,18 +106,20 @@ export default function JuaNetwork() {
     responsive: 'vertical',
     selectableRowsHideCheckboxes: false
   };
-  console.log(users)  
+
   return (
     <Page title="Jua Network">
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
           Jua Network
         </Typography>   
+        {!isLoading &&
         <MUIDataTable
           data={users}
           columns={columns}
           options={options}
         />
+        }
         {openUserDetailView &&
          <UserDetail
            user={selectedUser}

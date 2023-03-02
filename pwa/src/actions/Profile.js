@@ -1,31 +1,30 @@
-import axios from "axios"
-import { get } from 'lodash'
-import { defaultHeaders } from "./Auth"
-
+import axios from 'axios';
+import { get } from 'lodash';
+import { defaultHeaders } from './Auth';
 
 export async function uploadUserProfile(values) {
-    const formData = new FormData()
-    formData.append('file', values)
-    const fileUploadHeaders = defaultHeaders
-    fileUploadHeaders['Content-Type'] = 'multipart/form-data'
+  const formData = new FormData();
+  formData.append('file', values);
+  const fileUploadHeaders = defaultHeaders;
+  fileUploadHeaders['Content-Type'] = 'multipart/form-data';
 
-    return axios({
-        method: 'PUT',
-        url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_picture/`,
-        withCredentials: false,
-        headers: fileUploadHeaders,
-        data: formData
-    })
+  return axios({
+    method: 'PUT',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_picture/`,
+    withCredentials: false,
+    headers: fileUploadHeaders,
+    data: formData,
+  });
 }
 
 export async function editUserProfile(values) {
-    return axios({
-        method: 'PATCH',
-        url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile/`,
-        withCredentials: false,
-        headers: defaultHeaders,
-        data: values
-    })
+  return axios({
+    method: 'PATCH',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile/`,
+    withCredentials: false,
+    headers: defaultHeaders,
+    data: values,
+  });
 }
 
 export async function createUserEducation(values) {
@@ -34,8 +33,8 @@ export async function createUserEducation(values) {
     url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_education/`,
     withCredentials: false,
     headers: defaultHeaders,
-    data: values
-  })
+    data: values,
+  });
 }
 
 export async function updateUserEducation(values) {
@@ -44,8 +43,8 @@ export async function updateUserEducation(values) {
     url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_education/${get(values, 'ref')}/`,
     withCredentials: false,
     headers: defaultHeaders,
-    data: values
-  })
+    data: values,
+  });
 }
 
 export async function deleteUserEducation(values) {
@@ -54,9 +53,8 @@ export async function deleteUserEducation(values) {
     url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_education/${get(values, 'ref')}/`,
     withCredentials: false,
     headers: defaultHeaders,
-  })
+  });
 }
-
 
 export async function createUserExperience(values) {
   return axios({
@@ -64,8 +62,8 @@ export async function createUserExperience(values) {
     url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_experience/`,
     withCredentials: false,
     headers: defaultHeaders,
-    data: values
-  })
+    data: values,
+  });
 }
 
 export async function updateUserExperience(values) {
@@ -74,8 +72,8 @@ export async function updateUserExperience(values) {
     url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_experience/${get(values, 'ref')}/`,
     withCredentials: false,
     headers: defaultHeaders,
-    data: values
-  })
+    data: values,
+  });
 }
 
 export async function deleteUserExperience(values) {
@@ -83,10 +81,9 @@ export async function deleteUserExperience(values) {
     method: 'DELETE',
     url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_experience/${get(values, 'ref')}/`,
     withCredentials: false,
-    headers: defaultHeaders
-  })
+    headers: defaultHeaders,
+  });
 }
-
 
 export async function createUserService(values) {
   return axios({
@@ -94,8 +91,8 @@ export async function createUserService(values) {
     url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_service/`,
     withCredentials: false,
     headers: defaultHeaders,
-    data: values
-  })
+    data: values,
+  });
 }
 
 export async function updateUserService(values) {
@@ -104,8 +101,8 @@ export async function updateUserService(values) {
     url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_service/${get(values, 'ref')}/`,
     withCredentials: false,
     headers: defaultHeaders,
-    data: values
-  })
+    data: values,
+  });
 }
 
 export async function deleteUserService(values) {
@@ -113,6 +110,6 @@ export async function deleteUserService(values) {
     method: 'DELETE',
     url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_service/${get(values, 'ref')}/`,
     withCredentials: false,
-    headers: defaultHeaders
-  })
+    headers: defaultHeaders,
+  });
 }

@@ -16,7 +16,7 @@ export default function UserItem({ user, brief }) {
             <List sx={{ width: '100%', maxWidth: 400, bgcolor: 'background.paper' }}>
             <ListItem alignItems="flex-start">
             <ListItemAvatar>
-            <Avatar src={get(user, 'profile_picture')} />
+            <Avatar sx={{color: "#2065D1"}} src={get(user, 'profile_picture')} />
             </ListItemAvatar>
             <ListItemText
         primary={get(user, 'industry')}

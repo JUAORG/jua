@@ -1,6 +1,7 @@
 import { styled } from '@mui/material/styles';
 import { useForm } from 'react-hook-form';
-import { Stack, Badge, Avatar, TextField } from '@mui/material';
+import { useMutation } from 'react-query';
+import { Stack, Badge, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { submitJuaPlatformFeedback } from '../../../actions/About';
 import notificationManager from '../../../actions/NotificationManager';
@@ -38,23 +39,26 @@ export default function JuaPlatformFeedbackForm() {
   const formProps = useForm({});
 
   const {
+    reset,
     register,
-    handleSubmit,
-    formState: { errors },
+    getValues,
+    handleSubmit
   } = formProps;
 
-  const onSubmit = (values) => {
-    submitJuaPlatformFeedback(values)
-      .then(() => {
-        notificationManager.success('Thank you for your feedback.', 'Success');
-      })
-      .catch((error) => {
-        notificationManager.error(error, 'Error');
-      });
-  };
+  const { mutate, isLoading } = useMutation({
+    mutationFn: () => submitJuaPlatformFeedback(getValues()),
+    onSuccess: () => {
+      notificationManager.success('Thank you for your feedback.', 'Success');
+      reset();
+    },
+    onError: (error) => {
+      console.error(error);
+      notificationManager.error('something went wrong', 'Error');
+    },
+  });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(() => mutate())}>
       <Stack spacing={3}>
         <TextField fullWidth label="Subject" {...register('subject')} />
         <TextField
@@ -66,7 +70,7 @@ export default function JuaPlatformFeedbackForm() {
           placeholder="Improvement suggestions for Jua/Support?"
         />
         <>
-          <LoadingButton fullWidth size="large" type="submit" loading={false} variant="contained">
+          <LoadingButton fullWidth size="large" type="submit" loading={isLoading} variant="contained">
             Submit
           </LoadingButton>
         </>

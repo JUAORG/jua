@@ -1,17 +1,13 @@
-import react, { useState, useEffect } from 'react'
-import { get } from 'lodash'
+import { useState } from 'react';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import { set, sub } from 'date-fns';
-import { noCase } from 'change-case';
-import { faker } from '@faker-js/faker';
+import { useQuery } from 'react-query';
 // @mui
 import {
   Box,
   List,
   Badge,
-  Button,
   Avatar,
-  Tooltip,
   Divider,
   Popover,
   Typography,
@@ -21,52 +17,49 @@ import {
   ListItemAvatar,
   ListItemButton,
 } from '@mui/material';
-// utils
-import { fToNow } from '../../utils/formatTime';
 // components
 import Iconify from '../../components/Iconify';
 import Scrollbar from '../../components/Scrollbar';
-import { getUserNotifications, markAllUserNotificationsAsRead, markUserNotificationAsRead } from '../../actions/Notifications'
-
+import {
+  getUserNotifications,
+  markUserNotificationAsRead,
+} from '../../actions/Notifications';
+import { AnimationsSkeleton } from '../../components/Skeletons';
 
 export default function NotificationsPopover() {
-  const [notifications, setNotifications] = useState([]);
+  const [open, setOpen] = useState(null);
+  const { data, error, isLoading } = useQuery(['notifications'], getUserNotifications, {
+    enabled: true,
+    staleTime: 120000,
+    refetchInterval: 120000,
+    refetchIntervalInBackground: false
+  });
+  const notifications = get(data, 'data', []);
   const totalUnRead = notifications.filter((item) => item.read === false).length;
   const readNotifications = notifications.filter((item) => item.read === true);
   const unReadNotifications = notifications.filter((item) => item.read === false);
 
-  const [open, setOpen] = useState(null);
+  const handleOpen = (event) => {
+    setOpen(event.currentTarget);
+  };
 
-    useEffect(() => {
-        getUserNotifications()
-            .then((res) => {
-                setNotifications(res.data)
-            }).catch((err) => {
-                console.error('error', err)
-            })
-    },[])
+  const handleClose = () => {
+    setOpen(null);
+  };
 
-    const handleOpen = (event) => {
-        setOpen(event.currentTarget);
-    };
+  // const handleMarkAllAsRead = () => {
+  //   markAllUserNotificationsAsRead();
+  //   .then(() => {
+  //       setNotifications(
+  //           notifications.map((notification) => ({
+  //               ...notification,
+  //               isUnRead: false,
+  //           }))
+  //       )
+  //   })
+  // };
 
-    const handleClose = () => {
-        setOpen(null);
-    };
-
-    const handleMarkAllAsRead = () => {
-        markAllUserNotificationsAsRead()
-        .then(() => { 
-            setNotifications(
-                notifications.map((notification) => ({
-                    ...notification,
-                    isUnRead: false,
-                }))
-            )
-        }) 
-    };
-
-    return (
+  return (
     <>
       <IconButton color={open ? 'primary' : 'default'} onClick={handleOpen} sx={{ width: 40, height: 40 }}>
         <Badge badgeContent={totalUnRead} color="error">
@@ -88,22 +81,23 @@ export default function NotificationsPopover() {
           },
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 2.5 }}>
-          <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="subtitle1">Notifications</Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              You have {totalUnRead} unread messages
-            </Typography>
+        {!isLoading && (
+          <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 2.5 }}>
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography variant="subtitle1">Notifications</Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                You have {totalUnRead} unread messages
+              </Typography>
+            </Box>
+            {/* {totalUnRead > 0 && (
+              <Tooltip title=" Mark all as read">
+                <IconButton color="primary" onClick={handleMarkAllAsRead}>
+                  <Iconify icon="eva:done-all-fill" />
+                </IconButton>
+              </Tooltip>
+            )} */}
           </Box>
-
-          {totalUnRead > 0 && (
-            <Tooltip title=" Mark all as read">
-              <IconButton color="primary" onClick={handleMarkAllAsRead}>
-                <Iconify icon="eva:done-all-fill" />
-              </IconButton>
-            </Tooltip>
-          )}
-        </Box>
+        )}
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
@@ -116,9 +110,11 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {unReadNotifications.map((notification) => (
-              <NotificationItem key={get(notification, 'id')} notification={notification} />
-            ))}
+            {isLoading && <AnimationsSkeleton />}
+            {!isLoading &&
+              unReadNotifications.map((notification) => (
+                <NotificationItem key={get(notification, 'ref')} notification={notification} />
+              ))}
           </List>
 
           <List
@@ -129,9 +125,11 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {readNotifications.map((notification) => (
-              <NotificationItem key={get(notification, 'id')} notification={notification} />
-            ))}
+            {isLoading && <AnimationsSkeleton />}
+            {!isLoading &&
+              readNotifications.map((notification) => (
+                <NotificationItem key={get(notification, 'ref')} notification={notification} />
+              ))}
           </List>
         </Scrollbar>
 
@@ -166,13 +164,13 @@ function NotificationItem({ notification }) {
 
   const handleNotificationItemClick = () => {
     markUserNotificationAsRead(get(notification, 'ref'))
-    .then(() => {
-        console.debug('succesfully marked as read')
-
-    }).catch(() => {
-        console.error('unsuccesfully marked as read')
-    })
-  }
+      .then(() => {
+        console.debug('succesfully marked as read');
+      })
+      .catch(() => {
+        console.error('unsuccesfully marked as read');
+      });
+  };
 
   return (
     <ListItemButton
@@ -218,7 +216,7 @@ function renderContent(notification) {
     <Typography key={get(notification, 'ref')} variant="subtitle2">
       {get(notification, 'title')}
       <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-        &nbsp; {(get(notification, 'message'))}
+        &nbsp; {get(notification, 'message')}
       </Typography>
     </Typography>
   );
@@ -248,7 +246,9 @@ function renderContent(notification) {
     };
   }
   return {
-    avatar: get(notification, 'avatar') ? <img alt={get(notification, 'title')} src={get(notification, 'avatar')} /> : null,
+    avatar: get(notification, 'avatar') ? (
+      <img alt={get(notification, 'title')} src={get(notification, 'avatar')} />
+    ) : null,
     title,
   };
 }

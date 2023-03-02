@@ -1,10 +1,11 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
+import { get } from 'lodash';
+import { useQuery } from 'react-query';
 import { Outlet } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import DashboardNavbar from './DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
-import { UserContext } from '../../contexts/User';
-// import { fetchJuaNetwork } from '../../actions/JuaNetwork';
+import CircularIndeterminate from '../../components/reusables/CircularIndeterminate';
 
 // ----------------------------------------------------------------------
 
@@ -33,16 +34,22 @@ const MainStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function DashboardLayout() {
-  const user = useContext(UserContext)
-  const [open, setOpen] = useState(false);
-
+  const [open, setOpen] = useState(false)
+  const { data, isLoading } = useQuery(['user'])
+  const user = get(data, 'data', {})
+  
   return (
     <RootStyle>
-        <DashboardNavbar user={user} onOpenSidebar={() => setOpen(true)} />
-        <DashboardSidebar user={user} isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
-        <MainStyle>
-          <Outlet />
-        </MainStyle>
+      {isLoading && <CircularIndeterminate />}
+      {!isLoading && (
+        <>
+          <DashboardNavbar user={user} onOpenSidebar={() => setOpen(true)} />
+          <DashboardSidebar user={user} isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
+          <MainStyle>
+            <Outlet />
+          </MainStyle>
+        </>
+      )}
     </RootStyle>
   );
 }

@@ -1,8 +1,9 @@
-import { Navigate, useRoutes } from 'react-router-dom'
-// layouts
+import { useEffect } from 'react';
+import { get } from 'lodash'
+import { useQuery } from 'react-query';
+import { Navigate, useNavigate, useRoutes } from 'react-router-dom'
 import DashboardLayout from './layouts/dashboard'
 import LogoOnlyLayout from './layouts/LogoOnlyLayout'
-//
 import Login from './pages/Login'
 import NotFound from './pages/Page404'
 import Register from './pages/Register'
@@ -22,11 +23,30 @@ import ServiceRequest from './pages/ServiceRequest'
 import PasswordChange from './pages/PasswordChange'
 import Wallet from './pages/Wallet'
 import Faq from './pages/Faq'
+import { getUser } from './actions/Auth'
 
 // ----------------------------------------------------------------------
+const LOGIN_PATH = '/login'
+const REGISTER_PATH = '/register'
 
 export default function Router() {
+  const navigate = useNavigate()
+  const currentPath = window.location.pathname
+  const isOnAuthPage = Boolean(currentPath === LOGIN_PATH || currentPath === REGISTER_PATH)
+  const { data, error, isLoading } = useQuery(['user'], getUser, {
+    retry: 2,
+    enabled: false,
+    retryDelay: 5000,
+    staleTime: 120000,
+    refetchInterval: 120000,
+    refetchIntervalInBackground: false
+  })
 
+  useEffect(() => {
+    if (get(error, ['response', 'status']) === 401 && !isOnAuthPage) {
+      navigate('/login', {replace: true})
+    }
+  },[isLoading, error])
 
   return useRoutes([
     {

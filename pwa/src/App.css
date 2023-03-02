@@ -4,3 +4,27 @@
 .MuiFormGroup-root label:first-of-type {
     display: none;
 }
+
+.fc-toolbar-chunk {
+  display: grid;
+  align-items: center;
+}
+div.fc-list-day-cushion {
+  color: #fff !important;
+  background-color: #2065D1 !important;
+}
+.fc-header-toolbar button {
+  border: none !important;
+  background-color: #2065D1 !important;
+}
+h2.fc-toolbar-title {
+  font-size: 15px !important;
+}
+
+tr.fc-event {
+  cursor: pointer;
+}
+
+.fc .fc-toolbar.fc-header-toolbar {
+  margin: 15px 20px;
+}

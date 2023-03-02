@@ -1,57 +1,44 @@
-import { useState } from 'react'
 import { get } from 'lodash'
 import { useForm } from "react-hook-form"
 import { Stack, TextField } from '@mui/material'
+import { useMutation, useQueryClient } from 'react-query';
 import { LoadingButton } from '@mui/lab'
 import notificationManager from '../../../actions/NotificationManager'
-import {
-  createUserEducation,
-  updateUserEducation,
-  deleteUserEducation
-} from '../../../actions/Profile'
+import { createUserEducation, updateUserEducation, deleteUserEducation } from '../../../actions/Profile'
 
 
 export default function EducationHistoryForm(educationDoc) {
+  const queryClient = useQueryClient();
+  const education = get(educationDoc, 'educationDoc');
+  const formProps = useForm({ defaultValues: education });
 
-  const [education, setEducation] = useState(educationDoc.educationDoc)
-  const formProps = useForm({ defaultValues: education })
+  const { register, reset, handleSubmit } = formProps;
 
-  const {
-    register,
-    handleSubmit,
-  } = formProps
-
-  const onSubmit = (values) => {
-    if (education) {
-      values.ref = get(education, "ref")
-      updateUserEducation(values)
-        .then(() => {
-          notificationManager.success('Profile updated', 'Success')
-        }).catch((error) => {
-          notificationManager.error(error, 'Error')
-        })
-    }else{
-      createUserEducation(values)
-        .then(() => {
-          notificationManager.success('Profile updated', 'Success')
-        }).catch((error) => {
-          notificationManager.error(error, 'Error')
-        })
-    }
-  }
+  const { mutate, isLoading } = useMutation({
+    mutationFn: (values) => (get(education, 'ref') ? updateUserEducation(values) : createUserEducation(values)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      notificationManager.success('Profile updated', 'Success');
+      reset();
+    },
+    onError: () => alert('Something went wrong'),
+  });
 
   const deleteItem = (values) => {
     deleteUserEducation(values)
       .then(() => {
-        notificationManager.success('Profile updated', 'Success')
-      }).catch((error) => {
-        notificationManager.error(error, 'Error')
+        reset();
+        queryClient.invalidateQueries({ queryKey: ['user'] });
+        notificationManager.success('Profile updated', 'Success');
       })
-  }
+      .catch((error) => {
+        notificationManager.error(error, 'Error');
+      });
+  };
   
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Stack spacing={3}>
+    <form onSubmit={handleSubmit((values) => mutate(values))}>
+      <Stack spacing={3} pb={5}>
         <TextField
           required
           fullWidth

@@ -18,7 +18,6 @@ export default function UsersList(users) {
   const defaultFemaleAvatar = `${defaultAvatarBasePath}_female_avatar_${variant}.svg`
 
   const openUserProfile = (user) => {
-    console.log(user)
     navigate(`/dashboard/jua_network/${get(user, 'uid')}`, { replace: true });
   }
   

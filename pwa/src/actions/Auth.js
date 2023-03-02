@@ -1,8 +1,6 @@
 import { get, head, unset, assign } from 'lodash'
 import axios from "axios"
 import cookie from 'react-cookies'
-import notificationManager from './NotificationManager'
-import { createId } from '../utils/uuid-generator'
 
 export const setAuthId = (uid) => {
   localStorage.setItem("auth_id", uid)
@@ -75,6 +73,23 @@ export async function emailAndPasswordSignIn(values) {
       username: values.email,
       password: values.password
     }
+  })
+}
+
+export async function sendPasswordResetOtp(values) {
+  return axios({
+    method: 'POST',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/reset_password/`,
+    data: values
+  })
+}
+
+export async function updateUserPassword(values) {
+  return axios({
+    method: 'PUT',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/change_password/`,
+    data: values,
+    headers: defaultHeaders
   })
 }
 
