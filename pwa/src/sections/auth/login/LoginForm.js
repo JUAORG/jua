@@ -1,9 +1,6 @@
-import * as Yup from 'yup';
 import { useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-// material
-import { Link, Stack, Checkbox, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material';
+import { Stack, TextField, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { emailAndPasswordSignIn, setAuthId, setAuthTokenCookie } from '../../../actions/Auth';
 import notificationManager from '../../../actions/NotificationManager';
@@ -13,22 +10,14 @@ import PasswordResetForm from '../PasswordReset';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
-  const navigate = useNavigate();
-  const [showPasswordResetForm, setShowPasswordResetForm] = useState(false)
+  const [showPasswordResetForm, setShowPasswordResetForm] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showLoadingBackdrop, setShowLoadingBackdrop] = useState(false);
-  const defaultValues = {};
-  const formProps = useForm({ defaultValues });
+  const formProps = useForm({});
 
   const {
-    reset,
-    watch,
-    control,
-    setValue,
     register,
     getValues,
     handleSubmit,
-    formState: { errors },
   } = formProps;
 
   const handleShowPassword = () => {
@@ -36,17 +25,14 @@ export default function LoginForm() {
   };
 
   const onSubmit = () => {
-    setShowLoadingBackdrop(true);
     emailAndPasswordSignIn(getValues())
       .then((res) => {
         setAuthId(res.data.token);
-        setShowLoadingBackdrop(false);
         setAuthTokenCookie(res.data.token);
         notificationManager.success('Succesfully authenticated', 'Success');
-        navigate('/dashboard/app', { replace: true });
+        window.location.href = '/dashboard/app';
       })
       .catch((error) => {
-        setShowLoadingBackdrop(false);
         if (error.response) {
           notificationManager.error(error.response.data.non_field_errors, 'Error');
         }
@@ -55,12 +41,12 @@ export default function LoginForm() {
   };
 
   const openPasswordResetForm = () => {
-    setShowPasswordResetForm(true)
-  }
+    setShowPasswordResetForm(true);
+  };
 
   const handleClosePasswordResetForm = () => {
-    setShowPasswordResetForm(false)
-  }
+    setShowPasswordResetForm(false);
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -89,11 +75,11 @@ export default function LoginForm() {
         {/*   control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />} */}
         {/*   label="Remember me" */}
         {/* /> */}
-        <Link to="#" underline="hover" variant="subtitle2" component={RouterLink} onClick={openPasswordResetForm}>
+        {/* <Link to="#" underline="hover" variant="subtitle2" component={RouterLink} onClick={openPasswordResetForm}>
           Forgot password?
-        </Link>
+        </Link> */}
       </Stack>
-      {showPasswordResetForm && <PasswordResetForm handleClose={handleClosePasswordResetForm}/>}
+      {showPasswordResetForm && <PasswordResetForm handleClose={handleClosePasswordResetForm} />}
       <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={false}>
         Login
       </LoadingButton>

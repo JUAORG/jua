@@ -1,70 +1,103 @@
 import * as React from 'react';
-import { get } from 'lodash';
+import { get, head } from 'lodash';
+import { useQuery } from 'react-query';
 import {
   AppBar,
   Toolbar,
   Avatar,
+  AvatarGroup,
   Stack,
   Button,
   Dialog,
-  TextField,
   Divider,
   IconButton,
-  DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useNavigate, useParams } from 'react-router-dom';
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AccordionSummary from '@mui/material/AccordionSummary';
+import { useNavigate } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import MessageIcon from '@mui/icons-material/Message';
 import FeedbackIcon from '@mui/icons-material/Feedback';
-import UserItem from './UserItem';
-import ServiceRequestForm from '../sections/@dashboard/app/ServiceRequestForm';
-import IconTextDateList from './reusables/IconTextDateList';
-import { ServiceRequestChat } from './ServiceRequestChat';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import AttachEmailIcon from '@mui/icons-material/AttachEmail';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
 import BasicSpeedDial from './SpeedDial';
+import { CustomChatBox } from './CustomChatBox';
+import { fetchServiceRequest } from '../actions/JuaNetwork';
 
-export const ServiceRequestDetail = ({ selectedServiceRequest, handleClose }) => {
+export const ServiceRequestDetail = ({ selectedServiceRequestRef, handleClose }) => {
   const navigate = useNavigate();
+  const { data: userP } = useQuery(['user']);
+  const user = get(userP, 'data', {});
   const [open, setOpen] = React.useState(true);
   const [scroll, setScroll] = React.useState('paper');
+  const [openChatBox, setOpenChatBox] = React.useState(false);
   const [expanded, setExpanded] = React.useState('panel1');
+
+  const { isLoading, isError, data, error } = useQuery('service_request', () =>
+    fetchServiceRequest(selectedServiceRequestRef)
+  );
+
+  const selectedServiceRequest = head(get(data, 'data'));
+
+  if (isLoading) {
+    return <span>Loading...</span>;
+  }
+
+  if (isError) {
+    return <span>Error: {error.message}</span>;
+  }
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
 
-  const goToServiceRequestMeeting = () => {
-    navigate(`/dashboard/advisory_session_meeting/?room=${get(selectedServiceRequest, 'ref')}`, { replace: true });
-  };
+  const handleOpenChatBox = () => setOpenChatBox(true)
+  const handleCloseChatBox = () => setOpenChatBox(false)
+  const handleGoToServiceRequestMeeting = () => {
+    navigate(`/dashboard/advisory_session_meeting/?room=${selectedServiceRequestRef}`, { replace: true });
+  }
 
   const actions = [
     {
-      icon: <FeedbackIcon />,
+      icon: <FeedbackIcon sx={{ color: '#2065D1' }} />,
       name: 'Feedback',
-      onClick: () => console.log('success'),
+      onClick: () => console.log('You Can only provide feedback after the service request'),
     },
     {
-      icon: <FeedbackIcon />,
+      icon: <DeleteForeverIcon sx={{ color: '#2065D1' }} />,
+      name: 'Cancel Service Request',
+      onClick: () => alert('work in progress'),
+    },
+    {
+      icon: <MessageIcon sx={{ color: '#2065D1' }} />,
+      name: 'Send a message',
+      onClick: handleOpenChatBox,
+    },
+    {
+      icon: <AttachEmailIcon sx={{ color: '#2065D1' }} />,
+      name: 'Upload Attachment',
+      onClick: () => alert('work in progress'),
+    },
+    {
+      icon: <VideoCameraFrontIcon sx={{ color: '#2065D1' }} />,
       name: 'Start Service Request',
-      onClick: goToServiceRequestMeeting,
+      onClick: handleGoToServiceRequestMeeting,
     },
   ];
 
-  const descriptionElementRef = React.useRef(null);
-  React.useEffect(() => {
-    if (open) {
-      const { current: descriptionElement } = descriptionElementRef;
-      if (descriptionElement !== null) {
-        descriptionElement.focus();
-      }
-    }
-  }, [open]);
+  //    const descriptionElementRef = React.useRef(null);
+
+  // React.useEffect(() => {
+  //     if (open) {
+  //         const { current: descriptionElement } = descriptionElementRef;
+  //         if (descriptionElement !== null) {
+  //             descriptionElement.focus();
+  //         }
+  //     }
+  // }, [open]);
 
   return (
     <Dialog id="service-request-modal" fullScreen open onClose={handleClose} scroll={scroll}>
@@ -82,7 +115,7 @@ export const ServiceRequestDetail = ({ selectedServiceRequest, handleClose }) =>
         </Toolbar>
       </AppBar>
       <DialogContent dividers={scroll === 'paper'}>
-        <DialogContentText id="scroll-dialog-description" ref={descriptionElementRef} tabIndex={-1}>
+        <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
           <Stack direction="column" justifyContent="space-between" alignItems="flex-start" spacing={0.5}>
             <div>
               <Typography variant="body2" gutterBottom>
@@ -94,13 +127,18 @@ export const ServiceRequestDetail = ({ selectedServiceRequest, handleClose }) =>
               <Typography variant="body2" gutterBottom>
                 Status: {get(selectedServiceRequest, 'status')}
               </Typography>
-              <Typography variant="body2" gutterBottom>
-                Participants:
-                <Stack justifyContent="space-between" alignItems="center" spacing={8} direction={{ xs: 'column', md: 'row' }}>
-                  <UserItem brief user={get(selectedServiceRequest, ['service_provider', 'profile'])} />
-                  <UserItem brief user={get(selectedServiceRequest, ['service_requester', 'profile'])} />
-                </Stack>
-              </Typography>
+              <Stack
+                justifyContent="space-between"
+                alignItems="center"
+                spacing={8}
+                direction={{ xs: 'row', md: 'row' }}
+              >
+                <Typography variant="body2">Participants:</Typography>
+                <AvatarGroup max={4}>
+                  <Avatar src="" />
+                  <Avatar src="" />
+                </AvatarGroup>
+              </Stack>
               <div>{get(selectedServiceRequest, 'read_by_service_provider')}</div>
               <div>{get(selectedServiceRequest, 'read_by_service_requester')}</div>
               <div>{get(selectedServiceRequest, 'duration_in_minutes')}</div>
@@ -108,10 +146,10 @@ export const ServiceRequestDetail = ({ selectedServiceRequest, handleClose }) =>
               <Divider />
             </div>
             <Divider />
-            <ServiceRequestChat />
           </Stack>
+          {openChatBox && <CustomChatBox serviceRequestRef={selectedServiceRequestRef} handleClose={handleCloseChatBox}/>}
           <Stack justifyContent="space-between" alignItems="center" spacing={8} direction={{ xs: 'column', md: 'row' }}>
-          <BasicSpeedDial actions={actions}/>
+            <BasicSpeedDial actions={actions} customSpeedDialIcon={<MoreVertIcon />} />
           </Stack>
         </DialogContentText>
       </DialogContent>

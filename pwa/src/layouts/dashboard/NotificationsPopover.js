@@ -22,7 +22,6 @@ import Iconify from '../../components/Iconify';
 import Scrollbar from '../../components/Scrollbar';
 import {
   getUserNotifications,
-  markAllUserNotificationsAsRead,
   markUserNotificationAsRead,
 } from '../../actions/Notifications';
 import { AnimationsSkeleton } from '../../components/Skeletons';
@@ -31,10 +30,9 @@ export default function NotificationsPopover() {
   const [open, setOpen] = useState(null);
   const { data, error, isLoading } = useQuery(['notifications'], getUserNotifications, {
     enabled: true,
-    // Refetch every 30 seconds
-    refetchInterval: 30000,
-    // Continue to refetch while the tab/window is in the background
-    refetchIntervalInBackground: true,
+    staleTime: 120000,
+    refetchInterval: 120000,
+    refetchIntervalInBackground: false
   });
   const notifications = get(data, 'data', []);
   const totalUnRead = notifications.filter((item) => item.read === false).length;

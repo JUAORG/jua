@@ -2,6 +2,7 @@ import { get } from 'lodash';
 import { useRef, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { alpha } from '@mui/material/styles';
+import { useMutation, useQueryClient } from 'react-query';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@mui/material';
 import MenuPopover from '../../components/MenuPopover';
 import notificationManager from '../../actions/NotificationManager';
@@ -15,6 +16,7 @@ const MENU_OPTIONS = [];
 export default function AccountPopover({ user }) {
   const navigate = useNavigate();
   const anchorRef = useRef(null);
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(null);
   const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
 
@@ -26,20 +28,23 @@ export default function AccountPopover({ user }) {
   const openPasswordChangeForm = () => setShowChangePasswordForm(true);
   const handleCloseChangePasswordForm = () => setShowChangePasswordForm(false);
 
-  const handleLogout = () => {
-    logout()
-      .then(() => {
-        notificationManager.success('Logged out', 'Success');
-      })
-      .catch((error) => {
-        console.error(error.response);
-      })
-      .finally(() => {
-        localStorage.clear();
-        clearAuthTokenCookie();
-        navigate('/login', { replace: true });
-      });
+  const clearStorage = () => {
+    localStorage.clear();
+    clearAuthTokenCookie();
+    setOpen(null);
+    navigate('/login', { replace: true });
   };
+
+  const { mutate: handleLogout, isLoading: isSubmitLoading } = useMutation({
+    mutationFn: () => logout(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      notificationManager.success('Logged out', 'Success');
+      clearStorage()
+    },
+    onError: () => notificationManager.error('something went wrong', 'Error'),
+    onSettled: () => clearStorage(),
+  });
 
   return (
     <>

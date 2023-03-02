@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, SpeedDial, SpeedDialIcon, SpeedDialAction } from '@mui/material';
 
-export default function BasicSpeedDial({actions}) {
+export default function BasicSpeedDial({actions, customSpeedDialIcon}) {
 
 
   return (
@@ -10,7 +10,7 @@ export default function BasicSpeedDial({actions}) {
       <SpeedDial
         ariaLabel="SpeedDial basic example"
         sx={{ position: 'absolute', bottom: 16, right: 16 }}
-        icon={<SpeedDialIcon />}
+        icon={customSpeedDialIcon || <SpeedDialIcon />}
       >
         {actions.map((action) => (
           <SpeedDialAction onClick={action.onClick} key={action.name} icon={action.icon} tooltipTitle={action.name} />

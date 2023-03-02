@@ -8,7 +8,6 @@ import useResponsive from '../hooks/useResponsive';
 import Page from '../components/Page';
 import Logo from '../components/Logo';
 import { LoginForm } from '../sections/auth/login';
-import AuthSocial from '../sections/auth/AuthSocial';
 
 // ----------------------------------------------------------------------
 
@@ -57,14 +56,14 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 export default function Login() {
   const navigate = useNavigate()
-  const { data, isLoading } = useQuery(['user'])
+  const { data, isLoading, isError } = useQuery(['user'])
   
   const smUp = useResponsive('up', 'sm');
 
   const mdUp = useResponsive('up', 'md');
 
   useEffect(() => {
-    if (!isLoading && get(data, 'status') === 200) {
+    if (!isLoading && get(data, 'status') === 200 && !isError) {
       navigate('/dashboard/app/')
     }
   }, [isLoading, data])

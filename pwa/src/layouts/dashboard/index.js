@@ -38,7 +38,6 @@ export default function DashboardLayout() {
   const { data, isLoading } = useQuery(['user'])
   const user = get(data, 'data', {})
   
-
   return (
     <RootStyle>
       {isLoading && <CircularIndeterminate />}
