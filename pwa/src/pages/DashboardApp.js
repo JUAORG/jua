@@ -10,6 +10,8 @@ import { SERVICES } from '../content/services';
 import Page from '../components/Page';
 import { AppNewsUpdate, AppWidgetSummary } from '../sections/@dashboard/app';
 import BasicSpeedDial from '../components/SpeedDial';
+import BriefServiceCards from '../components/BriefServiceCards';
+import SearchBar from '../components/SearchBar';
 
 
 export default function DashboardApp() {
@@ -80,7 +82,7 @@ export default function DashboardApp() {
     return (
       <>
         <Grid item xs={12} sm={6} md={3}>
-          Blank
+          
           {/* <AppWidgetSummary title="Service Requests" total={numServiceRequests} onClick={goToServiceRequestPage} /> */}
         </Grid>
       </>
@@ -142,12 +144,14 @@ export default function DashboardApp() {
         <Typography variant="h4" sx={{ mb: 5 }}>
           {get(user, 'first_name') && `${get(user, ['profile', 'first_name'])} ${get(user, ['profile', 'last_name'])}`}
         </Typography>
+        <SearchBar/>
+          <Typography variant="h6" mb={2}>
+            Industries
+          </Typography>
+          <BriefServiceCards/>
         <Grid container spacing={3}>
           {get(user, ['profile', 'is_service_provider']) ? renderAdvisorHomePage() : renderCustomerHomePage()}
           {/* <Grid item xs={12} md={6} lg={8}>
-            <Typography variant="h6" mb={2}>
-              Updates
-            </Typography>
             <AppNewsUpdate list={ userUpdates }/>
           </Grid> */}
         </Grid>
