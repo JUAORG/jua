@@ -81,8 +81,7 @@ export const UserDetail = ({ user, handleClose }) => {
                   </AccordionSummary>
                   <AccordionDetails>
                     <Typography mb={3}>
-                      Show rate per hour, general avail times and explain that service provider (sp) has x amount of time to confirm
-                      update service request status frequently for example show if the sp has read the request etc
+                      By requesting the booking, you are agreeing to the Expert's hourly rate of R {get(user, 'rate_per_hour_in_rands')}.
                     </Typography>
                     <ServiceRequestForm serviceProvider={user}/>
                   </AccordionDetails>
