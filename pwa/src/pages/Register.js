@@ -87,7 +87,7 @@ export default function Register() {
 
         <Container>
           <ContentStyle>
-            <Typography variant="h4" gutterBottom>
+            <Typography variant="h4" gutterBottom mt={3}>
               Get started absolutely free.
             </Typography>
             <Typography sx={{ color: 'text.secondary', mb: 5 }}>
