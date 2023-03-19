@@ -123,10 +123,11 @@ export default function DashboardApp() {
     return (
       <>
         <Grid item xs={12} sm={6} md={12}>
-          <Typography variant="h6" mb={2}>
+          {' '}
+          {/* <Typography variant="h6" mb={2}>
             Services
           </Typography>
-          {renderAvailiableServices()}
+          {renderAvailiableServices()} */}
         </Grid>
       </>
     );
