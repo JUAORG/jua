@@ -33,7 +33,7 @@ export async function fetchUserLedger() {
   });
 }
 
-export async function makePayment(amount) {
+export async function makePayment(amount, serviceRequest) {
   const amountInCents = amount * 100;
   yoco.showPopup({
     amountInCents,
@@ -52,7 +52,11 @@ export async function makePayment(amount) {
           url: process.env.REACT_APP_PAYMENT_ENDPOINT,
           withCredentials: false,
           headers: defaultHeaders,
-          data: {amountInCents, token: get(result, 'id')},
+          data: {
+            amountInCents,
+            serviceRequest,
+            token: get(result, 'id')
+          },
         })
           .then((res) => {
             const statusCode = res.status;

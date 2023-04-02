@@ -10,6 +10,7 @@ import {
   Avatar,
   Divider,
   Popover,
+  Tooltip,
   Typography,
   IconButton,
   ListItemText,
@@ -23,6 +24,7 @@ import Scrollbar from '../../components/Scrollbar';
 import {
   getUserNotifications,
   markUserNotificationAsRead,
+  markAllUserNotificationsAsRead
 } from '../../actions/Notifications';
 import { AnimationsSkeleton } from '../../components/Skeletons';
 
@@ -30,9 +32,9 @@ export default function NotificationsPopover() {
   const [open, setOpen] = useState(null);
   const { data, error, isLoading } = useQuery(['notifications'], getUserNotifications, {
     enabled: true,
-    staleTime: 120000,
-    refetchInterval: 120000,
-    refetchIntervalInBackground: false
+    staleTime: 10000,
+    refetchInterval: 10000,
+    refetchIntervalInBackground: true
   });
   const notifications = get(data, 'data', []);
   const totalUnRead = notifications.filter((item) => item.read === false).length;
@@ -47,32 +49,32 @@ export default function NotificationsPopover() {
     setOpen(null);
   };
 
-  // const handleMarkAllAsRead = () => {
-  //   markAllUserNotificationsAsRead();
-  //   .then(() => {
-  //       setNotifications(
-  //           notifications.map((notification) => ({
-  //               ...notification,
-  //               isUnRead: false,
-  //           }))
-  //       )
-  //   })
-  // };
+  const handleMarkAllAsRead = () => {
+    console.log('frfr')
+    markAllUserNotificationsAsRead()
+      .then(() => {
+        console.log('bumble')
+        notifications.map((notification) => ({
+          ...notification,
+          isUnRead: false,
+        }))
+      })
+  };
 
   return (
     <>
       <IconButton color={open ? 'primary' : 'default'} onClick={handleOpen} sx={{ width: 40, height: 40 }}>
-        <Badge badgeContent={totalUnRead} color="error">
-          <Iconify icon="eva:bell-fill" />
-        </Badge>
+      <Badge badgeContent={totalUnRead} color="error">
+      <Iconify icon="eva:bell-fill" />
+      </Badge>
       </IconButton>
 
       <Popover
-        open={Boolean(open)}
-        anchorEl={open}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+    open={Boolean(open)}
+    anchorEl={open}
+    onClose={handleClose}
+    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         PaperProps={{
           sx: {
             mt: 1.5,
@@ -89,20 +91,20 @@ export default function NotificationsPopover() {
                 You have {totalUnRead} unread messages
               </Typography>
             </Box>
-            {/* {totalUnRead > 0 && (
-              <Tooltip title=" Mark all as read">
+            {totalUnRead > 0 && (
+                <Tooltip title=" Mark all as read">
                 <IconButton color="primary" onClick={handleMarkAllAsRead}>
-                  <Iconify icon="eva:done-all-fill" />
+                <Iconify icon="eva:done-all-fill" />
                 </IconButton>
-              </Tooltip>
-            )} */}
-          </Box>
-        )}
+                </Tooltip>
+            )}
+             </Box>
+            )}
 
-        <Divider sx={{ borderStyle: 'dashed' }} />
+         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <Scrollbar sx={{ height: { xs: 340, sm: 'auto' } }}>
-          <List
+         <Scrollbar sx={{ height: { xs: 340, sm: 'auto' } }}>
+         <List
             disablePadding
             subheader={
               <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>

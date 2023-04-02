@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { map, get } from 'lodash';
+import { useQuery } from 'react-query';
 import {
   CardContent,
   Typography,
@@ -8,10 +9,20 @@ import {
 } from '@mui/material';
 import FullCalendar from '@fullcalendar/react';
 import listPlugin from '@fullcalendar/list';
+import { useNavigate } from 'react-router-dom';
 import { ServiceRequestDetail } from './ServiceRequestDetail';
+import { makePayment } from '../actions/Wallet'
+import notificationManager from '../actions/NotificationManager'
+import { ServiceRequestStatusDialog } from './ServiceRequestStatusDialog'
 
 export const CalendarListDisplay = ({ events }) => {
+  const navigate = useNavigate();
+  const [shouldShowStatusChangeDialog,setShouldShowStatusChangeDialog] = useState(false)
+  const { data, isLoading } = useQuery(['user'])
+  const user = get(data, 'data', {})
+  const [message, setMessage] = useState(false)
   const [selectedServiceRequestRef, setSelectedServiceRequestRef] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null)
   const [openServiceRequestDetailView, setOpenServiceRequestDetailView] = useState(true);
 
   const calendarEvents = map(events, (event) => ({
@@ -23,6 +34,9 @@ export const CalendarListDisplay = ({ events }) => {
     status: get(event, 'status'),
     backgroundColor: '#474747',
     borderColor: '#474747',
+    service_request:event,
+    serviceProviderRef: get(event, 'service_provider_ref'),
+    serviceRequesterRef: get(event, 'service_requester_ref'),
   }));
 
   useEffect(() => {
@@ -33,8 +47,31 @@ export const CalendarListDisplay = ({ events }) => {
     }
   }, [selectedServiceRequestRef]);
 
-  const handleEventClick = (ref) => {
-    setSelectedServiceRequestRef(ref);
+  const handleCloseStatusChangeDialog = () => {
+    setShouldShowStatusChangeDialog(false)
+  }
+
+  const handleEventClick = (event) => {
+    const ref = get(event, 'publicId')
+    const serviceRequestStatus = get(event, ['extendedProps', 'status'])
+    const isServiceProvider = get(user, 'ref') === get(event, ['extendedProps', 'serviceProviderRef'])
+    const serviceRequestPrice = get(event, ['extendedProps', 'service_request', 'price'])
+
+
+    if (serviceRequestStatus === 'PENDING' && isServiceProvider) {
+      setShouldShowStatusChangeDialog(true)
+      navigate(`/dashboard/service_requests?service_request=${ref}`, { replace: true })
+    }else if (serviceRequestStatus === 'PENDING' && !isServiceProvider)  {
+      notificationManager.warning('Waiting for service provider to accept the service request.. Please check back later.', 'Pending... ');
+    }
+    if (serviceRequestStatus === 'PENDING_PAYMENT' && !isServiceProvider) {
+      makePayment(serviceRequestPrice, ref)
+    }
+    if (serviceRequestStatus === 'APPROVED') {
+      setSelectedServiceRequestRef(ref)
+    }
+
+
   };
   const closeServiceRequestDetailView = () => setSelectedServiceRequestRef(null);
 
@@ -48,12 +85,16 @@ export const CalendarListDisplay = ({ events }) => {
         initialView="listWeek"
         events={calendarEvents}
         plugins={[listPlugin]}
-        eventClick={(info) => handleEventClick(get(info, ['event', '_def', 'publicId']))}
+        eventClick={(info) => handleEventClick(get(info, ['event', '_def']))}
         headerToolbar={{ start: 'prev', center: 'title', end: 'next' }}
         eventContent={(eventInfo) => (
           <CardActionArea>
             <CardContent>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+              <Typography
+                gutterBottom
+                sx={{ fontSize: 14 }}
+                color="text.secondary"
+              >
                 {get(eventInfo, ['event', '_def', 'extendedProps', 'date_time'])} Duration: 30 minutes
               </Typography>
               <Typography variant="h5" component="div">
@@ -62,20 +103,29 @@ export const CalendarListDisplay = ({ events }) => {
               <Typography color="text.secondary">
                 Description: {get(eventInfo, ['event', '_def', 'extendedProps', 'description'])}
               </Typography>
-              <Typography variant="body2" mb={2}>
-                Sent by:
-              </Typography>
-              <Chip label={get(eventInfo, ['event', '_def', 'extendedProps', 'status'])} color="primary" />
+              {/* <Typography variant="body2" mb={2}> */}
+              {/*   Sent by: */}
+              {/* </Typography> */}
+              <Chip
+                color="primary"
+                label={get(eventInfo, ['event', '_def', 'extendedProps', 'status'])}
+              />
             </CardContent>
           </CardActionArea>
         )}
       />
-      {openServiceRequestDetailView && (
-        <ServiceRequestDetail
-          selectedServiceRequestRef={selectedServiceRequestRef}
-          handleClose={closeServiceRequestDetailView}
-        />
-      )}
+      {openServiceRequestDetailView &&
+       <ServiceRequestDetail
+         selectedServiceRequestRef={selectedServiceRequestRef}
+         handleClose={closeServiceRequestDetailView}
+       />
+      }
+      {shouldShowStatusChangeDialog &&
+       <ServiceRequestStatusDialog
+         handleClose={handleCloseStatusChangeDialog}
+         service_request={selectedEvent}
+       />
+      }
     </>
   );
 };

@@ -66,7 +66,7 @@ export default function DashboardApp() {
   ];
 
   const goToServiceRequestPage = () => {
-    navigate('/dashboard/service_requests', { replace: true });
+      navigate('/dashboard/service_requests', { replace: true });
   };
 
   const goToServiceDetailPage = (service) => {
@@ -82,7 +82,7 @@ export default function DashboardApp() {
     return (
       <>
         <Grid item xs={12} sm={6} md={3}>
-          
+
           {/* <AppWidgetSummary title="Service Requests" total={numServiceRequests} onClick={goToServiceRequestPage} /> */}
         </Grid>
       </>

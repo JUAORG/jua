@@ -1,5 +1,7 @@
+import { useState } from 'react'
+import ReactGA from 'react-ga';
 import { get, map } from 'lodash';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation } from 'react-query';
 import { Grid, Box, Button, Container, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import EducationHistoryForm from '../sections/@dashboard/app/EducationHistoryForm';
@@ -8,10 +10,14 @@ import Page from '../components/Page';
 import UserProfileForm from '../sections/@dashboard/app/UserProfileForm';
 import ServiceListForm from '../sections/@dashboard/app/ServiceListForm';
 import ReusableTab from '../components/reusables/Tabs';
+import notificationManager from '../actions/NotificationManager';
+import { becomeAffiliateExpertApplication } from '../actions/JuaNetwork'
+
 
 export default function Profile() {
   const { data } = useQuery(['user']);
   const user = get(data, 'data', {});
+  const [affiliateExpertApplicationButtonDisabled, setAffiliateExpertApplicationButtonDisabled] = useState(false)
 
   const renderEducationHistory = () => {
     const educationList = get(user, ['profile', 'educations_related_to_user_profile']);
@@ -66,14 +72,38 @@ export default function Profile() {
     value: PropTypes.number.isRequired,
   };
 
+  const handleAffiliateExpertApplication = useMutation( (values) => becomeAffiliateExpertApplication(values), {
+    onMutate: variables => {
+      ReactGA.event({
+        value: 1,
+        category: 'User Profile',
+        action: 'Apply to become affiliate expert'
+      })
+    },
+    onError: (error, variables, context) => {
+      console.error(error)
+      notificationManager.error('Something went wrong. Please try again later.', 'Error');
+    },
+    onSuccess: (data, variables, context) => {
+      setAffiliateExpertApplicationButtonDisabled(true)
+      notificationManager.success('We will update you soon', 'Success');
+    },
+    onSettled: (data, error, variables, context) => {
+    },
+  })
+
+
+
   const renderServices = () => {
     return (
       <>
+
+
         {/* {map(servicesList, (doc) =>
-          <>
-            <ServiceListForm key={get(doc, "id")} serviceDoc={doc} />
-          </>
-        )} */}
+           <>
+           <ServiceListForm key={get(doc, "id")} serviceDoc={doc} />
+           </>
+           )} */}
         <ServiceListForm />
       </>
     );
@@ -105,18 +135,22 @@ export default function Profile() {
       <>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Typography variant="h6" sx={{ mb: 5, textAlign: 'center' }}>
-            <Button>Apply to become an Affiliate Expert</Button>
+            <Button
+              disabled={ handleAffiliateExpertApplication.isLoading || affiliateExpertApplicationButtonDisabled }
+              onClick={() => handleAffiliateExpertApplication.mutate()}>
+              Apply to become an Affiliate Expert
+            </Button>
           </Typography>
           {/* <ReusableTab
-            scrollButtons
-            variant="scrollable"
-            allowScrollButtonsMobile
-            tabHeadings={['Personal Details', 'Old Service Requests']}
-            tabContents={[
-              <UserProfileForm userProfileDoc={ userProfile }/>,
-              renderOldServiceRequests() 
-            ]}
-          /> */}
+             scrollButtons
+             variant="scrollable"
+             allowScrollButtonsMobile
+             tabHeadings={['Personal Details', 'Old Service Requests']}
+             tabContents={[
+             <UserProfileForm userProfileDoc={ userProfile }/>,
+             renderOldServiceRequests()
+             ]}
+             /> */}
         </Box>
       </>
     );
