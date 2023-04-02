@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { get } from 'lodash'
+import ReactGA from 'react-ga';
 import { useQuery } from 'react-query';
 import { Navigate, useNavigate, useRoutes } from 'react-router-dom'
 import DashboardLayout from './layouts/dashboard'
@@ -47,6 +48,10 @@ export default function Router() {
       navigate('/login', {replace: true})
     }
   },[isLoading, error])
+
+  useEffect(() => {
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  })
 
   return useRoutes([
     {

@@ -1,3 +1,4 @@
+import ReactGA from 'react-ga';
 import { useForm } from "react-hook-form"
 import { useMutation, useQueryClient } from 'react-query'
 import { Stack, TextField } from '@mui/material'
@@ -12,6 +13,13 @@ export default function PasswordChangeForm({handleClose}) {
 
   const { mutate } = useMutation({
     mutationFn: (values) => updateUserPassword(values),
+    onMutate: () => {
+      ReactGA.event({
+        value: 1,
+        category: 'User Profile',
+        action: 'Password Change'
+      })
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       notificationManager.success('Password updated', 'Success');
@@ -21,7 +29,7 @@ export default function PasswordChangeForm({handleClose}) {
     onError: () => notificationManager.error('Something went wrong.', 'Error')
   });
 
-  
+
   return (
     <form onSubmit={handleSubmit((values) => mutate(values))}>
       <Stack spacing={3}>

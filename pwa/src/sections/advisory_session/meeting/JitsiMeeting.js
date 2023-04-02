@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React, { Component } from 'react'
+import ReactGA from 'react-ga';
 import {
   serviceRequestUserActions,
   submitActiveServiceRequestAction
@@ -62,26 +63,39 @@ class JitsiComponent extends Component {
   }
 
   handleVideoConferenceJoined = async () => {
-    console.log("Video Conference Joined")
-    const roomAsServiceRequestKey = window.location.search.slice(6)
-    submitActiveServiceRequestAction(roomAsServiceRequestKey, serviceRequestUserActions.joined)
+    ReactGA.event({
+      value: 1,
+      category: `Advisory Session:${this.state.room}`,
+      action: `Participant Joined `
+    })
   }
 
   handleVideoConferenceLeft = async () => {
-    console.log("Video Conference Left")
-    const roomAsServiceRequestKey = window.location.search.slice(6)
-    await submitActiveServiceRequestAction(roomAsServiceRequestKey, serviceRequestUserActions.left)
+    ReactGA.event({
+      value: 1,
+      category: `Advisory Session:${this.state.room}`,
+      action: `Participant Left`
+    })
     setTimeout(() => {
-      console.log(roomAsServiceRequestKey, serviceRequestUserActions)
-      window.location.href=`/dashboard/advisory_session_meeting/feedback/${roomAsServiceRequestKey}`
-    },[1000])
+      window.location.href=`/dashboard/advisory_session_meeting/feedback/${this.state.room}`
+    },[500])
   }
 
   handleMuteStatus = (audio) => {
+    ReactGA.event({
+      value: audio,
+      category: `Advisory Session:${this.state.room}`,
+      action: `Clicked Mute/Unmute audio: ${audio.muted}`
+    })
     console.log("handleMuteStatus", audio); // { muted: true }
   }
 
   handleVideoStatus = (video) => {
+    ReactGA.event({
+      value: video,
+      category: `Advisory Session Video Status: ${this.state.room}`,
+      action: `Clicked Stop/Start camera: ${video.muted}`
+    })
     console.log("handleVideoStatus", video); // { muted: true }
   }
 
@@ -89,10 +103,9 @@ class JitsiComponent extends Component {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve(this.api.getParticipantsInfo()); // get all participants
-      }, 500)
+      }, 60000)
     });
   }
-
 
 
   // custom events

@@ -1,7 +1,8 @@
 import React, { useState } from "react"
+import ReactGA from 'react-ga';
 import { get, head } from "lodash"
 import { useQuery } from 'react-query';
-import { Avatar, Container, Typography } from '@mui/material';
+import { Avatar, Container, Typography, Skeleton } from '@mui/material';
 import MUIDataTable from "mui-datatables";
 import "../App.css";
 import { fetchJuaNetworkUsers, fetchJuaNetworkUser } from "../actions/JuaNetwork"
@@ -24,12 +25,17 @@ export default function JuaNetwork() {
     fetchJuaNetworkUser(ref).then((response) => {
       setSelectedUser(response.data)
       setOpenUserDetailView(true)
+      ReactGA.event({
+        value: 1,
+        category: `Profile view: ${ref}`,
+        action: `Clicked on service provider profile`
+      })
     }).catch((error) => {
       console.error(error)
     })
   }
 
-    
+
   const columns = [
     {
       name: "ref",
@@ -94,7 +100,7 @@ export default function JuaNetwork() {
   }
 
   const closeUserDetailView = () => setOpenUserDetailView(false)
-  
+
   const options = {
     filterType: 'checkbox',
     print: false,
@@ -107,18 +113,47 @@ export default function JuaNetwork() {
     selectableRowsHideCheckboxes: false
   };
 
+  const renderDataTableSkeleton = () => (
+    <>
+      <Skeleton
+        variant="rectangular"
+        height={'5vh'}
+        sx={{
+          margin: 'auto',
+          width: {
+            xs: '90vw',
+            md: '50vw'
+          }
+        }}
+      />
+      <br/>
+      <Skeleton
+        variant="rectangular"
+        height={'45vh'}
+        sx={{
+          margin: 'auto',
+          width:{
+            xs: '90vw',
+            md: '50vw'
+          }
+        }}
+      />
+    </>
+  )
+
   return (
     <Page title="Jua Network">
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
           Jua Network
-        </Typography>   
+        </Typography>
+        {isLoading && renderDataTableSkeleton()}
         {!isLoading &&
-        <MUIDataTable
-          data={users}
-          columns={columns}
-          options={options}
-        />
+         <MUIDataTable
+           data={users}
+           columns={columns}
+           options={options}
+         />
         }
         {openUserDetailView &&
          <UserDetail
