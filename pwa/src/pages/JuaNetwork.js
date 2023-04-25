@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import ReactGA from 'react-ga';
 import { get, head } from "lodash"
 import { useQuery } from 'react-query';
-import { Avatar, Container, Typography, Skeleton } from '@mui/material';
+import { Avatar, Container, Button, Typography, Skeleton } from '@mui/material';
 import MUIDataTable from "mui-datatables";
 import "../App.css";
 import { fetchJuaNetworkUsers, fetchJuaNetworkUser } from "../actions/JuaNetwork"
@@ -90,6 +90,23 @@ export default function JuaNetwork() {
       options: {
         filter: true,
         sort: true,
+      }
+    },
+    {
+      name: "",
+      label: "",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          const row = tableMeta.tableData[tableMeta.rowIndex]
+          return <Button
+                   variant='contained'
+                   onClick={() => onClickJuaNetworkUser(head(get(tableMeta, 'rowData')))}
+                 >
+                   Open
+                 </Button>;
+        }
       }
     },
   ];
