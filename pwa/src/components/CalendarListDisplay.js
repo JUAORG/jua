@@ -54,9 +54,8 @@ export const CalendarListDisplay = ({ events }) => {
   const handleEventClick = (event) => {
     const ref = get(event, 'publicId')
     const serviceRequestStatus = get(event, ['extendedProps', 'status'])
-    const isServiceProvider = get(user, 'ref') === get(event, ['extendedProps', 'serviceProviderRef'])
+    const isServiceProvider = get(user, 'ref') === get(event, ['extendedProps', 'service_request', 'service_provider'])
     const serviceRequestPrice = get(event, ['extendedProps', 'service_request', 'price'])
-
 
     if (serviceRequestStatus === 'PENDING' && isServiceProvider) {
       setShouldShowStatusChangeDialog(true)
@@ -67,7 +66,7 @@ export const CalendarListDisplay = ({ events }) => {
     if (serviceRequestStatus === 'PENDING_PAYMENT' && !isServiceProvider) {
       makePayment(serviceRequestPrice, ref)
     }
-    if (serviceRequestStatus === 'APPROVED') {
+    if (serviceRequestStatus === 'IN_PROGRESS' ) {
       setSelectedServiceRequestRef(ref)
     }
 
