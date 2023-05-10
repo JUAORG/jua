@@ -3,11 +3,13 @@ import { NotificationContainer } from 'react-notifications';
 import ReactGA from 'react-ga';
 import * as Sentry from '@sentry/browser';
 import { BrowserTracing } from '@sentry/tracing';
+import CookieConsent from "react-cookie-consent";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { QueryClient, QueryClientProvider } from 'react-query';
 import Router from './routes';
 import ThemeProvider from './theme';
 import ScrollToTop from './components/ScrollToTop';
+
 
 // ----------------------------------------------------------------------
 
@@ -37,6 +39,18 @@ export default function App() {
         <ScrollToTop />
         <Router />
         <NotificationContainer />
+        <CookieConsent
+          overlay
+          location="bottom"
+          buttonText="I Agree!"
+          cookieName="jua_cookie_consent_notice"
+          expires={150}
+          buttonStyle={{ color: "#4e503b", fontSize: 17 }}
+          style={{ background: "#2065d1", fontSize: 17, textAlign: 'center' }}
+        >
+          {/* By using xneelo's website, you agree to our use of cookies. Learn More  */}
+          By using JUA, you agree to our use of cookies.
+        </CookieConsent>
         { !process.env.NODE_ENV || process.env.NODE_ENV === 'development' && <ReactQueryDevtools /> }
       </QueryClientProvider>
     </ThemeProvider>
