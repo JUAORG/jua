@@ -6,6 +6,7 @@ import { Grid, Box, Button, Container, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import EducationHistoryForm from '../sections/@dashboard/app/EducationHistoryForm';
 import WorkHistroyForm from '../sections/@dashboard/app/WorkHistoryForm';
+import AccountPaymentMethodForm from '../sections/@dashboard/app/AccountPayment';
 import Page from '../components/Page';
 import UserProfileForm from '../sections/@dashboard/app/UserProfileForm';
 import ServiceListForm from '../sections/@dashboard/app/ServiceListForm';
@@ -109,6 +110,8 @@ export default function Profile() {
     );
   };
 
+  const renderAccountPayment = () => <AccountPaymentMethodForm/>
+
   const renderAdvisorProfileTabs = () => {
     return (
       <>
@@ -117,12 +120,13 @@ export default function Profile() {
             scrollButtons
             variant="scrollable"
             allowScrollButtonsMobile
-            tabHeadings={['Personal Details', 'Services', 'Education', 'Experience']}
+            tabHeadings={['Personal Details', 'Services', 'Education', 'Experience', 'Payment']}
             tabContents={[
               <UserProfileForm userProfile={get(user, 'profile')} />,
               renderServices(),
               renderEducationHistory(),
               renderWorkHistory(),
+              renderAccountPayment()
             ]}
           />
         </Box>

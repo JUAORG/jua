@@ -104,7 +104,7 @@ export default function UserProfileForm(user) {
             </div>
             <TextField fullWidth label="First Name" {...register('first_name')} />
             <TextField fullWidth label="Last Name" {...register('last_name')} />
-            <TextField value='Information Technology' fullWidth label="Industry" {...register('industry')} />
+            {/* <TextField value='' fullWidth label="Industry" {...register('industry')} /> */}
 
             {/* <TextField */}
             {/*   fullWidth */}
