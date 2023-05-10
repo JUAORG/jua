@@ -37,6 +37,26 @@ export async function createUserEducation(values) {
   });
 }
 
+export async function fetchAccountPayment(values) {
+  return axios({
+    method: 'GET',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_account/`,
+    withCredentials: false,
+    headers: defaultHeaders,
+    data: values,
+  });
+}
+
+export async function updateAccountPayment(values) {
+  return axios({
+    method: 'PATCH',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_account/`,
+    withCredentials: false,
+    headers: defaultHeaders,
+    data: values,
+  });
+}
+
 export async function updateUserEducation(values) {
   return axios({
     method: 'PATCH',
