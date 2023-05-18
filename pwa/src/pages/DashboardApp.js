@@ -91,6 +91,7 @@ export default function DashboardApp() {
 
   const renderAvailiableServices = () => {
     const availableServices = SERVICES;
+
     return (
       <ImageList
         sx={{

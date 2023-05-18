@@ -5,26 +5,29 @@ import { useQuery } from 'react-query';
 import { Navigate, useNavigate, useRoutes } from 'react-router-dom'
 import DashboardLayout from './layouts/dashboard'
 import LogoOnlyLayout from './layouts/LogoOnlyLayout'
+
+import { getUser } from './actions/Auth'
+
+import Faq from './pages/Faq'
+import About from './pages/About'
 import Login from './pages/Login'
+import Wallet from './pages/Wallet'
+import Profile from './pages/Profile'
 import NotFound from './pages/Page404'
 import Register from './pages/Register'
-import DashboardApp from './pages/DashboardApp'
-import Profile from './pages/Profile'
-import ServiceRequests from './pages/ServiceRequests'
-import SavedOpportunities from './pages/SavedOpportunities'
 import Settings from './pages/Settings'
-import About from './pages/About'
-import Services from './pages/Services'
 import Service from './pages/Service'
+import Services from './pages/Services'
 import JuaNetwork from './pages/JuaNetwork'
+import DashboardApp from './pages/DashboardApp'
 import JuaNetworkUser from './pages/JuaNetworkUser'
-import AdvisorySessionMeeting from './pages/AdvisorySessionMeeting'
-import AdvisorySessionFeedback from './pages/AdvisorySessionFeedback'
 import ServiceRequest from './pages/ServiceRequest'
 import PasswordChange from './pages/PasswordChange'
-import Wallet from './pages/Wallet'
-import Faq from './pages/Faq'
-import { getUser } from './actions/Auth'
+import IndustryDetail from './pages/IndustryDetail'
+import ServiceRequests from './pages/ServiceRequests'
+import SavedOpportunities from './pages/SavedOpportunities'
+import AdvisorySessionMeeting from './pages/AdvisorySessionMeeting'
+import AdvisorySessionFeedback from './pages/AdvisorySessionFeedback'
 
 // ----------------------------------------------------------------------
 const LOGIN_PATH = '/login'
@@ -64,16 +67,17 @@ export default function Router() {
         { path: 'profile', element: <Profile /> },
         { path: 'app', element: <DashboardApp /> },
         { path: 'settings', element: <Settings /> },
+        { path: 'services', element: <Services /> },
+        { path: 'jua_network', element: <JuaNetwork /> },
+        { path: 'service/:serviceName', element: <Service /> },
         { path: 'password_change', element: <PasswordChange /> },
         { path: 'service_requests', element: <ServiceRequests /> },
         { path: 'saved_opportunities', element: <SavedOpportunities /> },
-        { path: 'services', element: <Services /> },
-        { path: 'service/:serviceName', element: <Service /> },
+        { path: 'industry/:industryRef', element: <IndustryDetail /> },
         { path: 'jua_network/:juaNetworkUserId', element: <JuaNetworkUser /> },
         { path: 'service_request/:serviceRequestId', element: <ServiceRequest /> },
         { path: 'advisory_session_meeting', element: <AdvisorySessionMeeting /> },
         { path: 'advisory_session_meeting/feedback/:serviceRequestId', element: <AdvisorySessionFeedback /> },
-        { path: 'jua_network', element: <JuaNetwork /> },
         // { path: 'rate_card_setup', element: isUserServiceProvider ? <Navigate to="/404" replace /> : <RateCardSetup /> }
       ]
     },

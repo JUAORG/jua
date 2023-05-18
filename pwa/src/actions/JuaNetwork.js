@@ -218,6 +218,24 @@ export const becomeAffiliateExpertApplication = () => {
     });
 }
 
+export async function fetchIndustries() {
+    return axios({
+        method: 'GET',
+        url: `${process.env.REACT_APP_API_BASE_URL}/api/industries/`,
+        withCredentials: false,
+        headers: defaultHeaders,
+    });
+}
+
+export async function fetchIndustry(industryRef) {
+    return axios({
+        method: 'GET',
+        url: `${process.env.REACT_APP_API_BASE_URL}/api/industries/${industryRef}`,
+        withCredentials: false,
+        headers: defaultHeaders,
+    });
+}
+
 export async function processCalendarEvents(sentServiceRequests, recievedServiceRequests) {
     const events = merge(sentServiceRequests, recievedServiceRequests);
     const result = map(events, (event) => {
