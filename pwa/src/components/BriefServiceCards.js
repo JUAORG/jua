@@ -43,15 +43,16 @@ export default function BriefServiceCards() {
         >
           <ImageListItem>
             <CardActionArea>
-              {/* {!isLoading && */}
-              {/*  <CardMedia */}
-              {/*    component="img" */}
-              {/*    height="140" */}
-              {/*    image="/static/images/cards/contemplative-reptile.jpg" */}
-              {/*    alt="green iguana" */}
-              {/*  /> */}
-              {/* } */}
-              <Skeleton sx={{ height: 190 }} animation="wave" variant="rectangular" />
+              {!isLoading &&
+               <CardMedia
+                 height="200"
+                 component="img"
+                 sx={{objectFit: 'contain'}}
+                 alt={get(industry, 'name')}
+                 image={`/static/icons/${get(industry, 'image_src')}.svg`}
+               />
+              }
+              {isLoading && <Skeleton sx={{ height: 190 }} animation="wave" variant="rectangular" />}
               <CardContent>
                 { isLoading && <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} /> }
                 { !isLoading &&
@@ -59,12 +60,17 @@ export default function BriefServiceCards() {
                     {get(industry, 'name')}
                   </Typography>
                 }
-                <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
-                <Skeleton animation="wave" height={10} width="80%" />
-                {/* <Typography variant="body2" color="text.secondary">
-                   Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all
-                   continents except Antarctica
-                   </Typography> */}
+                {isLoading &&
+                 <>
+                   <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
+                   <Skeleton animation="wave" height={10} width="80%" />
+                 </>
+                }
+                {!isLoading &&
+                 <Typography variant="body2" color="text.secondary">
+                   {get(industry, 'description')}
+                 </Typography>
+                }
               </CardContent>
             </CardActionArea>
           </ImageListItem>
