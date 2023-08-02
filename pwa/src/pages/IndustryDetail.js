@@ -26,7 +26,7 @@ export default function IndustryDetail() {
         <Typography variant="h3" sx={{ mb: 1 }}>
           {get(industry, 'name')}
         </Typography>
-        <Typography variant="h6" sx={{ mb: 5 }}>
+        <Typography variant="p" sx={{ mb: 5 }}>
           {get(industry, 'description')}
         </Typography>
         <Typography variant="h6" sx={{ mb: 5 }}>
