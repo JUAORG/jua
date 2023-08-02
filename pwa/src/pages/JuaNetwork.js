@@ -1,162 +1,53 @@
-import React, { useState } from "react"
-import ReactGA from 'react-ga';
-import { get, head } from "lodash"
-import { useQuery } from 'react-query';
-import { Avatar, Container, Button, Typography, Skeleton } from '@mui/material';
-import MUIDataTable from "mui-datatables";
-import "../App.css";
-import { fetchJuaNetworkUsers, fetchJuaNetworkUser } from "../actions/JuaNetwork"
-import Page from '../components/Page';
-import { UserDetail } from '../components/UserDetail';
-
+import React, { useState } from 'react'
+import ReactGA from 'react-ga'
+import { get, map } from 'lodash'
+import { useQuery } from 'react-query'
+import {
+  Stack,
+  Avatar,
+  Container,
+  Typography,
+  Skeleton,
+  Card,
+  CardContent,
+  CardMedia,
+  CardActionArea,
+  ImageList,
+  ImageListItem,
+} from '@mui/material'
+import '../App.css'
+import { fetchIndustries, fetchJuaNetworkUser } from '../actions/JuaNetwork'
+import Page from '../components/Page'
+import { UserDetail } from '../components/UserDetail'
 
 export default function JuaNetwork() {
-  const { data, error, isLoading } = useQuery(['jua_network_users'], fetchJuaNetworkUsers, {
+  const { data, error, isLoading } = useQuery(['jua_network_users'], fetchIndustries, {
     enabled: true,
-    refetchInterval: 60000,
+    refetchInterval: 600000,
     // Continue to refetch while the tab/window is in the background
-    refetchIntervalInBackground: true,
-  });
-  const users = get(data, 'data', [])
+    refetchIntervalInBackground: false,
+  })
+  const industries = get(data, 'data', [])
   const [selectedUser, setSelectedUser] = useState(false)
   const [openUserDetailView, setOpenUserDetailView] = useState(false)
 
   const onClickJuaNetworkUser = (ref) => {
-    fetchJuaNetworkUser(ref).then((response) => {
-      setSelectedUser(response.data)
-      setOpenUserDetailView(true)
-      ReactGA.event({
-        value: 1,
-        category: `Profile view: ${ref}`,
-        action: `Clicked on service provider profile`
+    fetchJuaNetworkUser(ref)
+      .then((response) => {
+        setSelectedUser(response.data)
+        setOpenUserDetailView(true)
+        ReactGA.event({
+          value: 1,
+          category: `Profile view: ${ref}`,
+          action: `Clicked on service provider profile`,
+        })
       })
-    }).catch((error) => {
-      console.error(error)
-    })
-  }
-
-
-  const columns = [
-    {
-      name: "ref",
-      label: "--",
-      options: {
-        filter: false,
-        showColumn: false,
-        allowToggle: false,
-        sort: false,
-        display: false,
-      }
-    },
-    {
-      name: "profile_picture",
-      label: ' ',
-      options: {
-        filter: false,
-        sort: true,
-        customBodyRender: (value, tableMeta, updateValue) => {
-          const row = tableMeta.tableData[tableMeta.rowIndex]
-          return <div><Avatar src={get(row, 'profile_picture')}/></div>;
-        }
-      }
-    },
-    {
-      name: "first_name",
-      label: "First Name",
-      options: {
-        filter: false,
-        sort: true,
-      }
-    },
-    {
-      name: "last_name",
-      label: "Last Name",
-      options: {
-        filter: false,
-        sort: true,
-      }
-    },
-    {
-      name: "current_occupation",
-      label: "Occupation",
-      options: {
-        filter: true,
-        sort: false,
-      }
-    },
-    {
-      name: "industry",
-      label: "Industry",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "",
-      label: "",
-      options: {
-        filter: true,
-        sort: true,
-        customBodyRender: (value, tableMeta, updateValue) => {
-          const row = tableMeta.tableData[tableMeta.rowIndex]
-          return <Button
-                   variant='contained'
-                   onClick={() => onClickJuaNetworkUser(head(get(tableMeta, 'rowData')))}
-                 >
-                   Open
-                 </Button>;
-        }
-      }
-    },
-  ];
-
-  const goToUserProfile = (rowData) => {
-    const juaNetworkUserId = head(rowData)
-    onClickJuaNetworkUser(juaNetworkUserId)
+      .catch((error) => {
+        console.error(error)
+      })
   }
 
   const closeUserDetailView = () => setOpenUserDetailView(false)
-
-  const options = {
-    filterType: 'checkbox',
-    print: false,
-    download: false,
-    isRowSelectable: false,
-    selectableRows: 'none',
-    resizableColumns: true,
-    onRowClick: goToUserProfile,
-    responsive: 'vertical',
-    selectableRowsHideCheckboxes: false
-  };
-
-  const renderDataTableSkeleton = () => (
-    <>
-      <Skeleton
-        variant="rectangular"
-        height={'5vh'}
-        sx={{
-          margin: 'auto',
-          width: {
-            xs: '90vw',
-            md: '50vw'
-          }
-        }}
-      />
-      <br/>
-      <Skeleton
-        variant="rectangular"
-        height={'45vh'}
-        sx={{
-          margin: 'auto',
-          width:{
-            xs: '90vw',
-            md: '50vw'
-          }
-        }}
-      />
-    </>
-  )
 
   return (
     <Page title="Jua Network">
@@ -164,20 +55,66 @@ export default function JuaNetwork() {
         <Typography variant="h4" sx={{ mb: 5 }}>
           Jua Network
         </Typography>
-        {isLoading && renderDataTableSkeleton()}
-        {!isLoading &&
-         <MUIDataTable
-           data={users}
-           columns={columns}
-           options={options}
-         />
-        }
-        {openUserDetailView &&
-         <UserDetail
-           user={selectedUser}
-           handleClose={closeUserDetailView}
-         />
-        }
+        <Stack direction="column" justifyContent="center" alignItems="flex-start" spacing={2}>
+          {map(industries, (industry) => (
+            <>
+              <p>{get(industry, 'name')}</p>
+              <ImageList
+                sx={{
+                  gridAutoFlow: 'column',
+                  gridAutoColumns: 'minmax(260px, 1fr)',
+                  gridTemplateColumns: 'repeat(auto-fill,minmax(250px,1fr)) !important',
+                }}
+              >
+                {map(get(industry, 'advisors'), (advisor) => (
+                  <>
+                    <Card
+                      m={1}
+                      sx={{ maxWidth: 400 }}
+                      key={get(advisor, 'ref')}
+                      onClick={() => onClickJuaNetworkUser(get(advisor, 'ref'))}
+                    >
+                      <ImageListItem>
+                        <CardActionArea>
+                          {!isLoading && (
+                            <CardMedia
+                              height="200"
+                              component="img"
+                              sx={{ objectFit: 'contain' }}
+                              alt={get(advisor, 'first_name')}
+                              image={`/static/icons/${get(advisor, 'image_src')}.svg`}
+                            />
+                          )}
+                          {isLoading && <Skeleton sx={{ height: 190 }} animation="wave" variant="rectangular" />}
+                          <CardContent>
+                            {isLoading && <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />}
+                            {!isLoading && (
+                              <Typography gutterBottom variant="h5" component="div">
+                                {get(advisor, 'first_name')}
+                              </Typography>
+                            )}
+                            {isLoading && (
+                              <>
+                                <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
+                                <Skeleton animation="wave" height={10} width="80%" />
+                              </>
+                            )}
+                            {!isLoading && (
+                              <Typography variant="body2" color="text.secondary">
+                                {get(advisor, 'last_name')}
+                              </Typography>
+                            )}
+                          </CardContent>
+                        </CardActionArea>
+                      </ImageListItem>
+                    </Card>
+                  </>
+                ))}
+              </ImageList>
+            </>
+          ))}
+        </Stack>
+        {openUserDetailView && <UserDetail user={selectedUser} handleClose={closeUserDetailView} />}
       </Container>
     </Page>
   )
