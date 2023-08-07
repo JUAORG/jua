@@ -65,7 +65,7 @@ export default function IndustryDetail() {
                       {isLoading && <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />}
                       {!isLoading && (
                         <Typography gutterBottom variant="h5" component="div">
-                          {get(advisor, 'first_name')}
+                          {get(advisor, 'first_name')} {get(advisor, 'last_name')}
                         </Typography>
                       )}
                       {isLoading && (
@@ -76,7 +76,7 @@ export default function IndustryDetail() {
                       )}
                       {!isLoading && (
                         <Typography variant="body2" color="text.secondary">
-                          {get(advisor, 'last_name')}
+                          {get(advisor, 'bio')}
                         </Typography>
                       )}
                     </CardContent>
