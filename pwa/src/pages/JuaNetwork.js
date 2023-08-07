@@ -55,7 +55,7 @@ export default function JuaNetwork() {
         <Typography variant="h4" sx={{ mb: 5 }}>
           Jua Network
         </Typography>
-        <Stack direction="column" justifyContent="center" alignItems="flex-start" spacing={2}>
+        <Stack direction="column" justifyContent="center" alignItems="flex-start" spacing={5}>
           {map(industries, (industry) => (
             <>
               <p>{get(industry, 'name')}</p>
@@ -78,19 +78,21 @@ export default function JuaNetwork() {
                         <CardActionArea>
                           {!isLoading && (
                             <CardMedia
-                              height="200"
-                              component="img"
-                              sx={{ objectFit: 'contain' }}
-                              alt={get(advisor, 'first_name')}
-                              image={`/static/icons/${get(advisor, 'image_src')}.svg`}
+                              height="10"
+                              component="div"
+                              sx={{ objectFit: 'contain', background: '#004aad', height: 20 }}
                             />
                           )}
+                          <Avatar
+                            src={get(advisor, 'profile_picture')}
+                            sx={{color: "#2065D1", position: 'relative', left: '20px', top: '15px'}}
+                          />
                           {isLoading && <Skeleton sx={{ height: 190 }} animation="wave" variant="rectangular" />}
                           <CardContent>
                             {isLoading && <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />}
                             {!isLoading && (
                               <Typography gutterBottom variant="h5" component="div">
-                                {get(advisor, 'first_name')}
+                                {get(advisor, 'first_name')} {get(advisor, 'last_name')}
                               </Typography>
                             )}
                             {isLoading && (
@@ -100,8 +102,11 @@ export default function JuaNetwork() {
                               </>
                             )}
                             {!isLoading && (
-                              <Typography variant="body2" color="text.secondary">
-                                {get(advisor, 'last_name')}
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                sx={{ textOverflow:'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>
+                                {get(advisor, 'bio')}
                               </Typography>
                             )}
                           </CardContent>

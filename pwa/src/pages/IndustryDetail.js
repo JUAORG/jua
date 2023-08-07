@@ -1,6 +1,7 @@
 import { useQuery } from 'react-query'
 import { get, map, last } from 'lodash'
 import {
+  Avatar,
   Container,
   Typography,
   Skeleton,
@@ -26,10 +27,10 @@ export default function IndustryDetail() {
         <Typography variant="h3" sx={{ mb: 1 }}>
           {get(industry, 'name')}
         </Typography>
-        <Typography variant="p" sx={{ mb: 5 }}>
+        <Typography variant="p" sx={{ my: 2 }}>
           {get(industry, 'description')}
         </Typography>
-        <Typography variant="h6" sx={{ mb: 5 }}>
+        <Typography variant="h6" sx={{ mt: 5, mb: 3 }}>
           Advisors
         </Typography>
         <ImageList
@@ -46,13 +47,15 @@ export default function IndustryDetail() {
                   <CardActionArea>
                     {!isLoading && (
                       <CardMedia
-                        height="200"
-                        component="img"
-                        sx={{ objectFit: 'contain' }}
-                        alt={get(advisor, 'first_name')}
-                        image={get(advisor, 'profile_picture')}
+                        height="10"
+                        component="div"
+                        sx={{ objectFit: 'contain', background: '#004aad', height: 20 }}
                       />
                     )}
+                    <Avatar
+                      src={get(advisor, 'profile_picture')}
+                      sx={{color: "#2065D1", position: 'relative', left: '20px', top: '15px'}}
+                    />
                     {isLoading && <Skeleton sx={{ height: 190 }} animation="wave" variant="rectangular" />}
                     <CardContent>
                       {isLoading && <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />}

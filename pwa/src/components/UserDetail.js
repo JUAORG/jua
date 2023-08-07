@@ -44,12 +44,9 @@ export const UserDetail = ({ user, handleClose }) => {
   return (
     <div>
       <Dialog
-        id='user-detail-modal'
         open
         onClose={handleClose}
         scroll={scroll}
-        aria-labelledby="scroll-dialog-title"
-        aria-describedby="scroll-dialog-description"
       >
         <DialogContent dividers={scroll === 'paper'}>
           <DialogContentText
@@ -88,34 +85,6 @@ export const UserDetail = ({ user, handleClose }) => {
                   </AccordionDetails>
                 </Accordion>
                 <Divider/>
-                {/* <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
-                   <AccordionSummary
-                   expandIcon={<ExpandMoreIcon />}
-                   aria-controls="panel1bh-content"
-                   id="panel1bh-header"
-                   >
-                   <Typography sx={{ width: '33%', flexShrink: 0 }}>
-                   Experience
-                   </Typography>
-                   </AccordionSummary>
-                   <AccordionDetails>
-                   <Typography>
-                   {<IconTextDateList/>}
-                   </Typography>
-                   </AccordionDetails>
-                   </Accordion> */}
-                {/* <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
-                   <AccordionSummary
-                   expandIcon={<ExpandMoreIcon />}
-                   aria-controls="panel2bh-content"
-                   id="panel2bh-header"
-                   >
-                   <Typography sx={{ width: '33%', flexShrink: 0 }}>Education</Typography>
-                   </AccordionSummary>
-                   <AccordionDetails>
-                   {<IconTextDateList/>}
-                   </AccordionDetails>
-                   </Accordion> */}
                 <Accordion disabled expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
