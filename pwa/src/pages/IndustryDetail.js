@@ -75,7 +75,10 @@ export default function IndustryDetail() {
                         </>
                       )}
                       {!isLoading && (
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ textOverflow:'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>
                           {get(advisor, 'bio')}
                         </Typography>
                       )}
