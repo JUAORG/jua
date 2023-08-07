@@ -42,7 +42,11 @@ export default function IndustryDetail() {
         >
           {map(get(industry, 'advisors'), (advisor) => (
             <>
-              <Card m={1} sx={{ maxWidth: 400 }} key={get(advisor, 'ref')}>
+              <Card
+                m={1}
+                key={get(advisor, 'ref')}
+                sx={{ width: 350, maxWidth: 350 }}
+              >
                 <ImageListItem>
                   <CardActionArea>
                     {!isLoading && (

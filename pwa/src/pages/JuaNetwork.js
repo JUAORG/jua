@@ -70,8 +70,8 @@ export default function JuaNetwork() {
                   <>
                     <Card
                       m={1}
-                      sx={{ maxWidth: 400 }}
                       key={get(advisor, 'ref')}
+                      sx={{ width: 350, maxWidth: 350 }}
                       onClick={() => onClickJuaNetworkUser(get(advisor, 'ref'))}
                     >
                       <ImageListItem>
