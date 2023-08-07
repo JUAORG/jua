@@ -10,6 +10,7 @@ import { SERVICES } from '../content/services';
 import Page from '../components/Page';
 import { AppNewsUpdate, AppWidgetSummary } from '../sections/@dashboard/app';
 import BasicSpeedDial from '../components/SpeedDial';
+import BriefFeedCards from  '../components/BriefFeedCards';
 import BriefServiceCards from '../components/BriefServiceCards';
 import SearchBar from '../components/SearchBar';
 
@@ -147,10 +148,14 @@ export default function DashboardApp() {
           {get(user, 'first_name') && `${get(user, ['profile', 'first_name'])} ${get(user, ['profile', 'last_name'])}`}
         </Typography>
         <SearchBar/>
-          <Typography variant="h6" mb={2}>
+          <Typography variant="h6" my={4}>
             Industries
           </Typography>
-          <BriefServiceCards/>
+        <BriefServiceCards/>
+        <Typography variant="h6" my={4}>
+          Feed
+        </Typography>
+        <BriefFeedCards/>
         <Grid container spacing={3}>
           {get(user, ['profile', 'is_service_provider']) ? renderAdvisorHomePage() : renderCustomerHomePage()}
           {/* <Grid item xs={12} md={6} lg={8}>

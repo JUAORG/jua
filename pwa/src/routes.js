@@ -23,6 +23,7 @@ import DashboardApp from './pages/DashboardApp'
 import JuaNetworkUser from './pages/JuaNetworkUser'
 import ServiceRequest from './pages/ServiceRequest'
 import PasswordChange from './pages/PasswordChange'
+import FeedItemDetail from './pages/FeedItemDetail'
 import IndustryDetail from './pages/IndustryDetail'
 import ServiceRequests from './pages/ServiceRequests'
 import SavedOpportunities from './pages/SavedOpportunities'
@@ -74,6 +75,7 @@ export default function Router() {
         { path: 'service_requests', element: <ServiceRequests /> },
         { path: 'saved_opportunities', element: <SavedOpportunities /> },
         { path: 'industry/:industryRef', element: <IndustryDetail /> },
+        { path: 'feed/:industryRef', element: <FeedItemDetail /> },
         { path: 'jua_network/:juaNetworkUserId', element: <JuaNetworkUser /> },
         { path: 'service_request/:serviceRequestId', element: <ServiceRequest /> },
         { path: 'advisory_session_meeting', element: <AdvisorySessionMeeting /> },
