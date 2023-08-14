@@ -227,6 +227,15 @@ export async function fetchIndustries() {
     });
 }
 
+export async function fetchIndustriesAsDropdownOptions() {
+  return axios({
+    method: 'GET',
+    url: `${process.env.REACT_APP_API_BASE_URL}/api/industries/dropdown_options/`,
+    withCredentials: false,
+    headers: defaultHeaders,
+  });
+}
+
 export async function fetchIndustry(industryRef) {
     return axios({
         method: 'GET',

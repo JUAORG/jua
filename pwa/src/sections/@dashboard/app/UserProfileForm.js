@@ -17,7 +17,7 @@ import {
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import LinkedInIcon from '@mui/icons-material/LinkedIn'
-import { fetchIndustries } from '../../../actions/JuaNetwork'
+import { fetchIndustriesAsDropdownOptions } from '../../../actions/JuaNetwork'
 import notificationManager from '../../../actions/NotificationManager'
 import { editUserProfile } from '../../../actions/Profile'
 import { industries } from '../../../_mock/industries'
@@ -76,7 +76,7 @@ export default function UserProfileForm(user) {
     setOpenProfilePictureUploader(false)
   }
 
-  const { data, error, isLoading } = useQuery(['industry_list'], fetchIndustries, {
+  const { data, error, isLoading } = useQuery(['industry_list'], fetchIndustriesAsDropdownOptions, {
     enabled: true,
     refetchIntervalInBackground: false,
   })
