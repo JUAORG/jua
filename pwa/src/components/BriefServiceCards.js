@@ -18,7 +18,8 @@ export default function BriefServiceCards() {
   const navigate = useNavigate();
   const { data, isLoading } = useQuery(['industry_list'], fetchIndustries, {
     enabled: true,
-    refetchIntervalInBackground: false,
+    refetchInterval: 60000,
+    refetchIntervalInBackground: true
   });
   const industries = get(data, 'data');
 
@@ -71,7 +72,7 @@ export default function BriefServiceCards() {
                   </>
                 )}
                 {!isLoading && (
-                  <Typography variant="body2" color="text.secondary" sx={{textAlign: 'justify'}}>
+                  <Typography variant="body2" color="text.secondary">
                     {truncateIndustryDescription(get(industry, 'description'))}
                   </Typography>
                 )}
