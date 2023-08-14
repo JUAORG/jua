@@ -26,6 +26,10 @@ export default function BriefServiceCards() {
     navigate(`/dashboard/industry/${ref}`, { replace: true });
   };
 
+  const truncateIndustryDescription = (str) =>
+        str.length > 100 ? `${str.substring(0, 100)} ...` : str
+  
+
   return (
     <ImageList
       sx={{
@@ -67,8 +71,8 @@ export default function BriefServiceCards() {
                   </>
                 )}
                 {!isLoading && (
-                  <Typography variant="body2" color="text.secondary">
-                    {get(industry, 'description')}
+                  <Typography variant="body2" color="text.secondary" sx={{textAlign: 'justify'}}>
+                    {truncateIndustryDescription(get(industry, 'description'))}
                   </Typography>
                 )}
               </CardContent>
