@@ -109,6 +109,11 @@ export default function Register() {
               </Link>
               .
             </Typography>
+            <p>
+                JUA Advisory is still in development mode. 
+                We are currently user testing the platform and adding final touches. 
+                Please feel free to register/sign in, experience the app, and give us feedback.
+              </p>
 
             {!smUp && (
               <Typography variant="body2" sx={{ mt: 3, textAlign: 'center' }}>
