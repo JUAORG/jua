@@ -100,11 +100,11 @@ export default function Register() {
 
             <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
               By registering, I agree to JUA&nbsp;
-              <Link underline="always" color="text.primary" href="#">
+              <Link underline="always" color="text.primary" href="https://www.jua.one/privacy/">
                 Terms of Service
               </Link>
-              {''}and{''}
-              <Link underline="always" color="text.primary" href="#">
+              {' '}and{' '}
+              <Link underline="always" color="text.primary" href="https://www.jua.one/privacy/">
                 Privacy Policy
               </Link>
               .
