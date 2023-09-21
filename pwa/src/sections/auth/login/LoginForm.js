@@ -83,7 +83,7 @@ export default function LoginForm() {
       <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={false}>
         Login
       </LoadingButton>
-                    <p>
+                          <p style={{fontSize: '10px', marginTop: '10px', textAlign: 'center'}}>
                 JUA Advisory is still in development mode. 
                 We are currently user testing the platform and adding final touches. 
                 Please feel free to register/sign in, experience the app, and give us feedback.
