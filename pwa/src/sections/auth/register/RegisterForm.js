@@ -62,6 +62,11 @@ export default function RegisterForm() {
         <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isLoading}>
           Register
         </LoadingButton>
+                          <p style={{fontSize: '10px', marginTop: '10px', textAlign: 'center'}}>
+                JUA Advisory is still in development mode. 
+                We are currently user testing the platform and adding final touches. 
+                Please feel free to register/sign in, experience the app, and give us feedback.
+              </p>
       </Stack>
     </form>
   );
