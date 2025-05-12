@@ -29,31 +29,31 @@ const navConfig = [
     path: '/dashboard/profile',
     icon: getIcon('eva:person-done-fill'),
   },
-  {
-    title: 'Wallet',
-    path: '/dashboard/wallet',
-    icon: getIcon('eva:credit-card-fill'),
-  },
-  {
-    title: 'FAQ',
-    path: '/dashboard/faq',
-    icon: getIcon('eva:info-outline'),
-  },
-  {
-    title: 'Feedback',
-    path: '/dashboard/about',
-    // icon: getIcon('eva:heart-fill'),
-  },
-  {
-    title: 'Admin: Feedback',
-    path: '/dashboard/admin/feedback',
-    // icon: getIcon('eva:heart-fill'),
-  },
-  {
-    title: 'Admin: FAQ',
-    path: '/dashboard/admin/faq',
-    // icon: getIcon('eva:heart-fill'),
-  },
+  // {
+  //   title: 'Wallet',
+  //   path: '/dashboard/wallet',
+  //   icon: getIcon('eva:credit-card-fill'),
+  // },
+  // {
+  //   title: 'FAQ',
+  //   path: '/dashboard/faq',
+  //   icon: getIcon('eva:info-outline'),
+  // },
+  // {
+  //   title: 'Feedback',
+  //   path: '/dashboard/about',
+  //   // icon: getIcon('eva:heart-fill'),
+  // },
+  // {
+  //   title: 'Admin: Feedback',
+  //   path: '/dashboard/admin/feedback',
+  //   // icon: getIcon('eva:heart-fill'),
+  // },
+  // {
+  //   title: 'Admin: FAQ',
+  //   path: '/dashboard/admin/faq',
+  //   // icon: getIcon('eva:heart-fill'),
+  // },
 ];
 
 export default navConfig

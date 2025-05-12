@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+// File: src/pages/ServiceRequest.js
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Container,
@@ -7,11 +8,10 @@ import {
   CircularProgress,
   Alert
 } from '@mui/material';
-import { getDoc, doc } from 'firebase/firestore';
-import { get } from 'lodash';
 import Page from '../components/Page';
 import ServiceRequestForm from '../sections/@dashboard/app/ServiceRequestForm';
-import { auth, db } from '../actions/firebase'; // ✅ Ensure both are imported correctly
+import { fetchServiceRequest } from '../utils/serviceRequest';
+import { auth } from '../actions/firebase';
 
 export default function ServiceRequest() {
   const navigate = useNavigate();
@@ -30,34 +30,17 @@ export default function ServiceRequest() {
   };
 
   useEffect(() => {
-    const fetchServiceRequest = async () => {
-      try {
-        const ref = doc(db, 'serviceRequests', serviceRequestId); // 👈 update path if needed
-        const snap = await getDoc(ref);
-
-        if (!snap.exists()) {
-          throw new Error('Service request not found.');
-        }
-
-        const data = snap.data();
-        setServiceRequest({ id: snap.id, ...data });
-      } catch (err) {
-        console.error(err);
-        setError('Failed to load the service request.');
-      } finally {
-        setLoading(false);
-      }
+    const loadRequest = async () => {
+      const { data, error } = await fetchServiceRequest(serviceRequestId);
+      if (error) setError(error);
+      if (data) setServiceRequest(data);
+      setLoading(false);
     };
-
-    fetchServiceRequest();
+    loadRequest();
   }, [serviceRequestId]);
 
   const currentUid = auth.currentUser?.uid;
-  const isServiceProvider = currentUid && currentUid === get(serviceRequest, 'serviceProvider');
-  const isCustomer = currentUid && currentUid === get(serviceRequest, 'customer');
-
-  // Permission check
-  const hasAccess = isServiceProvider || isCustomer;
+  const isServiceProvider = currentUid && currentUid === serviceRequest?.serviceProvider;
 
   return (
     <Page title="Service Request">
@@ -73,15 +56,15 @@ export default function ServiceRequest() {
         {loading && <CircularProgress />}
         {error && <Alert severity="error">{error}</Alert>}
 
-        {!loading && serviceRequest && hasAccess && (
+        {!loading && serviceRequest && (
           <>
             <ServiceRequestForm
               serviceRequest={serviceRequest}
               isServiceProvider={isServiceProvider}
             />
 
-            {get(serviceRequest, 'status') === 'Accepted' && (
-              <Button
+            {serviceRequest.status === 'Accepted' && (
+              <Button 
                 sx={{ mt: 5 }}
                 variant="contained"
                 onClick={goToServiceRequestMeeting}
@@ -90,12 +73,6 @@ export default function ServiceRequest() {
               </Button>
             )}
           </>
-        )}
-
-        {!loading && serviceRequest && !hasAccess && (
-          <Alert severity="warning" sx={{ mt: 4 }}>
-            You do not have permission to view this service request.
-          </Alert>
         )}
       </Container>
     </Page>

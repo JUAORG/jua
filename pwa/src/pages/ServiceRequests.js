@@ -1,13 +1,58 @@
-import { useState } from 'react';
-import { Typography, Skeleton, Card, CardContent, List, ListItem, ListItemText, Divider, Container, IconButton } from '@mui/material';
+// File: src/pages/ServiceRequests.js
+import { useEffect, useState } from 'react';
+import {
+  Typography,
+  Skeleton,
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Container,
+  IconButton,
+  Alert,
+  CircularProgress
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import { useNavigate } from 'react-router-dom';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import Page from '../components/Page';
-import { useUserServiceRequests } from '../hooks/useUserServiceRequests';
-import ServiceRequestForm from '../sections/@dashboard/app/ServiceRequestForm'; // Ensure this is the updated Firebase version
+import ServiceRequestForm from '../sections/@dashboard/app/ServiceRequestForm';
+import { auth, db } from '../actions/firebase';
 
 export default function ServiceRequests() {
-  const { serviceRequests, loading, authorized } = useUserServiceRequests();
+  const [serviceRequests, setServiceRequests] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const currentUid = auth.currentUser?.uid;
+        if (!currentUid) throw new Error('User not logged in');
+
+        const q = query(
+          collection(db, 'serviceRequests'),
+          where('customer', '==', currentUid)
+        );
+
+        const snapshot = await getDocs(q);
+        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        setServiceRequests(data);
+      } catch (err) {
+        console.error(err);
+        setError('Failed to load service requests.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRequests();
+  }, []);
 
   const handleOpenEdit = (req) => {
     setSelectedRequest(req);
@@ -15,6 +60,10 @@ export default function ServiceRequests() {
 
   const handleCloseEdit = () => {
     setSelectedRequest(null);
+  };
+
+  const handleItemClick = (id) => {
+    navigate(`/dashboard/service_request/${id}`);
   };
 
   const renderSkeletonList = () => (
@@ -39,11 +88,19 @@ export default function ServiceRequests() {
         <List disablePadding>
           {serviceRequests.map((req) => (
             <div key={req.id}>
-              <ListItem alignItems="flex-start" secondaryAction={
-                <IconButton edge="end" aria-label="edit" onClick={() => handleOpenEdit(req)}>
-                  <EditIcon />
-                </IconButton>
-              }>
+              <ListItem
+                button
+                onClick={() => handleItemClick(req.id)}
+                alignItems="flex-start"
+                secondaryAction={
+                  <IconButton edge="end" aria-label="edit" onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenEdit(req);
+                  }}>
+                    <EditIcon />
+                  </IconButton>
+                }
+              >
                 <ListItemText
                   primary={req.subject || 'Untitled Request'}
                   secondary={
@@ -61,7 +118,7 @@ export default function ServiceRequests() {
               <Divider component="li" />
             </div>
           ))}
-          {serviceRequests.length === 0 && (
+          {serviceRequests.length === 0 && !loading && (
             <Typography variant="body2" sx={{ textAlign: 'center', p: 2 }}>
               No service requests yet.
             </Typography>
@@ -83,19 +140,16 @@ export default function ServiceRequests() {
           />
           Service Requests
         </Typography>
+
         {loading && renderSkeletonList()}
-        {!loading && !authorized && (
-          <Typography align="center" variant="h6" sx={{ mt: 5, color: 'error.main' }}>
-            You are not authorized to view service requests.
-          </Typography>
-        )}
-        {!loading && authorized && renderServiceRequestList()}
+        {error && <Alert severity="error">{error}</Alert>}
+        {!loading && !error && renderServiceRequestList()}
 
         {selectedRequest && (
           <ServiceRequestForm
             serviceRequest={selectedRequest}
             closeDialog={handleCloseEdit}
-            isServiceProvider={false} // Optional prop based on your flow
+            isServiceProvider={false}
             serviceProvider={selectedRequest.serviceProvider ? { id: selectedRequest.serviceProvider } : null}
           />
         )}
