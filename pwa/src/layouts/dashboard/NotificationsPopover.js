@@ -1,8 +1,4 @@
-import { useState } from 'react';
-import { get } from 'lodash';
-import PropTypes from 'prop-types';
-import { useQuery } from 'react-query';
-// @mui
+import { useEffect, useState } from 'react';
 import {
   Box,
   List,
@@ -14,134 +10,107 @@ import {
   Typography,
   IconButton,
   ListItemText,
-  ListSubheader,
   ListItemAvatar,
   ListItemButton,
 } from '@mui/material';
-// components
-import Iconify from '../../components/Iconify';
+import { collection, doc, onSnapshot, orderBy, query, updateDoc, getDocs, writeBatch } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import { get } from 'lodash';
 import Scrollbar from '../../components/Scrollbar';
-import {
-  getUserNotifications,
-  markUserNotificationAsRead,
-  markAllUserNotificationsAsRead
-} from '../../actions/Notifications';
 import { AnimationsSkeleton } from '../../components/Skeletons';
+import { auth, db } from '../../actions/firebase'; // Adjust the path to your firebase.js config
+import Iconify from '../../components/Iconify';
 
 export default function NotificationsPopover() {
   const [open, setOpen] = useState(null);
-  const { data, error, isLoading } = useQuery(['notifications'], getUserNotifications, {
-    enabled: true,
-    staleTime: 10000,
-    refetchInterval: 10000,
-    refetchIntervalInBackground: true
-  });
-  const notifications = get(data, 'data', []);
-  const totalUnRead = notifications.filter((item) => item.read === false).length;
-  const readNotifications = notifications.filter((item) => item.read === true);
-  const unReadNotifications = notifications.filter((item) => item.read === false);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  const handleOpen = (event) => {
-    setOpen(event.currentTarget);
-  };
+  useEffect(() => {
+    if (!auth.currentUser) return;
 
-  const handleClose = () => {
-    setOpen(null);
-  };
+    const q = query(
+      collection(db, 'users', auth.currentUser.uid, 'notifications'),
+      orderBy('createdAt', 'desc')
+    );
 
-  const handleMarkAllAsRead = () => {
-    console.log('frfr')
-    markAllUserNotificationsAsRead()
-      .then(() => {
-        console.log('bumble')
-        notifications.map((notification) => ({
-          ...notification,
-          isUnRead: false,
-        }))
-      })
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const entries = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setNotifications(entries);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const totalUnRead = notifications.filter((item) => !item.read).length;
+  const readNotifications = notifications.filter((item) => item.read);
+  const unReadNotifications = notifications.filter((item) => !item.read);
+
+  const handleOpen = (event) => setOpen(event.currentTarget);
+  const handleClose = () => setOpen(null);
+
+  const handleMarkAllAsRead = async () => {
+    const batch = writeBatch(db);
+    unReadNotifications.forEach((notif) => {
+      const ref = doc(db, 'users', auth.currentUser.uid, 'notifications', notif.id);
+      batch.update(ref, { read: true });
+    });
+    await batch.commit();
   };
 
   return (
     <>
       <IconButton color={open ? 'primary' : 'default'} onClick={handleOpen} sx={{ width: 40, height: 40 }}>
-      <Badge badgeContent={totalUnRead} color="error">
-      <Iconify icon="eva:bell-fill" />
-      </Badge>
+        <Badge badgeContent={totalUnRead} color="error">
+          <Iconify icon="eva:bell-fill" />
+        </Badge>
       </IconButton>
 
       <Popover
-    open={Boolean(open)}
-    anchorEl={open}
-    onClose={handleClose}
-    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        PaperProps={{
-          sx: {
-            mt: 1.5,
-            ml: 0.75,
-            width: 360,
-          },
-        }}
+        open={Boolean(open)}
+        anchorEl={open}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        PaperProps={{ sx: { mt: 1.5, ml: 0.75, width: 360 } }}
       >
-        {!isLoading && (
-          <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 2.5 }}>
-            <Box sx={{ flexGrow: 1 }}>
-              <Typography variant="subtitle1">Notifications</Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                You have {totalUnRead} unread messages
-              </Typography>
-            </Box>
-            {totalUnRead > 0 && (
-                <Tooltip title=" Mark all as read">
-                <IconButton color="primary" onClick={handleMarkAllAsRead}>
+        <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 2.5 }}>
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography variant="subtitle1">Notifications</Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              You have {totalUnRead} unread notifications
+            </Typography>
+          </Box>
+          {totalUnRead > 0 && (
+            <Tooltip title="Mark all as read">
+              <IconButton color="primary" onClick={handleMarkAllAsRead}>
                 <Iconify icon="eva:done-all-fill" />
-                </IconButton>
-                </Tooltip>
-            )}
-             </Box>
-            )}
-
-         <Divider sx={{ borderStyle: 'dashed' }} />
-
-         <Scrollbar sx={{ height: { xs: 340, sm: 'auto' } }}>
-         <List
-            disablePadding
-            subheader={
-              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                New
-              </ListSubheader>
-            }
-          >
-            {isLoading && <AnimationsSkeleton />}
-            {!isLoading &&
-              unReadNotifications.map((notification) => (
-                <NotificationItem key={get(notification, 'ref')} notification={notification} />
-              ))}
-          </List>
-
-          <List
-            disablePadding
-            subheader={
-              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                Before that
-              </ListSubheader>
-            }
-          >
-            {isLoading && <AnimationsSkeleton />}
-            {!isLoading &&
-              readNotifications.map((notification) => (
-                <NotificationItem key={get(notification, 'ref')} notification={notification} />
-              ))}
-          </List>
-        </Scrollbar>
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        {/* <Box sx={{ p: 1 }}>
-          <Button fullWidth disableRipple>
-            View All
-          </Button>
-        </Box> */}
+        <Scrollbar sx={{ height: { xs: 340, sm: 'auto' } }}>
+          <List disablePadding>
+            {loading && <AnimationsSkeleton />}
+            {!loading && notifications.length === 0 && (
+              <Typography sx={{ p: 2.5, color: 'text.secondary' }}>No notifications yet.</Typography>
+            )}
+            {unReadNotifications.map((notification) => (
+              <NotificationItem key={notification.id} notification={notification} navigate={navigate} />
+            ))}
+            {readNotifications.map((notification) => (
+              <NotificationItem key={notification.id} notification={notification} navigate={navigate} />
+            ))}
+          </List>
+        </Scrollbar>
       </Popover>
     </>
   );
@@ -149,29 +118,15 @@ export default function NotificationsPopover() {
 
 // ----------------------------------------------------------------------
 
-NotificationItem.propTypes = {
-  notification: PropTypes.shape({
-    // createdAt: PropTypes.instanceOf(Date),
-    id: PropTypes.string,
-    isUnRead: PropTypes.bool,
-    title: PropTypes.string,
-    description: PropTypes.string,
-    type: PropTypes.string,
-    avatar: PropTypes.any,
-  }),
-};
-
-function NotificationItem({ notification }) {
+function NotificationItem({ notification, navigate }) {
   const { avatar, title } = renderContent(notification);
 
-  const handleNotificationItemClick = () => {
-    markUserNotificationAsRead(get(notification, 'ref'))
-      .then(() => {
-        console.debug('succesfully marked as read');
-      })
-      .catch(() => {
-        console.error('unsuccesfully marked as read');
-      });
+  const handleNotificationItemClick = async () => {
+    const ref = doc(db, 'users', auth.currentUser.uid, 'notifications', notification.id);
+    await updateDoc(ref, { read: true });
+    if (notification.actionUrl) {
+      navigate(notification.actionUrl);
+    }
   };
 
   return (
@@ -181,7 +136,7 @@ function NotificationItem({ notification }) {
         py: 1.5,
         px: 2.5,
         mt: '1px',
-        ...(notification.isUnRead && {
+        ...(notification.read === false && {
           bgcolor: 'action.selected',
         }),
       }}
@@ -202,8 +157,7 @@ function NotificationItem({ notification }) {
             }}
           >
             <Iconify icon="eva:clock-outline" sx={{ mr: 0.5, width: 16, height: 16 }} />
-            {/* {fToNow(get(notification, 'createdAt'))} */}
-            mark as read
+            {notification?.createdAt?.toDate?.().toLocaleString() || 'Unknown time'}
           </Typography>
         }
       />
@@ -215,42 +169,33 @@ function NotificationItem({ notification }) {
 
 function renderContent(notification) {
   const title = (
-    <Typography key={get(notification, 'ref')} variant="subtitle2">
-      {get(notification, 'title')}
+    <Typography key={notification.id} variant="subtitle2">
+      {notification.title || 'Notification'}
       <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-        &nbsp; {get(notification, 'message')}
+        &nbsp; {notification.message}
       </Typography>
     </Typography>
   );
 
-  if (get(notification, 'type') === 'order_placed') {
-    return {
-      avatar: <img alt={get(notification, 'title')} src="/assets/icons/ic_notification_package.svg" />,
-      title,
-    };
-  }
-  if (get(notification, 'type') === 'order_shipped') {
-    return {
-      avatar: <img alt={notification.title} src="/assets/icons/ic_notification_shipping.svg" />,
-      title,
-    };
-  }
-  if (get(notification, 'type') === 'mail') {
-    return {
-      avatar: <img alt={notification.title} src="/assets/icons/ic_notification_mail.svg" />,
-      title,
-    };
-  }
-  if (get(notification, 'type') === 'chat_message') {
-    return {
-      avatar: <img alt={notification.title} src="/assets/icons/ic_notification_chat.svg" />,
-      title,
-    };
-  }
+  const icon = notification.icon || getDefaultIcon(notification.type);
+
   return {
-    avatar: get(notification, 'avatar') ? (
-      <img alt={get(notification, 'title')} src={get(notification, 'avatar')} />
-    ) : null,
+    avatar: <Iconify icon={icon} width={20} height={20} />,
     title,
   };
+}
+
+function getDefaultIcon(type) {
+  switch (type) {
+    case 'service_request':
+      return 'eva:briefcase-outline';
+    case 'account_suspended':
+      return 'eva:alert-circle-outline';
+    case 'wallet_low':
+      return 'eva:credit-card-outline';
+    case 'chat_message':
+      return 'eva:message-square-outline';
+    default:
+      return 'eva:bell-outline';
+  }
 }

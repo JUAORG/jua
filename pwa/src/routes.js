@@ -1,87 +1,75 @@
-import { useEffect } from 'react';
-import { get } from 'lodash'
+import { lazy, Suspense, useContext, useEffect } from 'react';
+import { Navigate, useRoutes } from 'react-router-dom';
 import ReactGA from 'react-ga';
-import { useQuery } from 'react-query';
-import { Navigate, useNavigate, useRoutes } from 'react-router-dom'
-import DashboardLayout from './layouts/dashboard'
-import LogoOnlyLayout from './layouts/LogoOnlyLayout'
+import { CircularProgress, Box } from '@mui/material';
+import { AuthContext } from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import LogoOnlyLayout from './layouts/LogoOnlyLayout';
+import DashboardLayout from './layouts/dashboard';
 
-import { getUser } from './actions/Auth'
-
-import Faq from './pages/Faq'
-import About from './pages/About'
-import Login from './pages/Login'
-import Wallet from './pages/Wallet'
-import Profile from './pages/Profile'
-import NotFound from './pages/Page404'
-import Register from './pages/Register'
-import Settings from './pages/Settings'
-import Service from './pages/Service'
-import Services from './pages/Services'
-import JuaNetwork from './pages/JuaNetwork'
-import DashboardApp from './pages/DashboardApp'
-import JuaNetworkUser from './pages/JuaNetworkUser'
-import ServiceRequest from './pages/ServiceRequest'
-import PasswordChange from './pages/PasswordChange'
-import FeedItemDetail from './pages/FeedItemDetail'
-import IndustryDetail from './pages/IndustryDetail'
-import ServiceRequests from './pages/ServiceRequests'
-import SavedOpportunities from './pages/SavedOpportunities'
-import AdvisorySessionMeeting from './pages/AdvisorySessionMeeting'
-import AdvisorySessionFeedback from './pages/AdvisorySessionFeedback'
-
-// ----------------------------------------------------------------------
-const LOGIN_PATH = '/login'
-const REGISTER_PATH = '/register'
+// Lazy-loaded routes
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const NotFound = lazy(() => import('./pages/Page404'));
+const DashboardApp = lazy(() => import('./pages/DashboardApp'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Wallet = lazy(() => import('./pages/Wallet'));
+const Settings = lazy(() => import('./pages/Settings'));
+const Services = lazy(() => import('./pages/Services'));
+const Service = lazy(() => import('./pages/Service'));
+const Faq = lazy(() => import('./pages/Faq'));
+const About = lazy(() => import('./pages/About'));
+const JuaNetwork = lazy(() => import('./pages/JuaNetwork'));
+const JuaNetworkUser = lazy(() => import('./pages/JuaNetworkUser'));
+const PasswordChange = lazy(() => import('./pages/PasswordChange'));
+const FeedItemDetail = lazy(() => import('./pages/FeedItemDetail'));
+const IndustryDetail = lazy(() => import('./pages/IndustryDetail'));
+const ServiceRequests = lazy(() => import('./pages/ServiceRequests'));
+const SavedOpportunities = lazy(() => import('./pages/SavedOpportunities'));
+const AdvisorySessionMeeting = lazy(() => import('./pages/AdvisorySessionMeeting'));
+const AdvisorySessionFeedback = lazy(() => import('./pages/AdvisorySessionFeedback'));
+const ServiceRequest = lazy(() => import('./pages/ServiceRequest'));
+const AdminFeedbackPage = lazy(() => import('./pages/admin/AdminFeedbackPage'));
+const AdminFaqManagePage = lazy(() => import('./pages/admin/AdminFaqManagePage'));
 
 export default function Router() {
-  const navigate = useNavigate()
-  const currentPath = window.location.pathname
-  const isOnAuthPage = Boolean(currentPath === LOGIN_PATH || currentPath === REGISTER_PATH)
-  const { data, error, isLoading } = useQuery(['user'], getUser, {
-    retry: 2,
-    enabled: false,
-    retryDelay: 5000,
-    staleTime: 120000,
-    refetchInterval: 120000,
-    refetchIntervalInBackground: false
-  })
-
-  useEffect(() => {
-    if (get(error, ['response', 'status']) === 401 && !isOnAuthPage) {
-      navigate('/login', {replace: true})
-    }
-  },[isLoading, error])
+  const { user, initializing } = useContext(AuthContext);
 
   useEffect(() => {
     ReactGA.pageview(window.location.pathname + window.location.search);
-  })
+  }, []);
 
-  return useRoutes([
+  // ✅ always call useRoutes
+  const routes = useRoutes([
     {
       path: '/dashboard',
-      element: <DashboardLayout />,
+      element: (
+        <ProtectedRoute>
+          <DashboardLayout />
+        </ProtectedRoute>
+      ),
       children: [
         { path: 'faq', element: <Faq /> },
-        { path: 'About', element: <About /> },
+        { path: 'about', element: <About /> },
         { path: 'wallet', element: <Wallet /> },
         { path: 'profile', element: <Profile /> },
         { path: 'app', element: <DashboardApp /> },
         { path: 'settings', element: <Settings /> },
         { path: 'services', element: <Services /> },
-        { path: 'jua_network', element: <JuaNetwork /> },
         { path: 'service/:serviceName', element: <Service /> },
+        { path: 'jua_network', element: <JuaNetwork /> },
+        { path: 'jua_network/:juaNetworkUserId', element: <JuaNetworkUser /> },
         { path: 'password_change', element: <PasswordChange /> },
         { path: 'service_requests', element: <ServiceRequests /> },
         { path: 'saved_opportunities', element: <SavedOpportunities /> },
         { path: 'industry/:industryRef', element: <IndustryDetail /> },
         { path: 'feed/:industryRef', element: <FeedItemDetail /> },
-        { path: 'jua_network/:juaNetworkUserId', element: <JuaNetworkUser /> },
         { path: 'service_request/:serviceRequestId', element: <ServiceRequest /> },
         { path: 'advisory_session_meeting', element: <AdvisorySessionMeeting /> },
         { path: 'advisory_session_meeting/feedback/:serviceRequestId', element: <AdvisorySessionFeedback /> },
-        // { path: 'rate_card_setup', element: isUserServiceProvider ? <Navigate to="/404" replace /> : <RateCardSetup /> }
-      ]
+        {path: 'admin/feedback', element: <AdminFeedbackPage />},
+        {path: 'admin/faq', element: <AdminFaqManagePage />},
+      ],
     },
     {
       path: '/',
@@ -94,6 +82,15 @@ export default function Router() {
         { path: '*', element: <Navigate to="/404" /> },
       ],
     },
-    { path: '*', element: <Navigate to="/404" replace /> },
-  ])
+  ]);
+
+  return (
+    <Suspense fallback={<Box textAlign="center" mt={10}><CircularProgress /></Box>}>
+      {initializing ? (
+        <Box textAlign="center" mt={10}><CircularProgress /></Box>
+      ) : (
+        routes
+      )}
+    </Suspense>
+  );
 }

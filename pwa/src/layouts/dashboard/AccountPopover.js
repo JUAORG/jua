@@ -1,50 +1,64 @@
-import { get } from 'lodash';
 import { useRef, useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { alpha } from '@mui/material/styles';
-import { useMutation, useQueryClient } from 'react-query';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@mui/material';
-import MenuPopover from '../../components/MenuPopover';
+import {
+  Box,
+  Divider,
+  Typography,
+  Stack,
+  MenuItem,
+  Avatar,
+  IconButton,
+} from '@mui/material';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../actions/firebase'; // Adjust this path as needed
 import notificationManager from '../../actions/NotificationManager';
-import { clearAuthTokenCookie, logout } from '../../actions/Auth';
-import PasswordChangeForm from '../../sections/@dashboard/app/PasswordChangeForm';
+import MenuPopover from '../../components/MenuPopover';
 import FormDialog from '../../components/FormDialog';
-// ----------------------------------------------------------------------
+import PasswordChangeForm from '../../sections/@dashboard/app/PasswordChangeForm'
 
-const MENU_OPTIONS = [];
-
-export default function AccountPopover({ user }) {
+export default function AccountPopover() {
   const navigate = useNavigate();
   const anchorRef = useRef(null);
-  const queryClient = useQueryClient();
   const [open, setOpen] = useState(null);
   const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
 
+  const currentUser = auth.currentUser;
+  const displayName = currentUser?.firstName || 'Anonymous User';
+  const email = currentUser?.email || 'Unknown Email';
+  const photoURL = currentUser?.photoURL || '';
+console.debug(currentUser)
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
 
   const handleClose = () => setOpen(null);
-  const openPasswordChangeForm = () => setShowChangePasswordForm(true);
-  const handleCloseChangePasswordForm = () => setShowChangePasswordForm(false);
 
-  const clearStorage = () => {
+  const openPasswordChangeForm = () => {
+    setShowChangePasswordForm(true);
+    handleClose();
+  };
+
+  const handleCloseChangePasswordForm = () => {
+    setShowChangePasswordForm(false);
+  };
+
+  const clearSession = () => {
     localStorage.clear();
-    clearAuthTokenCookie();
-    setOpen(null);
     navigate('/login', { replace: true });
   };
 
-  const { mutate: handleLogout, isLoading: isSubmitLoading } = useMutation({
-    mutationFn: () => logout(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
       notificationManager.success('Logged out', 'Success');
-      clearStorage()
-    },
-    onError: () => notificationManager.error('something went wrong', 'Error'),
-    onSettled: () => clearStorage(),
-  });
+    } catch (err) {
+      console.error('Logout error:', err);
+      notificationManager.error('Something went wrong', 'Error');
+    } finally {
+      clearSession();
+    }
+  };
 
   return (
     <>
@@ -66,7 +80,7 @@ export default function AccountPopover({ user }) {
           }),
         }}
       >
-        <Avatar src={get(user, ['profile', 'profile_picture'])} alt="profile picture" />
+        <Avatar src={photoURL} alt="profile picture" />
       </IconButton>
 
       <MenuPopover
@@ -84,33 +98,27 @@ export default function AccountPopover({ user }) {
         }}
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
-          <Typography variant="subtitle2" noWrap>
-            {get(user, ['profile', 'first_name'])} {get(user, ['profile', 'last_name'])}
-          </Typography>
+          {/* <Typography variant="subtitle2" noWrap>
+            {displayName}
+          </Typography> */}
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {get(user, ['profile', 'number_of_notification'], 0)} notifications
+            {email}
           </Typography>
         </Box>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <Stack sx={{ p: 1 }}>
-          {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} to={option.linkTo} component={RouterLink} onClick={handleClose}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </Stack>
-
-        <Divider sx={{ borderStyle: 'dashed' }} />
         <MenuItem onClick={openPasswordChangeForm} sx={{ m: 1 }}>
           Change Password
         </MenuItem>
+
         <Divider sx={{ borderStyle: 'dashed' }} />
+
         <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
           Logout
         </MenuItem>
       </MenuPopover>
+
       {showChangePasswordForm && (
         <FormDialog
           handleClose={handleCloseChangePasswordForm}

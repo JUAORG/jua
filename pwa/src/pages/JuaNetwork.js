@@ -1,53 +1,117 @@
-import React, { useState } from 'react'
-import ReactGA from 'react-ga'
-import { get, map } from 'lodash'
-import { useQuery } from 'react-query'
+import React, { useEffect, useState, useMemo } from 'react';
 import {
-  Stack,
-  Avatar,
   Container,
   Typography,
-  Skeleton,
+  Stack,
+  Avatar,
   Card,
   CardContent,
   CardMedia,
   CardActionArea,
   ImageList,
   ImageListItem,
-} from '@mui/material'
-import '../App.css'
-import { fetchIndustries, fetchJuaNetworkUser } from '../actions/JuaNetwork'
-import Page from '../components/Page'
-import { UserDetail } from '../components/UserDetail'
+  TextField,
+  MenuItem,
+  Pagination,
+  CircularProgress
+} from '@mui/material';
+import ReactGA from 'react-ga';
+import { doc, getDoc, collection, query, where, onSnapshot } from 'firebase/firestore';
+import { db } from '../actions/firebase'; // Adjust the path to your firebase.js config
+import notificationManager from '../actions/NotificationManager';
+import { UserDetail } from '../components/UserDetail';
+import Page from '../components/Page';
+
+const ITEMS_PER_PAGE = 6;
 
 export default function JuaNetwork() {
-  const { data, error, isLoading } = useQuery(['jua_network_users'], fetchIndustries, {
-    enabled: true,
-    refetchInterval: 600000,
-    // Continue to refetch while the tab/window is in the background
-    refetchIntervalInBackground: false,
-  })
-  const industries = get(data, 'data', [])
-  const [selectedUser, setSelectedUser] = useState(false)
-  const [openUserDetailView, setOpenUserDetailView] = useState(false)
+  const [users, setUsers] = useState([]);
+  const [industryFilter, setIndustryFilter] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [openUserDetailView, setOpenUserDetailView] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const onClickJuaNetworkUser = (ref) => {
-    fetchJuaNetworkUser(ref)
-      .then((response) => {
-        setSelectedUser(response.data)
-        setOpenUserDetailView(true)
+  useEffect(() => {
+    const q = query(
+      collection(db, 'users'),
+      where('profile_visible', '==', true),
+      where('is_service_provider', '==', true)
+    );
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const updatedUsers = snapshot.docs.map((doc) => ({
+          ...doc.data(),
+          ref: doc.id
+        }));
+        setUsers(updatedUsers);
+        setLoading(false);
+      },
+      (error) => {
+        console.error(error);
+        notificationManager.error('Failed to listen to network users', 'Error');
+        setLoading(false);
+      }
+    );
+
+    return () => unsubscribe(); // cleanup listener on unmount
+  }, []);
+
+  const filteredIndustries = useMemo(() => {
+    const uniqueIndustries = [...new Set(users.map((u) => u.industry))];
+    return uniqueIndustries.sort();
+  }, [users]);
+
+  const filteredUsers = useMemo(() => {
+    let list = users;
+    if (industryFilter) {
+      list = list.filter((u) => u.industry === industryFilter);
+    }
+    if (searchTerm) {
+      list = list.filter((u) =>
+        `${u.first_name} ${u.last_name} ${u.bio || ''}`.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    return list;
+  }, [users, industryFilter, searchTerm]);
+
+  const paginatedUsers = useMemo(() => {
+    const start = (page - 1) * ITEMS_PER_PAGE;
+    return filteredUsers.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredUsers, page]);
+
+  const onClickJuaNetworkUser = async (ref) => {
+    try {
+      const snap = await getDoc(doc(db, 'users', ref));
+      if (snap.exists()) {
+        setSelectedUser({ ...snap.data(), ref: snap.id });
+        setOpenUserDetailView(true);
         ReactGA.event({
           value: 1,
           category: `Profile view: ${ref}`,
-          action: `Clicked on service provider profile`,
-        })
-      })
-      .catch((error) => {
-        console.error(error)
-      })
-  }
+          action: 'Clicked on service provider profile'
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      notificationManager.error('Could not load user details', 'Error');
+    }
+  };
 
-  const closeUserDetailView = () => setOpenUserDetailView(false)
+  const closeUserDetailView = () => setOpenUserDetailView(false);
+
+  const handleIndustryChange = (e) => {
+    setIndustryFilter(e.target.value);
+    setPage(1);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setPage(1);
+  };
 
   return (
     <Page title="Jua Network">
@@ -55,72 +119,95 @@ export default function JuaNetwork() {
         <Typography variant="h4" sx={{ mb: 5 }}>
           Jua Network
         </Typography>
-        <Stack direction="column" justifyContent="center" alignItems="flex-start" spacing={5}>
-          {map(industries, (industry) => (
-            <>
-              <p>{get(industry, 'name')}</p>
-              <ImageList
-                sx={{
-                  gridAutoFlow: 'column',
-                  gridAutoColumns: 'minmax(260px, 1fr)',
-                  gridTemplateColumns: 'repeat(auto-fill,minmax(250px,1fr)) !important',
-                }}
+
+        {loading ? (
+          <CircularProgress sx={{ mx: 'auto', display: 'block' }} />
+        ) : (
+          <>
+            <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
+              <TextField
+                select
+                label="Filter by Industry"
+                value={industryFilter}
+                onChange={handleIndustryChange}
+                sx={{ minWidth: 220 }}
               >
-                {map(get(industry, 'advisors'), (advisor) => (
-                  <>
-                    <Card
-                      m={1}
-                      key={get(advisor, 'ref')}
-                      sx={{ width: 350, maxWidth: 350 }}
-                      onClick={() => onClickJuaNetworkUser(get(advisor, 'ref'))}
-                    >
-                      <ImageListItem>
-                        <CardActionArea>
-                          {!isLoading && (
-                            <CardMedia
-                              height="10"
-                              component="div"
-                              sx={{ objectFit: 'contain', background: '#004aad', height: 20 }}
-                            />
-                          )}
-                          <Avatar
-                            src={get(advisor, 'profile_picture')}
-                            sx={{color: "#2065D1", position: 'relative', left: '20px', top: '15px'}}
-                          />
-                          {isLoading && <Skeleton sx={{ height: 190 }} animation="wave" variant="rectangular" />}
-                          <CardContent>
-                            {isLoading && <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />}
-                            {!isLoading && (
-                              <Typography gutterBottom variant="h5" component="div">
-                                {get(advisor, 'first_name')} {get(advisor, 'last_name')}
-                              </Typography>
-                            )}
-                            {isLoading && (
-                              <>
-                                <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
-                                <Skeleton animation="wave" height={10} width="80%" />
-                              </>
-                            )}
-                            {!isLoading && (
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                                sx={{ textOverflow:'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>
-                                {get(advisor, 'bio')}
-                              </Typography>
-                            )}
-                          </CardContent>
-                        </CardActionArea>
-                      </ImageListItem>
-                    </Card>
-                  </>
+                <MenuItem value="">All Industries</MenuItem>
+                {filteredIndustries.map((industry) => (
+                  <MenuItem key={industry} value={industry}>
+                    {industry}
+                  </MenuItem>
                 ))}
-              </ImageList>
-            </>
-          ))}
-        </Stack>
-        {openUserDetailView && <UserDetail user={selectedUser} handleClose={closeUserDetailView} />}
+              </TextField>
+
+              <TextField
+                label="Search"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                placeholder="Search name or bio..."
+                sx={{ flex: 1 }}
+              />
+            </Stack>
+
+            <ImageList
+              sx={{
+                gridAutoFlow: 'row',
+                gridTemplateColumns: 'repeat(auto-fill,minmax(250px,1fr)) !important'
+              }}
+            >
+              {paginatedUsers.map((advisor) => (
+                <Card
+                  key={advisor.ref}
+                  sx={{ width: 350, maxWidth: 350 }}
+                  onClick={() => onClickJuaNetworkUser(advisor.ref)}
+                >
+                  <ImageListItem>
+                    <CardActionArea>
+                      <CardMedia
+                        component="div"
+                        sx={{ objectFit: 'contain', background: '#004aad', height: 20 }}
+                      />
+                      <Avatar
+                        src={advisor.profile_picture}
+                        sx={{ color: '#2065D1', position: 'relative', left: '20px', top: '15px' }}
+                      />
+                      <CardContent>
+                        <Typography gutterBottom variant="h5">
+                          {advisor.first_name} {advisor.last_name}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap'
+                          }}
+                        >
+                          {advisor.bio}
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </ImageListItem>
+                </Card>
+              ))}
+            </ImageList>
+
+            {filteredUsers.length > ITEMS_PER_PAGE && (
+              <Pagination
+                count={Math.ceil(filteredUsers.length / ITEMS_PER_PAGE)}
+                page={page}
+                onChange={(_, value) => setPage(value)}
+                sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}
+              />
+            )}
+          </>
+        )}
+
+        {openUserDetailView && (
+          <UserDetail user={selectedUser} handleClose={closeUserDetailView} />
+        )}
       </Container>
     </Page>
-  )
+  );
 }

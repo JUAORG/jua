@@ -42,7 +42,17 @@ const navConfig = [
   {
     title: 'Feedback',
     path: '/dashboard/about',
-    icon: getIcon('eva:heart-fill'),
+    // icon: getIcon('eva:heart-fill'),
+  },
+  {
+    title: 'Admin: Feedback',
+    path: '/dashboard/admin/feedback',
+    // icon: getIcon('eva:heart-fill'),
+  },
+  {
+    title: 'Admin: FAQ',
+    path: '/dashboard/admin/faq',
+    // icon: getIcon('eva:heart-fill'),
   },
 ];
 

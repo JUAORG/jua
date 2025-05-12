@@ -1,5 +1,4 @@
 import axios from "axios";
-import { defaultHeaders } from "./Auth";
 
 export const notificationTypes = [
   {
@@ -13,7 +12,6 @@ export async function getUserNotifications(values) {
         method: 'GET',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_notifications/`,
         withCredentials: false,
-        headers: defaultHeaders
     })
 }
 
@@ -22,7 +20,6 @@ export async function markAllUserNotificationsAsRead(values) {
         method: 'PATCH',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_notifications/`,
         withCredentials: false,
-        headers: defaultHeaders
     })
 }
 
@@ -31,6 +28,5 @@ export async function markUserNotificationAsRead(ref) {
         method: 'PATCH',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_notifications/${ref}`,
         withCredentials: false,
-        headers: defaultHeaders
     })
 }

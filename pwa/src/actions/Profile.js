@@ -1,135 +1,112 @@
-import axios from 'axios';
-import { get } from 'lodash';
-import { defaultHeaders } from './Auth';
+// firebaseProfile.js
+import {
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  addDoc,
+  deleteDoc,
+  collection
+} from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { auth, db, storage } from './firebase'; // update path
 
-export async function uploadUserProfile(values) {
-  const formData = new FormData();
-  formData.append('file', values);
-  const fileUploadHeaders = defaultHeaders;
-  fileUploadHeaders['Content-Type'] = 'multipart/form-data';
+const getUserId = () => {
+  const user = auth.currentUser;
+  if (!user) throw new Error('No authenticated user');
+  return user.uid;
+};
 
-  return axios({
-    method: 'PUT',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_picture/`,
-    withCredentials: false,
-    headers: fileUploadHeaders,
-    data: formData,
+export async function uploadUserProfile(file) {
+  const uid = getUserId();
+  const storageRef = ref(storage, `users/${uid}/profile_picture`);
+  await uploadBytes(storageRef, file);
+  const downloadUrl = await getDownloadURL(storageRef);
+
+  await updateDoc(doc(db, 'users', uid), {
+    profilePictureUrl: downloadUrl
   });
+
+  return { profilePictureUrl: downloadUrl };
 }
 
 export async function editUserProfile(values) {
-  return axios({
-    method: 'PATCH',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile/`,
-    withCredentials: false,
-    headers: defaultHeaders,
-    data: values,
-  });
+  const uid = getUserId();
+  const profileRef = doc(db, 'users', uid);
+  await updateDoc(profileRef, values);
+  return values;
 }
+
+// --------------------- Education ---------------------
 
 export async function createUserEducation(values) {
-  return axios({
-    method: 'POST',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_education/`,
-    withCredentials: false,
-    headers: defaultHeaders,
-    data: values,
+  const uid = getUserId();
+  const ref = await addDoc(collection(db, 'users', uid, 'education'), {
+    ...values,
+    createdAt: new Date().toISOString()
   });
-}
-
-export async function fetchAccountPayment(values) {
-  return axios({
-    method: 'GET',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_account/`,
-    withCredentials: false,
-    headers: defaultHeaders,
-    data: values,
-  });
-}
-
-export async function updateAccountPayment(values) {
-  return axios({
-    method: 'PATCH',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_account/`,
-    withCredentials: false,
-    headers: defaultHeaders,
-    data: values,
-  });
+  return { id: ref.id, ...values };
 }
 
 export async function updateUserEducation(values) {
-  return axios({
-    method: 'PATCH',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_education/${get(values, 'ref')}/`,
-    withCredentials: false,
-    headers: defaultHeaders,
-    data: values,
-  });
+  const uid = getUserId();
+  const refId = values.ref;
+  const updateData = { ...values };
+  delete updateData.ref;
+
+  const docRef = doc(db, 'users', uid, 'education', refId);
+  await updateDoc(docRef, updateData);
+  return { id: refId, ...updateData };
 }
 
 export async function deleteUserEducation(values) {
-  return axios({
-    method: 'DELETE',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_education/${get(values, 'ref')}/`,
-    withCredentials: false,
-    headers: defaultHeaders,
-  });
+  const uid = getUserId();
+  const docRef = doc(db, 'users', uid, 'education', values.ref);
+  await deleteDoc(docRef);
+  return { id: values.ref };
 }
 
+// --------------------- Experience ---------------------
+
 export async function createUserExperience(values) {
-  return axios({
-    method: 'POST',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_experience/`,
-    withCredentials: false,
-    headers: defaultHeaders,
-    data: values,
+  const uid = getUserId();
+  const ref = await addDoc(collection(db, 'users', uid, 'experience'), {
+    ...values,
+    createdAt: new Date().toISOString()
   });
+  return { id: ref.id, ...values };
 }
 
 export async function updateUserExperience(values) {
-  return axios({
-    method: 'PATCH',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_experience/${get(values, 'ref')}/`,
-    withCredentials: false,
-    headers: defaultHeaders,
-    data: values,
-  });
+  const uid = getUserId();
+  const refId = values.ref;
+  const updateData = { ...values };
+  delete updateData.ref;
+
+  const docRef = doc(db, 'users', uid, 'experience', refId);
+  await updateDoc(docRef, updateData);
+  return { id: refId, ...updateData };
 }
 
 export async function deleteUserExperience(values) {
-  return axios({
-    method: 'DELETE',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_experience/${get(values, 'ref')}/`,
-    withCredentials: false,
-    headers: defaultHeaders,
-  });
+  const uid = getUserId();
+  const docRef = doc(db, 'users', uid, 'experience', values.ref);
+  await deleteDoc(docRef);
+  return { id: values.ref };
 }
 
-export async function createUserService(values) {
-  return axios({
-    method: 'POST',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_service/`,
-    withCredentials: false,
-    headers: defaultHeaders,
-    data: values,
-  });
+// --------------------- Account Payment ---------------------
+
+export async function fetchAccountPayment() {
+  const uid = getUserId();
+  const userDoc = await getDoc(doc(db, 'users', uid));
+  return userDoc.exists() ? userDoc.data().account || {} : {};
 }
 
-export async function updateUserService(values) {
-  return axios({
-    method: 'PATCH',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_service/${get(values, 'ref')}/`,
-    withCredentials: false,
-    headers: defaultHeaders,
-    data: values,
+export async function updateAccountPayment(values) {
+  const uid = getUserId();
+  await updateDoc(doc(db, 'users', uid), {
+    account: values
   });
-}
-
-export async function deleteUserService(values) {
-  return axios({
-    method: 'DELETE',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_service/${get(values, 'ref')}/`,
-    withCredentials: false,
-    headers: defaultHeaders,
-  });
+  return values;
 }

@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { map, get, size, merge, filter } from 'lodash';
 import { createId } from '../utils/uuid-generator';
-import { defaultHeaders, getAuthId } from './Auth';
 
-const uid = getAuthId();
+const uid = null;
+
 export const serviceRequestStatusOptions = {
     unread: 'Unread',
     read: 'Read',
@@ -41,7 +41,6 @@ export async function fetchJuaNetworkUsers() {
         method: 'GET',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/jua_network/`,
         withCredentials: false,
-        headers: defaultHeaders,
     });
 }
 
@@ -50,7 +49,6 @@ export async function fetchJuaNetworkUser(id) {
         method: 'GET',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/jua_network/${id}`,
         withCredentials: false,
-        headers: defaultHeaders,
     });
 }
 
@@ -59,7 +57,6 @@ export async function createServiceRequest(values) {
         method: 'POST',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/service_requests/`,
         withCredentials: false,
-        headers: defaultHeaders,
         data: values,
     });
 }
@@ -69,7 +66,6 @@ export async function fetchServiceRequests() {
         method: 'GET',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/service_requests/`,
         withCredentials: false,
-        headers: defaultHeaders,
     });
 }
 
@@ -78,7 +74,6 @@ export async function fetchServiceRequest(ref) {
         method: 'GET',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/service_request/${ref}`,
         withCredentials: false,
-        headers: defaultHeaders,
     });
 }
 
@@ -87,7 +82,6 @@ export async function fetchServiceRequestChat(ref) {
         method: 'GET',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/service_requests/${ref}/comments`,
         withCredentials: false,
-        headers: defaultHeaders,
     });
 }
 
@@ -96,7 +90,6 @@ export async function sendServiceRequestChatMessage(ref, values) {
         method: 'POST',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/service_requests/${ref}/comments/`,
         withCredentials: false,
-        headers: defaultHeaders,
         data: values,
     });
 }
@@ -106,7 +99,6 @@ export async function fetchServiceRequestsForServiceProvider() {
         method: 'GET',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/service_requests/?is_service_provider=True`,
         withCredentials: false,
-        headers: defaultHeaders,
     });
 }
 
@@ -133,7 +125,6 @@ export async function updateServiceRequest(values) {
         method: 'PATCH',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/service_request/${get(values, 'ref')}/`,
         withCredentials: false,
-        headers: defaultHeaders,
         data: values,
     });
 }
@@ -148,7 +139,6 @@ export async function submitServiceRequestFeedback(values) {
         method: 'POST',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/service_request_feedback/`,
         withCredentials: false,
-        headers: defaultHeaders,
         data: values,
     });
 }
@@ -213,7 +203,6 @@ export const becomeAffiliateExpertApplication = () => {
         method: 'POST',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/affiliate_expert_application/`,
         withCredentials: false,
-        headers: defaultHeaders,
 //        data: values,
     });
 }
@@ -223,7 +212,6 @@ export async function fetchIndustries() {
         method: 'GET',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/industries/`,
         withCredentials: false,
-        headers: defaultHeaders,
     });
 }
 
@@ -232,7 +220,6 @@ export async function fetchIndustriesAsDropdownOptions() {
     method: 'GET',
     url: `${process.env.REACT_APP_API_BASE_URL}/api/industries/dropdown_options/`,
     withCredentials: false,
-    headers: defaultHeaders,
   });
 }
 
@@ -241,7 +228,6 @@ export async function fetchIndustry(industryRef) {
         method: 'GET',
         url: `${process.env.REACT_APP_API_BASE_URL}/api/industries/${industryRef}`,
         withCredentials: false,
-        headers: defaultHeaders,
     });
 }
 

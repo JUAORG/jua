@@ -1,4 +1,3 @@
-import { getAuthId } from "./Auth"
 import notificationManager from './NotificationManager'
 
 

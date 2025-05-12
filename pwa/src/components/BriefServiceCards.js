@@ -1,6 +1,4 @@
-import * as React from 'react';
-import { get, map } from 'lodash';
-import { useQuery } from 'react-query';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -10,26 +8,45 @@ import {
   ImageList,
   ImageListItem,
   Skeleton,
+  CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { fetchIndustries } from '../actions/JuaNetwork';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { get, map } from 'lodash';
+import { db } from '../actions/firebase';
 
 export default function BriefServiceCards() {
   const navigate = useNavigate();
-  const { data, isLoading } = useQuery(['industry_list'], fetchIndustries, {
-    enabled: true,
-    refetchInterval: 60000,
-    refetchIntervalInBackground: true
-  });
-  const industries = get(data, 'data');
+  const [industries, setIndustries] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const q = query(collection(db, 'industries'), orderBy('name', 'asc'));
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const entries = snapshot.docs.map((doc) => ({
+          ref: doc.id,
+          ...doc.data(),
+        }));
+        setIndustries(entries);
+        setLoading(false);
+      },
+      (error) => {
+        console.error('Error fetching industries:', error);
+        setLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
 
   const goToIndustry = (ref) => {
     navigate(`/dashboard/industry/${ref}`, { replace: true });
   };
 
   const truncateIndustryDescription = (str) =>
-        str.length > 100 ? `${str.substring(0, 100)} ...` : str
-  
+    str && str.length > 100 ? `${str.substring(0, 100)} ...` : str;
 
   return (
     <ImageList
@@ -39,43 +56,42 @@ export default function BriefServiceCards() {
         gridTemplateColumns: 'repeat(auto-fill,minmax(250px,1fr)) !important',
       }}
     >
-      {map(industries, (industry) => (
+      {loading && (
+        [...Array(3)].map((_, idx) => (
+          <Card key={idx} sx={{ maxWidth: 400 }}>
+            <ImageListItem>
+              <Skeleton sx={{ height: 190 }} animation="wave" variant="rectangular" />
+              <CardContent>
+                <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
+                <Skeleton animation="wave" height={10} width="80%" />
+              </CardContent>
+            </ImageListItem>
+          </Card>
+        ))
+      )}
+
+      {!loading && industries.length > 0 && map(industries, (industry) => (
         <Card
-          m={1}
-          sx={{ maxWidth: 400 }}
           key={get(industry, 'ref')}
+          sx={{ maxWidth: 400, cursor: 'pointer' }}
           onClick={() => goToIndustry(get(industry, 'ref'))}
         >
           <ImageListItem>
             <CardActionArea>
-              {!isLoading && (
-                <CardMedia
-                  height="200"
-                  component="img"
-                  sx={{ objectFit: 'contain' }}
-                  alt={get(industry, 'name')}
-                  image={`/static/icons/${get(industry, 'image_src')}.svg`}
-                />
-              )}
-              {isLoading && <Skeleton sx={{ height: 190 }} animation="wave" variant="rectangular" />}
+              <CardMedia
+                height="200"
+                component="img"
+                sx={{ objectFit: 'contain' }}
+                alt={get(industry, 'name')}
+                image={`/static/icons/${get(industry, 'image_src')}.svg`}
+              />
               <CardContent>
-                {isLoading && <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />}
-                {!isLoading && (
-                  <Typography gutterBottom variant="h5" component="div">
-                    {get(industry, 'name')}
-                  </Typography>
-                )}
-                {isLoading && (
-                  <>
-                    <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
-                    <Skeleton animation="wave" height={10} width="80%" />
-                  </>
-                )}
-                {!isLoading && (
-                  <Typography variant="body2" color="text.secondary">
-                    {truncateIndustryDescription(get(industry, 'description'))}
-                  </Typography>
-                )}
+                <Typography gutterBottom variant="h5" component="div">
+                  {get(industry, 'name')}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {truncateIndustryDescription(get(industry, 'description'))}
+                </Typography>
               </CardContent>
             </CardActionArea>
           </ImageListItem>

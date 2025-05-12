@@ -1,8 +1,4 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { get, map } from 'lodash';
-import PropTypes from 'prop-types';
-import { styled } from '@mui/material/styles';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Avatar,
@@ -16,14 +12,18 @@ import {
   Divider,
   IconButton,
   DialogTitle,
-  LinearProgress,
   Typography,
   DialogContent,
+  LinearProgress,
+  CircularProgress
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import CloseIcon from '@mui/icons-material/Close';
+import { styled } from '@mui/material/styles';
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '../actions/firebase';
 import notificationManager from '../actions/NotificationManager';
-import { fetchServiceRequestChat, sendServiceRequestChatMessage } from '../actions/JuaNetwork';
+import { get, map } from 'lodash';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -34,74 +34,80 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-function BootstrapDialogTitle(props) {
-  const { children, onClose, ...other } = props;
-
+function BootstrapDialogTitle({ children, onClose, ...other }) {
   return (
     <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
       {children}
-      {onClose ? (
+      {onClose && (
         <IconButton
           aria-label="close"
           onClick={onClose}
-          sx={{
-            position: 'absolute',
-            right: 8,
-            top: 8,
-            color: (theme) => theme.palette.grey[500],
-          }}
+          sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}
         >
           <CloseIcon />
         </IconButton>
-      ) : null}
+      )}
     </DialogTitle>
   );
 }
 
-BootstrapDialogTitle.propTypes = {
-  children: PropTypes.node,
-  onClose: PropTypes.func.isRequired,
-};
-
-export const CustomChatBox = ({ serviceRequestRef, handleClose }) => {
-  const queryClient = useQueryClient();
-  const { data: User } = useQuery(['user']);
-  const user = get(User, 'data', {});
-  const userProfileRef = get(user, ['profile', 'ref']);
-  const [message, setMessage] = useState();
+export const CustomChatBox = ({ serviceRequestRef, customerId, handleClose }) => {
+  const [chat, setChat] = useState([]);
+  const [message, setMessage] = useState('');
   const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const { mutate, isLoading: isSubmitLoading } = useMutation({
-    mutationFn: () =>
-      sendServiceRequestChatMessage(serviceRequestRef, { service_request: serviceRequestRef, message }).then(
-        setSubmitButtonDisabled(true)
-      ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['service_request_chat'] });
+  useEffect(() => {
+    if (!customerId || !serviceRequestRef) return;
+
+    const messagesRef = collection(db, 'users', customerId, 'serviceRequests', serviceRequestRef, 'conversations');
+    const q = query(messagesRef, orderBy('createdAt', 'asc'));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const entries = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setChat(entries);
+      setLoading(false);
+    }, (error) => {
+      console.error(error);
+      notificationManager.error('Failed to load chat', 'Error');
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [customerId, serviceRequestRef]);
+
+  const sendMessage = async () => {
+    if (!message.trim()) return;
+
+    setSubmitButtonDisabled(true);
+
+    try {
+      const messagesRef = collection(db, 'users', customerId, 'serviceRequests', serviceRequestRef, 'conversations');
+
+      await addDoc(messagesRef, {
+        message: message.trim(),
+        sender: auth.currentUser.uid,
+        createdAt: serverTimestamp(),
+      });
+
       notificationManager.success('Message Sent', 'Success');
-    },
-    onError: () => notificationManager.error('something went wrong', 'Error'),
-    onSettled: () => setSubmitButtonDisabled(false),
-  });
-
-  const { isLoading, isError, data, error } = useQuery('service_request_chat', () =>
-    fetchServiceRequestChat(serviceRequestRef)
-  );
-  const chat = get(data, 'data');
-
-  if (isLoading) {
-    return <span>Loading...</span>;
-  }
-  console.log(isLoading, 'frfrfrkf');
-
-  if (isError) {
-    return <span>Error: {error.message}</span>;
-  }
+      setMessage('');
+    } catch (error) {
+      console.error(error);
+      notificationManager.error('Failed to send message', 'Error');
+    } finally {
+      setSubmitButtonDisabled(false);
+    }
+  };
 
   const renderMessage = (item) => {
-    const isSender = get(item, 'profile') === userProfileRef;
+    const isSender = item.sender === auth.currentUser.uid;
     return (
       <ListItem
+        key={item.id}
         alignItems="flex-start"
         sx={{
           flexDirection: isSender ? 'row-reverse' : 'row',
@@ -109,20 +115,14 @@ export const CustomChatBox = ({ serviceRequestRef, handleClose }) => {
           alignItems: 'center',
         }}
       >
-        <ListItemAvatar
-          sx={{
-            margin: isSender ? '0px 0px 0px 5px' : '0px 5px 0px 5px',
-          }}
-        >
+        <ListItemAvatar sx={{ margin: isSender ? '0 0 0 5px' : '0 5px 0 0' }}>
           <Avatar src="/static/images/avatar/1.jpg" />
         </ListItemAvatar>
         <ListItemText
           secondary={
-            <>
-              <Typography sx={{ display: 'inline' }} component="span" variant="body2" color="text.primary">
-                {get(item, 'message', 'empty')}
-              </Typography>
-            </>
+            <Typography component="span" variant="body2" color="text.primary">
+              {item.message}
+            </Typography>
           }
         />
       </ListItem>
@@ -136,24 +136,30 @@ export const CustomChatBox = ({ serviceRequestRef, handleClose }) => {
           Service Request Chat
         </BootstrapDialogTitle>
         <DialogContent dividers>
-          <List sx={{ width: '100%', maxWidth: 400, height: 200, bgcolor: 'background.paper' }}>
-            {map(chat, (item) => renderMessage(item))}
-          </List>
+          {loading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <List sx={{ width: '100%', maxWidth: 500, height: 300, bgcolor: 'background.paper', overflow: 'auto' }}>
+              {chat.length > 0 ? (
+                map(chat, (item) => renderMessage(item))
+              ) : (
+                <Typography sx={{ p: 2, textAlign: 'center' }}>No messages yet</Typography>
+              )}
+            </List>
+          )}
           <Divider component="div" />
         </DialogContent>
-        <Paper
-          component="form"
-          sx={{ position: 'relative', display: 'flex', alignItems: 'center', border: '1px solid #2065D1' }}
-        >
+        <Paper component="form" sx={{ display: 'flex', alignItems: 'center', p: 1 }} onSubmit={(e) => { e.preventDefault(); sendMessage(); }}>
           <InputBase
             multiline
             sx={{ ml: 1, flex: 1 }}
             maxRows={4}
+            value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Send a message"
-            inputProps={{ 'aria-label': 'Send a message' }}
           />
-          <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
           {submitButtonDisabled && (
             <Box sx={{ width: '100%' }}>
               <LinearProgress />
@@ -163,8 +169,7 @@ export const CustomChatBox = ({ serviceRequestRef, handleClose }) => {
             disabled={submitButtonDisabled}
             color="primary"
             sx={{ p: '10px' }}
-            aria-label="directions"
-            onClick={() => mutate()}
+            onClick={sendMessage}
           >
             <SendIcon />
           </IconButton>

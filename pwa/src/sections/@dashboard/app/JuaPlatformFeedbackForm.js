@@ -3,7 +3,8 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { Stack, Badge, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { submitJuaPlatformFeedback } from '../../../actions/About';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '../../../actions/firebase'; // Adjust the path to your firebase.js config
 import notificationManager from '../../../actions/NotificationManager';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -36,44 +37,57 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 export default function JuaPlatformFeedbackForm() {
-  const formProps = useForm({});
-
-  const {
-    reset,
-    register,
-    getValues,
-    handleSubmit
-  } = formProps;
+  const formProps = useForm();
+  const { reset, register, getValues, handleSubmit } = formProps;
 
   const { mutate, isLoading } = useMutation({
-    mutationFn: () => submitJuaPlatformFeedback(getValues()),
+    mutationFn: async () => {
+      const values = getValues();
+      const uid = auth.currentUser?.uid || null;
+      const email = auth.currentUser?.email || null;
+
+      await addDoc(collection(db, 'platformFeedback'), {
+        ...values,
+        userId: uid,
+        userEmail: email,
+        submittedAt: serverTimestamp()
+      });
+    },
     onSuccess: () => {
       notificationManager.success('Thank you for your feedback.', 'Success');
       reset();
     },
     onError: (error) => {
       console.error(error);
-      notificationManager.error('something went wrong', 'Error');
+      notificationManager.error('Something went wrong', 'Error');
     },
   });
 
   return (
     <form onSubmit={handleSubmit(() => mutate())}>
       <Stack spacing={3}>
-        <TextField fullWidth label="Subject" {...register('subject')} />
+        <TextField
+          fullWidth
+          label="Subject"
+          {...register('subject', { required: 'Subject is required' })}
+        />
         <TextField
           rows={4}
           fullWidth
           multiline
           label="We welcome your feedback"
-          {...register('message')}
+          {...register('message', { required: 'Message is required' })}
           placeholder="Improvement suggestions for Jua/Support?"
         />
-        <>
-          <LoadingButton fullWidth size="large" type="submit" loading={isLoading} variant="contained">
-            Submit
-          </LoadingButton>
-        </>
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          loading={isLoading}
+          variant="contained"
+        >
+          Submit
+        </LoadingButton>
       </Stack>
     </form>
   );

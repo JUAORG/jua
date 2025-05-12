@@ -1,104 +1,75 @@
-import { get, head, unset, assign } from 'lodash'
-import axios from "axios"
-import cookie from 'react-cookies'
+// auth.js
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signOut,
+  updatePassword,
+  onAuthStateChanged
+} from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, db } from './firebase';
+// ------------------- User Session Management -------------------
 
-export const setAuthId = (uid) => {
-  localStorage.setItem("auth_id", uid)
-  localStorage.setItem("date_auth_id_set", new Date())
-}
+export const getCurrentUser = () => auth.currentUser;
 
-export const getAuthId = () => {
-  return localStorage.getItem("auth_id")
-}
+export const listenToAuthChanges = (callback) => {
+  return onAuthStateChanged(auth, callback);
+};
 
-export const clearAuthTokenCookie = () => cookie.remove('auth_token', { path: '/' })
-export const getAuthTokenCookie = () => cookie.load('auth_token', { path: '/' })
+export const getIdToken = async () => {
+  const user = auth.currentUser;
+  return user ? await user.getIdToken() : null;
+};
 
-export const setAuthTokenCookie = (authToken) => {
-  clearAuthTokenCookie()
-  cookie.save('auth_token', authToken, { path: '/' })
-}
+// ------------------- Authentication Actions -------------------
 
+export const emailAndPasswordRegister = async (values) => {
+  const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+  const user = userCredential.user;
 
-export const defaultHeaders = {
-  'Authorization': `token ${getAuthTokenCookie()}`,
-  'Content-Type': 'application/json'
-}
+  // Store additional profile data in Firestore
+  await setDoc(doc(db, 'users', user.uid), {
+    first_name: values.first_name,
+    last_name: values.last_name,
+    email: values.email,
+    createdAt: new Date().toISOString()
+  });
 
-export async function getUser() {
-  return axios({
-    method: 'GET',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/user/`,
-    withCredentials: false,
-    headers: defaultHeaders,
-  })
-}
+  return userCredential;
+};
 
-export const removeAuthId = () => {
-  localStorage.removeItem("auth_id")
-  localStorage.removeItem("date_auth_id_set")
-}
+export const emailAndPasswordSignIn = async (values) => {
+  const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+  return userCredential;
+};
 
+export const logout = async () => {
+  await signOut(auth);
+};
 
-export const isSignedIn = () => {
-  const pathName = window.location.pathname
-  const loginPath = "/login"
-  const registerPath = "/register"
-  const notFoundPath = "/404"
-  const isSignedIn = getAuthId()
+// ------------------- User Info and Password -------------------
 
-  if (!isSignedIn && pathName !== loginPath && pathName !== registerPath && pathName !== notFoundPath) {
-    window.location.href = registerPath
+export const getUserProfile = async (uid) => {
+  const userDoc = await getDoc(doc(db, 'users', uid));
+  if (userDoc.exists()) {
+    return userDoc.data();
   }
-}
+  return null;
+};
 
-export async function emailAndPasswordRegister(values) {
-  return axios({
-    method: 'POST',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/register/`,
-    data: {
-      first_name: values.first_name,
-      last_name: values.last_name,
-      username: values.email,
-      password: values.password
-    }
-  })
-}
+export const updateUserPassword = async (newPassword) => {
+  const user = auth.currentUser;
+  if (user) {
+    await updatePassword(user, newPassword);
+  } else {
+    throw new Error('No authenticated user');
+  }
+};
 
-export async function emailAndPasswordSignIn(values) {
-  return axios({
-    method: 'POST',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/login/`,
-    data: {
-      username: values.email,
-      password: values.password
-    }
-  })
-}
+// ------------------- Password Reset -------------------
 
-export async function sendPasswordResetOtp(values) {
-  return axios({
-    method: 'POST',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/reset_password/`,
-    data: values
-  })
-}
-
-export async function updateUserPassword(values) {
-  return axios({
-    method: 'PUT',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/change_password/`,
-    data: values,
-    headers: defaultHeaders
-  })
-}
-
-export async function logout(){
-  return axios({
-    method: 'POST',
-    url: `${process.env.REACT_APP_API_BASE_URL}/api/logout/`,
-    headers: defaultHeaders
-  })
-}
-
+export const sendPasswordResetOtp = async (values) => {
+  await sendPasswordResetEmail(auth, values.email);
+};
 

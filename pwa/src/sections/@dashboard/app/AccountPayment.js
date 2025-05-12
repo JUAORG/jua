@@ -1,85 +1,89 @@
 import { useState, useEffect } from 'react';
-import { get, values } from 'lodash';
+import { get } from 'lodash';
 import { useForm } from 'react-hook-form';
 import {
   Stack,
   TextField,
-  Radio,
-  RadioGroup,
-  FormLabel,
-  Skeleton,
   MenuItem,
   InputLabel,
-  FormControl,
-  FormControlLabel
+  Select,
 } from '@mui/material';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { LoadingButton } from '@mui/lab';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import notificationManager from '../../../actions/NotificationManager';
-import { fetchAccountPayment, updateAccountPayment } from '../../../actions/Profile';
-import { FormFieldSkeleton } from './FormFieldSkeleton'
+import { FormFieldSkeleton } from './FormFieldSkeleton';
+import { auth, db } from '../../../actions/firebase'; // Adjust the path to your firebase.js config
 
 export default function AccountPaymentMethodForm() {
-  const queryClient = useQueryClient();
-  const { data, error, isLoading } = useQuery(['user_account_payment'], fetchAccountPayment, {
-    enabled: true,
-    refetchInterval: 60000,
-    refetchIntervalInBackground: false,
-  });
-  const formProps = useForm({ defaultValues: get(data, 'data') });
-  const { register, getValues, setValue, handleSubmit } = formProps;
-  const [preferredPaymentMethod, setPreferredPaymentMethod] = useState(getValues('preferred_payment_method'))
+  const formProps = useForm();
+  const { register, reset, setValue, handleSubmit } = formProps;
+  const [loading, setLoading] = useState(true);
+  const [preferredPaymentMethod, setPreferredPaymentMethod] = useState('');
 
-
-  const { mutate } = useMutation({
-    mutationFn: (values) => updateAccountPayment(values),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
-      notificationManager.success('Profile updated', 'Success');
-    },
-    onError: (error) => notificationManager.error(`${JSON.stringify(error.response.data)}`),
-  });
-  
-  console.debug(getValues('preferred_payment_method'))
-  
-  return (
-    <form onSubmit={handleSubmit((values) => mutate(values))}>
-      <Stack spacing={3} pb={5}>
-        {isLoading && <FormFieldSkeleton/> }
-        {!isLoading &&
-         <>
-           <InputLabel id="demo-simple-select-label">Preferred Payment Method</InputLabel>
-           <Select
-             labelId="demo-simple-select-label"
-             id="demo-simple-select"
-             value={preferredPaymentMethod}
-             label="Preferred_payment_method"
-             onChange={(e) => [setValue('preferred_payment_method', e.target.value), setPreferredPaymentMethod(e.target.value)]}
-           >
-             <MenuItem value='EWALLET'>Ewallet</MenuItem>
-             <MenuItem value='EFT'>EFT</MenuItem>
-           </Select>
-           {/* <FormControlp */}
-           {/*   <RadioGroup> */}
-           {/*     row */}
-           {/*     name="preferred_payment_method" */}
-           {/*     {...register('preferred_payment_method')} */}
-           {/*   > */}
-           {/*     <FormControlLabel value="EFT" control={<Radio />}label="EFT"/> */}
-           {/*     <FormControlLabel value="EWALLET" control={<Radio />}label="EWALLET"/> */}
-           {/*   </RadioGroup> */}
-           {/* </FormControl> */}
-           <TextField required fullWidth label="Account Holder Name" {...register('account_holder_name')}/>
-           <TextField required fullWidth label="Bank" {...register('bank')}/>
-           <TextField required fullWidth label="branch_code" {...register('branch_code')} />
-           <TextField required fullWidth label="Account Number" {...register('account_number')}/>
-           <TextField required fullWidth label="Phone Number" {...register('phone_number')}/>
-           <LoadingButton fullWidth size="large" type="submit" loading={false} variant="contained">
-             Update
-           </LoadingButton>
-         </>
+  useEffect(() => {
+    if (!auth.currentUser) return;
+    const loadPaymentData = async () => {
+      try {
+        const userRef = doc(db, 'users', auth.currentUser.uid);
+        const docSnap = await getDoc(userRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data().accountPayment || {};
+          reset(data);
+          setPreferredPaymentMethod(data.preferred_payment_method || '');
         }
+      } catch (error) {
+        console.error('Failed to load account payment', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadPaymentData();
+  }, [reset]);
+
+  const onSubmit = async (values) => {
+    try {
+      setLoading(true);
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      await updateDoc(userRef, { accountPayment: values });
+      notificationManager.success('Account payment updated', 'Success');
+    } catch (error) {
+      console.error(error);
+      notificationManager.error('Something went wrong', 'Error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Stack spacing={3} pb={5}>
+        {loading && <FormFieldSkeleton />}
+        {!loading && (
+          <>
+            <InputLabel>Preferred Payment Method</InputLabel>
+            <Select
+              value={preferredPaymentMethod}
+              onChange={(e) => {
+                setValue('preferred_payment_method', e.target.value);
+                setPreferredPaymentMethod(e.target.value);
+              }}
+              required
+            >
+              <MenuItem value='EWALLET'>Ewallet</MenuItem>
+              <MenuItem value='EFT'>EFT</MenuItem>
+            </Select>
+
+            <TextField required fullWidth label="Account Holder Name" {...register('account_holder_name')} />
+            <TextField required fullWidth label="Bank" {...register('bank')} />
+            <TextField required fullWidth label="Branch Code" {...register('branch_code')} />
+            <TextField required fullWidth label="Account Number" {...register('account_number')} />
+            <TextField required fullWidth label="Phone Number" {...register('phone_number')} />
+
+            <LoadingButton fullWidth size="large" type="submit" loading={loading} variant="contained">
+              Update
+            </LoadingButton>
+          </>
+        )}
       </Stack>
     </form>
   );

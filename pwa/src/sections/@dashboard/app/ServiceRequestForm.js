@@ -1,96 +1,121 @@
 import { useEffect, useState } from 'react';
-import moment  from 'moment'
 import { get } from 'lodash';
 import ReactGA from 'react-ga';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useMutation, useQueryClient } from 'react-query';
 import { Stack, TextField } from '@mui/material';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LoadingButton } from '@mui/lab';
+import { doc, addDoc, updateDoc, collection, serverTimestamp } from 'firebase/firestore';
 import notificationManager from '../../../actions/NotificationManager';
-import { createServiceRequest, updateServiceRequest } from '../../../actions/JuaNetwork';
+import { auth, db } from '../../../actions/firebase'; // Adjust the path as needed
 
-export default function ServiceRequestForm({ closeDialog, serviceRequest, isServiceProvider, serviceProvider }) {
+export default function ServiceRequestForm({ closeDialog, serviceRequest, serviceProvider }) {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const formProps = useForm({ defaultValues: serviceRequest });
-  const { register, reset, setValue, getValues, handleSubmit } = formProps;
-  const [date, setDate] = useState(get(serviceRequest, 'date_and_time'));
-  const [serviceRequestSubmissionLoading, setServiceRequestSubmissionLoading] = useState(false);
-  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
+  const formProps = useForm({ defaultValues: serviceRequest || {} });
+  const { register, setValue, handleSubmit } = formProps;
+  const [date, setDate] = useState(get(serviceRequest, 'date_and_time') ? new Date(get(serviceRequest, 'date_and_time')) : null);
+  const [submissionLoading, setSubmissionLoading] = useState(false);
 
-  console.log('dd', serviceProvider)
-  const { mutate, isLoading } = useMutation({
-    mutationFn: (values) => (get(serviceRequest, 'ref') ? updateServiceRequest(values) : createServiceRequest(values)),
-    onMutate: () => {
-      setSubmitButtonDisabled(true)
-      setServiceRequestSubmissionLoading(true);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['service_requests'] });
+  useEffect(() => {
+    if (serviceProvider) {
+      setValue('serviceProvider', serviceProvider.ref || serviceProvider.id);
+    }
+  }, [serviceProvider, setValue]);
+
+  const handleDateTimeChange = (newDate) => {
+    setDate(newDate?.toDate ? newDate.toDate() : newDate);
+    setValue('date_and_time', newDate?.toDate ? newDate.toDate() : newDate);
+  };
+
+  const onSubmit = async (values) => {
+    try {
+      setSubmissionLoading(true);
+
       ReactGA.event({
         value: 1,
         category: 'Service Requests',
-        action: 'Service Request created'
-      })
-      notificationManager.success('Service Request', 'Success');
-      navigate(`/dashboard/service_requests/`, { replace: true });
+        action: serviceRequest ? 'Service Request updated' : 'Service Request created',
+      });
 
-    },
-    onError: () => notificationManager.error('something went wrong', 'Error'),
-    onSettled: () => {
-      setServiceRequestSubmissionLoading(false);
+      const user = auth.currentUser;
+      if (!user) {
+        notificationManager.error('User is not authenticated.', 'Error');
+        return;
+      }
+
+      if (!values.serviceProvider) {
+        notificationManager.error('Service Provider is required.', 'Error');
+        return;
+      }
+
+      if (!date) {
+        notificationManager.error('Please select a valid date and time.', 'Error');
+        return;
+      }
+
+      const safeDate = date.toDate ? date.toDate() : date;
+
+      if (serviceRequest?.id) {
+        const requestRef = doc(db, 'users', user.uid, 'serviceRequests', serviceRequest.id);
+        await updateDoc(requestRef, {
+          ...values,
+          date_and_time: safeDate,
+          updatedAt: serverTimestamp(),
+        });
+      } else {
+        const requestsCollection = collection(db, 'users', user.uid, 'serviceRequests');
+        await addDoc(requestsCollection, {
+          ...values,
+          date_and_time: safeDate,
+          createdAt: serverTimestamp(),
+          status: 'Pending',
+          customer: user.uid,
+        });
+      }
+
+      notificationManager.success('Service Request submitted successfully.', 'Success');
+      navigate('/dashboard/service_requests', { replace: true });
+    } catch (error) {
+      console.error(error);
+      notificationManager.error('Something went wrong while submitting the request.', 'Error');
+    } finally {
+      setSubmissionLoading(false);
     }
-  });
-
-  useEffect(() => {
-    setValue('service_provider', get(serviceProvider, 'ref'));
-    console.log('bb', getValues())
-  }, [serviceProvider]);
-
-  const handleDateTimeChange = (newDate) => {
-    setDate(newDate);
-    setValue('date_and_time', newDate);
-    //        console.debug(newDate.add(2, 'hours'))
   };
 
-  const renderServiceRequestForm = () => {
-    return (
-      <>
-        <TextField fullWidth required label="Subject" {...register('subject')} />
-        <LocalizationProvider
-          dateAdapter={AdapterMoment}
-          adapterLocale="en-za"
-        >
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Stack spacing={3}>
+        <TextField
+          fullWidth
+          required
+          label="Subject"
+          {...register('subject', { required: 'Subject is required' })}
+        />
+
+        <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="en-za">
           <DateTimePicker
-            label="Ideal date time for service request"
+            label="Ideal date and time for service request"
             required
             value={date}
             onChange={handleDateTimeChange}
             renderInput={(params) => <TextField {...params} />}
           />
         </LocalizationProvider>
-        <TextField required fullWidth type="text" label="Description (optional)" {...register('description')} />
-      </>
-    );
-  };
 
-  return (
-    <form onSubmit={handleSubmit((values) => mutate(values))}>
-      <Stack spacing={3}>
-        {renderServiceRequestForm()}
+        <TextField fullWidth label="Description (optional)" {...register('description')} />
+
         <LoadingButton
           fullWidth
           size="large"
           type="submit"
-          loading={serviceRequestSubmissionLoading}
-          disabled={submitButtonDisabled}
+          loading={submissionLoading}
           variant="contained"
         >
-          {get(serviceRequest, 'id') ? 'Update' : 'Send Request'}
+          {serviceRequest?.id ? 'Update Request' : 'Send Request'}
         </LoadingButton>
       </Stack>
     </form>
