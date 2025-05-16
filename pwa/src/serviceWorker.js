@@ -40,7 +40,7 @@ export function register(config) {
         // Add some additional logging to localhost, pointing developers to the
         // service worker/PWA documentation.
         navigator.serviceWorker.ready.then(() => {
-            'worker. To learn more, visit https://bit.ly/CRA-PWA');
+            'worker. To learn more, visit https://bit.ly/CRA-PWA')
         });
       } else {
         // Is not localhost. Just register service worker
