@@ -1,7 +1,7 @@
-import react, {useEffect, useState} from 'react'
-import { get, head } from 'lodash'
+import react, { useEffect, useState } from 'react';
+import { get, head } from 'lodash';
 import { styled } from '@mui/material/styles';
-import { useForm } from "react-hook-form"
+import { useForm } from 'react-hook-form';
 import {
   Stack,
   Badge,
@@ -12,13 +12,12 @@ import {
   FormControl,
   FormHelperText,
   InputAdornment,
-} from '@mui/material'
-import { LoadingButton } from '@mui/lab'
-import { css, Global } from '@emotion/react'
-import notificationManager from '../../../actions/NotificationManager'
-import { createId } from '../../../utils/uuid-generator'
-import { makePayment } from '../../../actions/Wallet'
-
+} from '@mui/material';
+import { LoadingButton } from '@mui/lab';
+import { css, Global } from '@emotion/react';
+import notificationManager from '../../../actions/NotificationManager';
+import { createId } from '../../../utils/uuid-generator';
+import { makePayment } from '../../../actions/Wallet';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -47,17 +46,17 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
       opacity: 0,
     },
   },
-}))
+}));
 
 const globalStyles = css`
-#CheckoutIframe {
-  margin-top: 35px;
-}
-`
+  #CheckoutIframe {
+    margin-top: 35px;
+  }
+`;
 
 export default function JuaWalletPaymentForm() {
-  const [amount, setAmount] = useState(250)
-  const formProps = useForm({})
+  const [amount, setAmount] = useState(250);
+  const formProps = useForm({});
 
   const {
     reset,
@@ -68,49 +67,37 @@ export default function JuaWalletPaymentForm() {
     getValues,
     handleSubmit,
     formState: { errors },
-  } = formProps
+  } = formProps;
 
   const onSubmit = () => {
     if (amount >= 1) {
-      makePayment(amount)
-    }else{
-      notificationManager.error('Amount cannot be less than R1')
+      makePayment(amount);
+    } else {
+      notificationManager.error('Amount cannot be less than R1');
     }
-  }
+  };
 
-  const handleAmountChange = (e) => {
-    setAmount(e.target.value)
-  }
-  
+  const handleAmountChange = e => {
+    setAmount(e.target.value);
+  };
+
   return (
-    <Stack spacing={ 3 }>
-      <Global styles={ globalStyles }/>
-      <InputLabel>
-        Amount
-      </InputLabel>
+    <Stack spacing={3}>
+      <Global styles={globalStyles} />
+      <InputLabel>Amount</InputLabel>
       <Input
-        type='number'
-        value={ amount }
+        type="number"
+        value={amount}
         inputProps={{
           pattern: '[0-9]*',
-          inputMode: 'number'
+          inputMode: 'number',
         }}
-        onChange={ handleAmountChange }
-        startAdornment={
-          <InputAdornment position='start'>
-            R
-          </InputAdornment>
-        }
+        onChange={handleAmountChange}
+        startAdornment={<InputAdornment position="start">R</InputAdornment>}
       />
-        <LoadingButton
-          fullWidth
-          size='large'
-          variant='contained'
-          loading={ false }
-          onClick={onSubmit}
-        >
-          Top Up Now
-        </LoadingButton>
+      <LoadingButton fullWidth size="large" variant="contained" loading={false} onClick={onSubmit}>
+        Top Up Now
+      </LoadingButton>
     </Stack>
-  )
+  );
 }

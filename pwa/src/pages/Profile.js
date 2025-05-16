@@ -1,12 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import {
-  Box,
-  Button,
-  Container,
-  Typography,
-  Grid,
-  CircularProgress
-} from '@mui/material';
+import { Box, Button, Container, Typography, Grid, CircularProgress } from '@mui/material';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { auth, db } from '../actions/firebase'; // Adjust the path to your firebase.js config
 import Page from '../components/Page';
@@ -28,7 +21,7 @@ export default function Profile() {
   const [affiliateExpertApplicationButtonDisabled, setAffiliateExpertApplicationButtonDisabled] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
 
-  console.debug()
+  console.debug();
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -42,11 +35,10 @@ export default function Profile() {
         }
 
         const eduSnap = await getDocs(collection(db, 'users', uid, 'education'));
-        setEducationList(eduSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        setEducationList(eduSnap.docs.map(doc => ({ ...doc.data(), id: doc.id })));
 
         const expSnap = await getDocs(collection(db, 'users', uid, 'experience'));
-        setExperienceList(expSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-
+        setExperienceList(expSnap.docs.map(doc => ({ ...doc.data(), id: doc.id })));
       } catch (error) {
         console.error(error);
         notificationManager.error('Failed to load profile data', 'Error');
@@ -75,23 +67,29 @@ export default function Profile() {
     // }
   };
 
-  const educationForms = useMemo(() => (
-    <>
-      {educationList.map((doc) => (
-        <EducationHistoryForm key={doc.id} educationDoc={doc} />
-      ))}
-      <EducationHistoryForm />
-    </>
-  ), [educationList]);
+  const educationForms = useMemo(
+    () => (
+      <>
+        {educationList.map(doc => (
+          <EducationHistoryForm key={doc.id} educationDoc={doc} />
+        ))}
+        <EducationHistoryForm />
+      </>
+    ),
+    [educationList]
+  );
 
-  const workForms = useMemo(() => (
-    <>
-      {experienceList.map((doc) => (
-        <WorkHistoryForm key={doc.id} workDoc={doc} />
-      ))}
-      <WorkHistoryForm />
-    </>
-  ), [experienceList]);
+  const workForms = useMemo(
+    () => (
+      <>
+        {experienceList.map(doc => (
+          <WorkHistoryForm key={doc.id} workDoc={doc} />
+        ))}
+        <WorkHistoryForm />
+      </>
+    ),
+    [experienceList]
+  );
 
   const advisorTabs = (
     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -105,7 +103,7 @@ export default function Profile() {
           <ServiceListForm />,
           educationForms,
           workForms,
-          <AccountPaymentMethodForm />
+          <AccountPaymentMethodForm />,
         ]}
       />
     </Box>
@@ -137,11 +135,11 @@ export default function Profile() {
         </Typography>
 
         {loading ? (
-          <Box textAlign="center"><CircularProgress /></Box>
+          <Box textAlign="center">
+            <CircularProgress />
+          </Box>
         ) : (
-          <Grid>
-            {userProfile?.is_service_provider ? advisorTabs : customerSection}
-          </Grid>
+          <Grid>{userProfile?.is_service_provider ? advisorTabs : customerSection}</Grid>
         )}
       </Container>
     </Page>

@@ -1,6 +1,6 @@
 import ReactGA from 'react-ga';
 import React, { useState } from 'react';
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
 import { Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
@@ -31,7 +31,7 @@ export default function PasswordChangeForm({ handleClose }) {
     }
   };
 
-  const onSubmit = async (values) => {
+  const onSubmit = async values => {
     const { oldPassword, newPassword, confirmNewPassword } = values;
 
     if (newPassword !== confirmNewPassword) {
@@ -84,20 +84,8 @@ export default function PasswordChangeForm({ handleClose }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
-        <TextField
-          required
-          fullWidth
-          type="password"
-          label="Current Password"
-          {...register('oldPassword')}
-        />
-        <TextField
-          required
-          fullWidth
-          type="password"
-          label="New Password"
-          {...register('newPassword')}
-        />
+        <TextField required fullWidth type="password" label="Current Password" {...register('oldPassword')} />
+        <TextField required fullWidth type="password" label="New Password" {...register('newPassword')} />
         <TextField
           required
           fullWidth
@@ -105,13 +93,7 @@ export default function PasswordChangeForm({ handleClose }) {
           label="Confirm New Password"
           {...register('confirmNewPassword')}
         />
-        <LoadingButton
-          fullWidth
-          size="large"
-          type="submit"
-          loading={loading}
-          variant="contained"
-        >
+        <LoadingButton fullWidth size="large" type="submit" loading={loading} variant="contained">
           Update Password
         </LoadingButton>
       </Stack>

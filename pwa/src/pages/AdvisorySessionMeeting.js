@@ -17,12 +17,25 @@ import {
   TextField,
   Chip,
   IconButton,
-  Paper
+  Paper,
 } from '@mui/material';
 import moment from 'moment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
-import { collection, addDoc, serverTimestamp, getDocs, deleteDoc, doc, getDoc, updateDoc, increment, onSnapshot, query, orderBy } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  getDocs,
+  deleteDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  increment,
+  onSnapshot,
+  query,
+  orderBy,
+} from 'firebase/firestore';
 import { useSearchParams } from 'react-router-dom';
 import JitsiComponent from '../sections/advisory_session/meeting/JitsiMeeting';
 import Page from '../components/Page';
@@ -41,14 +54,19 @@ export default function AdvisorySessionMeeting() {
   const roomId = searchParams.get('room');
 
   const MAX_FILE_SIZE_MB = 10;
-  const ALLOWED_TYPES = ['application/pdf', 'image/png', 'image/jpeg', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+  const ALLOWED_TYPES = [
+    'application/pdf',
+    'image/png',
+    'image/jpeg',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  ];
   const currentUserId = auth.currentUser?.uid;
 
   const fetchResources = async () => {
     if (!roomId) return;
     const snap = await getDocs(collection(db, 'serviceRequests', roomId, 'resources'));
     const withNames = await Promise.all(
-      snap.docs.map(async (docSnap) => {
+      snap.docs.map(async docSnap => {
         const data = docSnap.data();
         let uploaderName = data.uploadedBy;
         try {
@@ -70,32 +88,36 @@ export default function AdvisorySessionMeeting() {
     fetchResources();
   }, [roomId, snackOpen]);
 
-  const fetchUserMap = async (uids) => {
+  const fetchUserMap = async uids => {
     const map = {};
-    await Promise.all(uids.map(async (uid) => {
-      if (!map[uid]) {
-        const snap = await getDoc(doc(db, 'users', uid));
-        if (snap.exists()) {
-          const data = snap.data();
-          map[uid] = `${data.firstName || ''} ${data.lastName || ''}`.trim();
-        } else {
-          map[uid] = uid;
+    await Promise.all(
+      uids.map(async uid => {
+        if (!map[uid]) {
+          const snap = await getDoc(doc(db, 'users', uid));
+          if (snap.exists()) {
+            const data = snap.data();
+            map[uid] = `${data.firstName || ''} ${data.lastName || ''}`.trim();
+          } else {
+            map[uid] = uid;
+          }
         }
-      }
-    }));
+      })
+    );
     setUserMap(map);
   };
 
   useEffect(() => {
-    const unsubscribe = roomId && onSnapshot(
-      query(collection(db, 'serviceRequests', roomId, 'chat'), orderBy('createdAt', 'asc')),
-      async (snapshot) => {
-        const msgs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        const uniqueUids = [...new Set(msgs.map(msg => msg.senderId))];
-        await fetchUserMap(uniqueUids);
-        setChatMessages(msgs);
-      }
-    );
+    const unsubscribe =
+      roomId &&
+      onSnapshot(
+        query(collection(db, 'serviceRequests', roomId, 'chat'), orderBy('createdAt', 'asc')),
+        async snapshot => {
+          const msgs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const uniqueUids = [...new Set(msgs.map(msg => msg.senderId))];
+          await fetchUserMap(uniqueUids);
+          setChatMessages(msgs);
+        }
+      );
     return () => unsubscribe && unsubscribe();
   }, [roomId]);
 
@@ -105,7 +127,7 @@ export default function AdvisorySessionMeeting() {
     const messageObj = {
       message: newMessage.trim(),
       senderId: user.uid,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
     };
     await addDoc(collection(db, 'serviceRequests', roomId, 'chat'), messageObj);
     setNewMessage('');
@@ -114,7 +136,7 @@ export default function AdvisorySessionMeeting() {
       type: 'chat',
       message: `${user.displayName || 'A user'} sent a message`,
       createdAt: serverTimestamp(),
-      userId: user.uid
+      userId: user.uid,
     });
 
     await addDoc(collection(db, 'users', user.uid, 'notifications'), {
@@ -122,7 +144,7 @@ export default function AdvisorySessionMeeting() {
       message: 'You sent a message in a session.',
       type: 'chat',
       createdAt: serverTimestamp(),
-      read: false
+      read: false,
     });
   };
 
@@ -156,7 +178,7 @@ export default function AdvisorySessionMeeting() {
           uploadedBy: user.uid,
           tag: fileTag || '',
           views: 0,
-          createdAt: serverTimestamp()
+          createdAt: serverTimestamp(),
         });
         setFile(null);
         setFileTag('');
@@ -169,7 +191,7 @@ export default function AdvisorySessionMeeting() {
     }
   };
 
-  const handleDelete = async (res) => {
+  const handleDelete = async res => {
     if (!roomId || !res.id) return;
     if (res.uploadedBy !== currentUserId) {
       alert('You can only delete files you uploaded.');
@@ -185,15 +207,11 @@ export default function AdvisorySessionMeeting() {
     }
   };
 
-  const handleView = async (res) => {
+  const handleView = async res => {
     const resRef = doc(db, 'serviceRequests', roomId, 'resources', res.id);
     try {
       await updateDoc(resRef, { views: increment(1) });
-      setResources(prev =>
-        prev.map((item) =>
-          item.id === res.id ? { ...item, views: (item.views || 0) + 1 } : item
-        )
-      );
+      setResources(prev => prev.map(item => (item.id === res.id ? { ...item, views: (item.views || 0) + 1 } : item)));
       window.open(res.url, '_blank', 'noopener');
     } catch (err) {
       console.error('Failed to increment view count:', err);
@@ -209,16 +227,12 @@ export default function AdvisorySessionMeeting() {
 
         <Box sx={{ mb: 3 }}>
           <InputLabel htmlFor="file">Upload Session Material</InputLabel>
-          <Input
-            type="file"
-            onChange={(e) => setFile(e.target.files[0])}
-            disabled={uploading}
-          />
+          <Input type="file" onChange={e => setFile(e.target.files[0])} disabled={uploading} />
           <TextField
             fullWidth
             placeholder="Optional: Tag this file (e.g. slides, assignment)"
             value={fileTag}
-            onChange={(e) => setFileTag(e.target.value)}
+            onChange={e => setFileTag(e.target.value)}
             sx={{ mt: 1 }}
           />
           <Button variant="contained" sx={{ mt: 1 }} onClick={handleUpload} disabled={!file || uploading}>
@@ -230,7 +244,7 @@ export default function AdvisorySessionMeeting() {
           <Box sx={{ mb: 4 }}>
             <Typography variant="h6">Uploaded Materials</Typography>
             <List>
-              {resources.map((res) => (
+              {resources.map(res => (
                 <ListItem key={res.id} divider>
                   <ListItemText
                     primary={res.fileName}
@@ -253,19 +267,20 @@ export default function AdvisorySessionMeeting() {
 
         <Divider sx={{ my: 4 }} />
 
-        <Grid>
-          {/* <JitsiComponent /> */}
-        </Grid>
+        <Grid>{/* <JitsiComponent /> */}</Grid>
 
         <Divider sx={{ my: 4 }} />
 
         <Box>
-          <Typography variant="h6" sx={{ mb: 1 }}>Chat</Typography>
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            Chat
+          </Typography>
           <Paper variant="outlined" sx={{ maxHeight: 300, overflow: 'auto', p: 2, mb: 2 }}>
             {chatMessages.map(msg => (
               <Box key={msg.id} sx={{ mb: 1 }}>
                 <Typography variant="body2">
-                  <strong>{msg.senderId === currentUserId ? 'You' : userMap[msg.senderId] || msg.senderId}</strong>: {msg.message}
+                  <strong>{msg.senderId === currentUserId ? 'You' : userMap[msg.senderId] || msg.senderId}</strong>:{' '}
+                  {msg.message}
                   <br />
                   <small>{msg.createdAt?.toDate ? moment(msg.createdAt.toDate()).format('LT') : ''}</small>
                 </Typography>
@@ -276,8 +291,8 @@ export default function AdvisorySessionMeeting() {
             fullWidth
             placeholder="Type your message..."
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+            onChange={e => setNewMessage(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
             sx={{ mb: 1 }}
           />
           <Button variant="contained" onClick={handleSendMessage} disabled={!newMessage.trim()}>

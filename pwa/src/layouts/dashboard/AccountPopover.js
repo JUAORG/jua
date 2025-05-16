@@ -1,21 +1,13 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { alpha } from '@mui/material/styles';
-import {
-  Box,
-  Divider,
-  Typography,
-  Stack,
-  MenuItem,
-  Avatar,
-  IconButton,
-} from '@mui/material';
+import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@mui/material';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../actions/firebase'; // Adjust this path as needed
 import notificationManager from '../../actions/NotificationManager';
 import MenuPopover from '../../components/MenuPopover';
 import FormDialog from '../../components/FormDialog';
-import PasswordChangeForm from '../../sections/@dashboard/app/PasswordChangeForm'
+import PasswordChangeForm from '../../sections/@dashboard/app/PasswordChangeForm';
 
 export default function AccountPopover() {
   const navigate = useNavigate();
@@ -23,12 +15,12 @@ export default function AccountPopover() {
   const [open, setOpen] = useState(null);
   const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
 
-  const currentUser = auth.currentUser;
+  const { currentUser } = auth;
   const displayName = currentUser?.firstName || 'Anonymous User';
   const email = currentUser?.email || 'Unknown Email';
   const photoURL = currentUser?.photoURL || '';
-console.debug(currentUser)
-  const handleOpen = (event) => {
+  console.debug(currentUser);
+  const handleOpen = event => {
     setOpen(event.currentTarget);
   };
 
@@ -75,7 +67,7 @@ console.debug(currentUser)
               height: '100%',
               borderRadius: '50%',
               position: 'absolute',
-              bgcolor: (theme) => alpha(theme.palette.grey[900], 0.8),
+              bgcolor: theme => alpha(theme.palette.grey[900], 0.8),
             },
           }),
         }}

@@ -4,13 +4,7 @@ import { Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import notificationManager from '../../../actions/NotificationManager';
 import { auth, db } from '../../../actions/firebase';
-import {
-  collection,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-} from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { useState } from 'react';
 
 export default function WorkHistoryForm(workDoc) {
@@ -19,7 +13,7 @@ export default function WorkHistoryForm(workDoc) {
   const { register, reset, handleSubmit } = formProps;
   const [loading, setLoading] = useState(false);
 
-  const saveExperience = async (values) => {
+  const saveExperience = async values => {
     const uid = auth.currentUser?.uid;
     if (!uid) throw new Error('User not authenticated');
 
@@ -82,21 +76,10 @@ export default function WorkHistoryForm(workDoc) {
             InputLabelProps={{ shrink: true }}
           />
         </Stack>
-        <TextField
-          fullWidth
-          type="text"
-          label="Description (optional)"
-          {...register('description')}
-        />
+        <TextField fullWidth type="text" label="Description (optional)" {...register('description')} />
         {experience ? (
           <>
-            <LoadingButton
-              fullWidth
-              size="large"
-              type="submit"
-              loading={loading}
-              variant="contained"
-            >
+            <LoadingButton fullWidth size="large" type="submit" loading={loading} variant="contained">
               Update
             </LoadingButton>
             <LoadingButton
@@ -111,13 +94,7 @@ export default function WorkHistoryForm(workDoc) {
             </LoadingButton>
           </>
         ) : (
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            loading={loading}
-            variant="contained"
-          >
+          <LoadingButton fullWidth size="large" type="submit" loading={loading} variant="contained">
             Add
           </LoadingButton>
         )}

@@ -38,12 +38,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 export default function JuaPlatformFeedbackForm() {
   const formProps = useForm({});
 
-  const {
-    reset,
-    register,
-    getValues,
-    handleSubmit
-  } = formProps;
+  const { reset, register, getValues, handleSubmit } = formProps;
 
   const { mutate, isLoading } = useMutation({
     mutationFn: () => submitJuaPlatformFeedback(getValues()),
@@ -51,7 +46,7 @@ export default function JuaPlatformFeedbackForm() {
       notificationManager.success('Thank you for your feedback.', 'Success');
       reset();
     },
-    onError: (error) => {
+    onError: error => {
       console.error(error);
       notificationManager.error('something went wrong', 'Error');
     },

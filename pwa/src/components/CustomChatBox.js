@@ -15,7 +15,7 @@ import {
   Typography,
   DialogContent,
   LinearProgress,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import CloseIcon from '@mui/icons-material/Close';
@@ -42,7 +42,7 @@ function BootstrapDialogTitle({ children, onClose, ...other }) {
         <IconButton
           aria-label="close"
           onClick={onClose}
-          sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}
+          sx={{ position: 'absolute', right: 8, top: 8, color: theme => theme.palette.grey[500] }}
         >
           <CloseIcon />
         </IconButton>
@@ -63,18 +63,22 @@ export const CustomChatBox = ({ serviceRequestRef, customerId, handleClose }) =>
     const messagesRef = collection(db, 'users', customerId, 'serviceRequests', serviceRequestRef, 'conversations');
     const q = query(messagesRef, orderBy('createdAt', 'asc'));
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const entries = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setChat(entries);
-      setLoading(false);
-    }, (error) => {
-      console.error(error);
-      notificationManager.error('Failed to load chat', 'Error');
-      setLoading(false);
-    });
+    const unsubscribe = onSnapshot(
+      q,
+      snapshot => {
+        const entries = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setChat(entries);
+        setLoading(false);
+      },
+      error => {
+        console.error(error);
+        notificationManager.error('Failed to load chat', 'Error');
+        setLoading(false);
+      }
+    );
 
     return () => unsubscribe();
   }, [customerId, serviceRequestRef]);
@@ -103,7 +107,7 @@ export const CustomChatBox = ({ serviceRequestRef, customerId, handleClose }) =>
     }
   };
 
-  const renderMessage = (item) => {
+  const renderMessage = item => {
     const isSender = item.sender === auth.currentUser.uid;
     return (
       <ListItem
@@ -143,7 +147,7 @@ export const CustomChatBox = ({ serviceRequestRef, customerId, handleClose }) =>
           ) : (
             <List sx={{ width: '100%', maxWidth: 500, height: 300, bgcolor: 'background.paper', overflow: 'auto' }}>
               {chat.length > 0 ? (
-                map(chat, (item) => renderMessage(item))
+                map(chat, item => renderMessage(item))
               ) : (
                 <Typography sx={{ p: 2, textAlign: 'center' }}>No messages yet</Typography>
               )}
@@ -151,13 +155,20 @@ export const CustomChatBox = ({ serviceRequestRef, customerId, handleClose }) =>
           )}
           <Divider component="div" />
         </DialogContent>
-        <Paper component="form" sx={{ display: 'flex', alignItems: 'center', p: 1 }} onSubmit={(e) => { e.preventDefault(); sendMessage(); }}>
+        <Paper
+          component="form"
+          sx={{ display: 'flex', alignItems: 'center', p: 1 }}
+          onSubmit={e => {
+            e.preventDefault();
+            sendMessage();
+          }}
+        >
           <InputBase
             multiline
             sx={{ ml: 1, flex: 1 }}
             maxRows={4}
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={e => setMessage(e.target.value)}
             placeholder="Send a message"
           />
           {submitButtonDisabled && (
@@ -165,12 +176,7 @@ export const CustomChatBox = ({ serviceRequestRef, customerId, handleClose }) =>
               <LinearProgress />
             </Box>
           )}
-          <IconButton
-            disabled={submitButtonDisabled}
-            color="primary"
-            sx={{ p: '10px' }}
-            onClick={sendMessage}
-          >
+          <IconButton disabled={submitButtonDisabled} color="primary" sx={{ p: '10px' }} onClick={sendMessage}>
             <SendIcon />
           </IconButton>
         </Paper>

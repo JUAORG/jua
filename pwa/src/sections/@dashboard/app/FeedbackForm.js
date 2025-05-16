@@ -1,16 +1,11 @@
-import react, {useEffect, useState} from 'react'
-import { get, head } from 'lodash'
+import react, { useEffect, useState } from 'react';
+import { get, head } from 'lodash';
 import { styled } from '@mui/material/styles';
-import { useForm } from "react-hook-form"
-import {
-  Stack,
-  Badge,
-  Avatar,
-  TextField,
-} from '@mui/material'
-import { LoadingButton } from '@mui/lab'
-import { createId } from '../../../utils/uuid-generator'
-import { editUserProfile} from '../../../actions/Profile'
+import { useForm } from 'react-hook-form';
+import { Stack, Badge, Avatar, TextField } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
+import { createId } from '../../../utils/uuid-generator';
+import { editUserProfile } from '../../../actions/Profile';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -39,11 +34,11 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
       opacity: 0,
     },
   },
-}))
+}));
 
 export default function UserProfileForm() {
-  const [userProfile, setUserProfile] = useState(null)
-  const formProps = useForm({})
+  const [userProfile, setUserProfile] = useState(null);
+  const formProps = useForm({});
 
   const {
     reset,
@@ -54,42 +49,33 @@ export default function UserProfileForm() {
     getValues,
     handleSubmit,
     formState: { errors },
-  } = formProps
+  } = formProps;
 
-  const onSubmit = (values) => {
+  const onSubmit = values => {
     if (userProfile) {
-      console.log(values)
-      editUserProfile(values)
+      console.log(values);
+      editUserProfile(values);
     }
-  }
-  
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
+        <TextField fullWidth label="Subject" {...register('subject')} />
         <TextField
+          rows={4}
           fullWidth
-          label="Subject"
-          { ...register('subject') }
+          multiline
+          label="We welcom you feedback"
+          {...register('feedback')}
+          placeholder="Improvement suggestions for Jua?"
         />
-        <TextField
-                rows={4}
-                fullWidth
-                multiline
-                label="We welcom you feedback"
-                {...register('feedback')}
-                placeholder="Improvement suggestions for Jua?"
-              />
-          <>
-            <LoadingButton
-              fullWidth
-              size="large"
-              type="submit"
-              loading={ false }
-              variant="contained">
-              Update
-            </LoadingButton>
-          </>
+        <>
+          <LoadingButton fullWidth size="large" type="submit" loading={false} variant="contained">
+            Update
+          </LoadingButton>
+        </>
       </Stack>
     </form>
-  )
+  );
 }

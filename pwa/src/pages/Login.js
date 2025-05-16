@@ -104,9 +104,7 @@ export default function Login() {
               Sign in to JUA
             </Typography>
 
-            <Typography sx={{ color: 'text.secondary', mb: 5 }}>
-              Enter your details below.
-            </Typography>
+            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Enter your details below.</Typography>
 
             <LoginForm />
 

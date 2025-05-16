@@ -66,10 +66,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       <Box sx={{ mb: 1, mx: 2.5 }}>
         <Link underline="none" component={RouterLink} to="#">
           <AccountStyle>
-            <Avatar
-              src={user?.photoURL || ''}
-              alt="profile picture"
-            />
+            <Avatar src={user?.photoURL || ''} alt="profile picture" />
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
                 {loading ? 'Loading...' : `${user?.first_name || ''} ${user?.last_name || ''}`}
@@ -90,11 +87,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   return (
     <RootStyle>
       {!isDesktop ? (
-        <Drawer
-          open={isOpenSidebar}
-          onClose={onCloseSidebar}
-          PaperProps={{ sx: { width: DRAWER_WIDTH } }}
-        >
+        <Drawer open={isOpenSidebar} onClose={onCloseSidebar} PaperProps={{ sx: { width: DRAWER_WIDTH } }}>
           {renderContent}
         </Drawer>
       ) : (

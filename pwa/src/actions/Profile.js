@@ -1,13 +1,5 @@
 // firebaseProfile.js
-import {
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  addDoc,
-  deleteDoc,
-  collection
-} from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, addDoc, deleteDoc, collection } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { auth, db, storage } from './firebase'; // update path
 
@@ -24,7 +16,7 @@ export async function uploadUserProfile(file) {
   const downloadUrl = await getDownloadURL(storageRef);
 
   await updateDoc(doc(db, 'users', uid), {
-    profilePictureUrl: downloadUrl
+    profilePictureUrl: downloadUrl,
   });
 
   return { profilePictureUrl: downloadUrl };
@@ -43,7 +35,7 @@ export async function createUserEducation(values) {
   const uid = getUserId();
   const ref = await addDoc(collection(db, 'users', uid, 'education'), {
     ...values,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   });
   return { id: ref.id, ...values };
 }
@@ -72,7 +64,7 @@ export async function createUserExperience(values) {
   const uid = getUserId();
   const ref = await addDoc(collection(db, 'users', uid, 'experience'), {
     ...values,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   });
   return { id: ref.id, ...values };
 }
@@ -106,7 +98,7 @@ export async function fetchAccountPayment() {
 export async function updateAccountPayment(values) {
   const uid = getUserId();
   await updateDoc(doc(db, 'users', uid), {
-    account: values
+    account: values,
   });
   return values;
 }

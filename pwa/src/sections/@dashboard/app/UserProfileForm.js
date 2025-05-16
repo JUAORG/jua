@@ -54,11 +54,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 export default function UserProfileForm() {
   const formProps = useForm();
   const [isLoading, setIsLoading] = useState(false);
-  const [industryOptions] = useState([
-    { name: 'Finance' },
-    { name: 'Tech' },
-    { name: 'Legal' },
-  ]);
+  const [industryOptions] = useState([{ name: 'Finance' }, { name: 'Tech' }, { name: 'Legal' }]);
   const [photoURL, setPhotoURL] = useState('');
 
   const { register, reset, handleSubmit } = formProps;
@@ -89,7 +85,7 @@ export default function UserProfileForm() {
     loadUserProfile();
   }, [reset]);
 
-  const handleProfileImageChange = async (event) => {
+  const handleProfileImageChange = async event => {
     const file = event.target.files[0];
     if (!file || !auth.currentUser) return;
 
@@ -114,7 +110,7 @@ export default function UserProfileForm() {
     }
   };
 
-  const onSubmit = async (values) => {
+  const onSubmit = async values => {
     if (!auth.currentUser) {
       notificationManager.error('Not authenticated', 'Error');
       return;
@@ -153,7 +149,9 @@ export default function UserProfileForm() {
             >
               <Avatar
                 alt="Profile Picture"
-                src={typeof photoURL === 'string' && photoURL.trim() !== '' ? photoURL : '/static/avatar_placeholder.png'}
+                src={
+                  typeof photoURL === 'string' && photoURL.trim() !== '' ? photoURL : '/static/avatar_placeholder.png'
+                }
                 sx={{ width: 80, height: 80 }}
               />
             </StyledBadge>
@@ -174,14 +172,7 @@ export default function UserProfileForm() {
           </Select>
         </FormControl>
 
-        <TextField
-          fullWidth
-          multiline
-          minRows={4}
-          label="About"
-          placeholder="Add summary"
-          {...register('bio')}
-        />
+        <TextField fullWidth multiline minRows={4} label="About" placeholder="Add summary" {...register('bio')} />
         <TextField
           fullWidth
           type="number"

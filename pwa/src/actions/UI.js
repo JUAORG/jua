@@ -1,1 +1,1 @@
-import { get } from 'lodash'
+import { get } from 'lodash';

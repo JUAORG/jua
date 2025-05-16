@@ -35,8 +35,8 @@ export function useUserServiceRequests() {
             orderBy('createdAt', 'desc')
           );
 
-          unsubscribe = onSnapshot(q, (snapshot) => {
-            const entries = snapshot.docs.map((doc) => ({
+          unsubscribe = onSnapshot(q, snapshot => {
+            const entries = snapshot.docs.map(doc => ({
               id: doc.id,
               ...doc.data(),
             }));

@@ -22,7 +22,7 @@ function IconColor({ sx, ...other }) {
         alignItems: 'center',
         justifyContent: 'center',
         bgcolor: 'currentColor',
-        transition: (theme) =>
+        transition: theme =>
           theme.transitions.create('all', {
             duration: theme.transitions.duration.shortest,
           }),
@@ -44,7 +44,7 @@ ColorManyPicker.propTypes = {
 export default function ColorManyPicker({ colors, onChecked, sx, ...other }) {
   return (
     <Box sx={sx}>
-      {colors.map((color) => {
+      {colors.map(color => {
         const isWhite = color === '#FFFFFF' || color === 'white';
 
         return (
@@ -58,7 +58,7 @@ export default function ColorManyPicker({ colors, onChecked, sx, ...other }) {
               <IconColor
                 sx={{
                   ...(isWhite && {
-                    border: (theme) => `solid 1px ${theme.palette.divider}`,
+                    border: theme => `solid 1px ${theme.palette.divider}`,
                   }),
                 }}
               />
@@ -78,8 +78,8 @@ export default function ColorManyPicker({ colors, onChecked, sx, ...other }) {
                   },
                   '& svg': { width: 12, height: 12, color: 'common.white' },
                   ...(isWhite && {
-                    border: (theme) => `solid 1px ${theme.palette.divider}`,
-                    boxShadow: (theme) => `4px 4px 8px 0 ${theme.palette.grey[500_24]}`,
+                    border: theme => `solid 1px ${theme.palette.divider}`,
+                    boxShadow: theme => `4px 4px 8px 0 ${theme.palette.grey[500_24]}`,
                     '& svg': { width: 12, height: 12, color: 'common.black' },
                   }),
                 }}

@@ -1,5 +1,4 @@
-
-import { get, map, last } from 'lodash'
+import { get, map, last } from 'lodash';
 import {
   Avatar,
   Container,
@@ -11,15 +10,15 @@ import {
   CardActionArea,
   ImageList,
   ImageListItem,
-} from '@mui/material'
-import { fetchIndustry } from '../actions/JuaNetwork'
-import Page from '../components/Page'
+} from '@mui/material';
+import { fetchIndustry } from '../actions/JuaNetwork';
+import Page from '../components/Page';
 
 export default function IndustryDetail() {
-  const industryRef = last(window.location.pathname.split('/'))
+  const industryRef = last(window.location.pathname.split('/'));
 
-  const { isLoading, data } = useQuery('industry', () => fetchIndustry(industryRef))
-  const industry = get(data, 'data')
+  const { isLoading, data } = useQuery('industry', () => fetchIndustry(industryRef));
+  const industry = get(data, 'data');
 
   return (
     <Page title="Profile">
@@ -40,13 +39,9 @@ export default function IndustryDetail() {
             gridTemplateColumns: 'repeat(auto-fill,minmax(250px,1fr)) !important',
           }}
         >
-          {map(get(industry, 'advisors'), (advisor) => (
+          {map(get(industry, 'advisors'), advisor => (
             <>
-              <Card
-                m={1}
-                key={get(advisor, 'ref')}
-                sx={{ width: 350, maxWidth: 350 }}
-              >
+              <Card m={1} key={get(advisor, 'ref')} sx={{ width: 350, maxWidth: 350 }}>
                 <ImageListItem>
                   <CardActionArea>
                     {!isLoading && (
@@ -58,7 +53,7 @@ export default function IndustryDetail() {
                     )}
                     <Avatar
                       src={get(advisor, 'profile_picture')}
-                      sx={{color: "#2065D1", position: 'relative', left: '20px', top: '15px'}}
+                      sx={{ color: '#2065D1', position: 'relative', left: '20px', top: '15px' }}
                     />
                     {isLoading && <Skeleton sx={{ height: 190 }} animation="wave" variant="rectangular" />}
                     <CardContent>
@@ -76,9 +71,10 @@ export default function IndustryDetail() {
                       )}
                       {!isLoading && (
                         <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ textOverflow:'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
+                        >
                           {get(advisor, 'bio')}
                         </Typography>
                       )}
@@ -91,5 +87,5 @@ export default function IndustryDetail() {
         </ImageList>
       </Container>
     </Page>
-  )
+  );
 }

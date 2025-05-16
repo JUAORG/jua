@@ -8,7 +8,7 @@ import {
   ListItemText,
   ListSubheader,
   Switch,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -59,10 +59,7 @@ export default function Settings() {
       const userRef = doc(db, 'users', uid);
       await updateDoc(userRef, { profile_visible: updatedVisibility });
 
-      notificationManager.success(
-        `Profile visibility ${updatedVisibility ? 'enabled' : 'disabled'}`,
-        'Success'
-      );
+      notificationManager.success(`Profile visibility ${updatedVisibility ? 'enabled' : 'disabled'}`, 'Success');
     } catch (error) {
       console.error(error);
       notificationManager.error('Failed to update profile visibility', 'Error');

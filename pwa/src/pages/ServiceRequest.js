@@ -1,13 +1,7 @@
 // File: src/pages/ServiceRequest.js
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  Container,
-  Typography,
-  Button,
-  CircularProgress,
-  Alert
-} from '@mui/material';
+import { Container, Typography, Button, CircularProgress, Alert } from '@mui/material';
 import { httpsCallable, getFunctions } from 'firebase/functions';
 import ServiceRequestForm from '../sections/@dashboard/app/ServiceRequestForm';
 import { fetchServiceRequest } from '../utils/serviceRequest';
@@ -18,7 +12,7 @@ import { auth } from '../actions/firebase';
 const functions = getFunctions();
 
 const yoco = new window.YocoSDK({
-  publicKey: "pk_test_ed3c54a6gOol69qa7f45" // process.env.REACT_APP_YOCO_PUBLIC_KEY,
+  publicKey: 'pk_test_ed3c54a6gOol69qa7f45', // process.env.REACT_APP_YOCO_PUBLIC_KEY
 });
 
 export default function ServiceRequest() {
@@ -39,8 +33,13 @@ export default function ServiceRequest() {
   };
 
   const handlePopupPayment = async () => {
-    const amount = serviceRequest?.fee;
-    const amountInCents = 2000 // = amount * 100;
+    const amount = 20000; // serviceRequest?.fee;
+    if (!amount) {
+      notificationManager.error('Invalid amount for payment', 'Error');
+      return;
+    }
+
+    const amountInCents = Math.round(amount * 100);
     setPaying(true);
 
     yoco.showPopup({
@@ -48,7 +47,7 @@ export default function ServiceRequest() {
       currency: 'ZAR',
       name: 'Jua Payment',
       description: 'Pay for advisory session on JUA',
-      callback: async (result) => {
+      callback: async result => {
         if (result.error) {
           notificationManager.error(`${result.error.message}`, 'Error');
           setPaying(false);
@@ -107,28 +106,16 @@ export default function ServiceRequest() {
 
         {!loading && serviceRequest && (
           <>
-            <ServiceRequestForm
-              serviceRequest={serviceRequest}
-              isServiceProvider={isServiceProvider}
-            />
+            <ServiceRequestForm serviceRequest={serviceRequest} isServiceProvider={isServiceProvider} />
 
             {isCustomer && serviceRequest.status === 'Accepted' && serviceRequest.paymentStatus !== 'paid' && (
-              <Button
-                variant="contained"
-                sx={{ mt: 5, mr: 2 }}
-                disabled={paying}
-                onClick={handlePopupPayment}
-              >
+              <Button variant="contained" sx={{ mt: 5, mr: 2 }} disabled={paying} onClick={handlePopupPayment}>
                 {paying ? 'Processing...' : `Pay R${serviceRequest.fee}`}
               </Button>
             )}
 
             {serviceRequest.status === 'Accepted' && serviceRequest.paymentStatus === 'paid' && (
-              <Button
-                sx={{ mt: 5 }}
-                variant="contained"
-                onClick={goToServiceRequestMeeting}
-              >
+              <Button sx={{ mt: 5 }} variant="contained" onClick={goToServiceRequestMeeting}>
                 Go To Service Request
               </Button>
             )}

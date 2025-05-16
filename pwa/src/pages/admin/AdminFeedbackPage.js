@@ -11,10 +11,10 @@ import {
   Box,
   TextField,
   Button,
-  Stack
+  Stack,
 } from '@mui/material';
 import { collection, onSnapshot, query, orderBy, doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../../actions/firebase'; // Adjust the path to your firebase.js config 
+import { auth, db } from '../../actions/firebase'; // Adjust the path to your firebase.js config
 import Page from '../../components/Page';
 // import { saveAs } from 'file-saver'; // npm install file-saver
 // import { Parser } from 'json2csv';   // npm install json2csv
@@ -41,8 +41,8 @@ export default function AdminFeedbackPage() {
       }
 
       const q = query(collection(db, 'platformFeedback'), orderBy('submittedAt', 'desc'));
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const entries = snapshot.docs.map((doc) => ({
+      const unsubscribe = onSnapshot(q, snapshot => {
+        const entries = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
         }));
@@ -56,36 +56,36 @@ export default function AdminFeedbackPage() {
     checkAndSubscribe();
   }, []);
 
-  const filteredList = useMemo(() => {
-    return feedbackList.filter((entry) => {
-      const searchMatch = (
-        (entry.subject || '').toLowerCase().includes(search.toLowerCase()) ||
-        (entry.message || '').toLowerCase().includes(search.toLowerCase()) ||
-        (entry.userEmail || '').toLowerCase().includes(search.toLowerCase())
-      );
+  const filteredList = useMemo(
+    () =>
+      feedbackList.filter(entry => {
+        const searchMatch =
+          (entry.subject || '').toLowerCase().includes(search.toLowerCase()) ||
+          (entry.message || '').toLowerCase().includes(search.toLowerCase()) ||
+          (entry.userEmail || '').toLowerCase().includes(search.toLowerCase());
 
-      const timeMatch =
-        !daysFilter ||
-        (entry.submittedAt?.toDate &&
-          new Date() - entry.submittedAt.toDate() <= daysFilter * 24 * 60 * 60 * 1000);
+        const timeMatch =
+          !daysFilter ||
+          (entry.submittedAt?.toDate && new Date() - entry.submittedAt.toDate() <= daysFilter * 24 * 60 * 60 * 1000);
 
-      return searchMatch && timeMatch;
-    });
-  }, [feedbackList, search, daysFilter]);
+        return searchMatch && timeMatch;
+      }),
+    [feedbackList, search, daysFilter]
+  );
 
   const exportToCSV = () => {
-    const parser = null // new Parser();
+    const parser = null; // new Parser();
     const csv = parser.parse(
-      filteredList.map((entry) => ({
+      filteredList.map(entry => ({
         id: entry.id,
         subject: entry.subject,
         message: entry.message,
         userEmail: entry.userEmail,
-        submittedAt: entry.submittedAt?.toDate().toISOString()
+        submittedAt: entry.submittedAt?.toDate().toISOString(),
       }))
     );
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-     // saveAs(blob, 'jua_feedback_export.csv');
+    // saveAs(blob, 'jua_feedback_export.csv');
   };
 
   return (
@@ -105,7 +105,7 @@ export default function AdminFeedbackPage() {
                 label="Search"
                 variant="outlined"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={e => setSearch(e.target.value)}
                 placeholder="Subject, message, email..."
                 fullWidth
               />
@@ -114,7 +114,7 @@ export default function AdminFeedbackPage() {
                 type="number"
                 variant="outlined"
                 value={daysFilter}
-                onChange={(e) => setDaysFilter(Number(e.target.value))}
+                onChange={e => setDaysFilter(Number(e.target.value))}
                 InputProps={{ inputProps: { min: 0 } }}
                 sx={{ width: 120 }}
               />
@@ -123,11 +123,11 @@ export default function AdminFeedbackPage() {
               </Button>
             </Stack>
 
-            {filteredList.length === 0 ? (  
+            {filteredList.length === 0 ? (
               <Alert severity="info">No feedback matches your criteria.</Alert>
             ) : (
               <List>
-                {filteredList.map((entry) => (
+                {filteredList.map(entry => (
                   <Box key={entry.id}>
                     <ListItem alignItems="flex-start">
                       <ListItemText

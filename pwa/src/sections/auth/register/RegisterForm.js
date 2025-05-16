@@ -20,12 +20,14 @@ export default function RegisterForm() {
     getValues,
     handleSubmit,
     setError,
-    formState: { errors }
+    formState: { errors },
   } = useForm();
 
-  const validatePassword = (password) => {
+  const validatePassword = password => {
     const strongRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
-    return strongRegex.test(password) || "Password must be at least 8 characters, include a number and an uppercase letter.";
+    return (
+      strongRegex.test(password) || 'Password must be at least 8 characters, include a number and an uppercase letter.'
+    );
   };
 
   const onSubmit = async () => {
@@ -38,7 +40,7 @@ export default function RegisterForm() {
       if (methods.length > 0) {
         setError('email', {
           type: 'manual',
-          message: 'Email is already registered. Please log in instead.'
+          message: 'Email is already registered. Please log in instead.',
         });
         setIsLoading(false);
         return;
@@ -46,14 +48,14 @@ export default function RegisterForm() {
 
       // ✅ Create Firebase Auth user
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const uid = userCredential.user.uid;
+      const { uid } = userCredential.user;
 
       // 🗂️ Create Firestore user profile with snake_case keys
       await setDoc(doc(db, 'users', uid), {
         first_name: firstName,
         last_name: lastName,
         email,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       });
 
       notificationManager.success('Account created. Please log in.', 'Success');
@@ -100,8 +102,8 @@ export default function RegisterForm() {
             required: 'Email is required',
             pattern: {
               value: /^\S+@\S+\.\S+$/,
-              message: 'Enter a valid email'
-            }
+              message: 'Enter a valid email',
+            },
           })}
           error={!!errors.email}
           helperText={errors.email?.message}
@@ -114,18 +116,18 @@ export default function RegisterForm() {
           label="Password"
           {...register('password', {
             required: 'Password is required',
-            validate: validatePassword
+            validate: validatePassword,
           })}
           error={!!errors.password}
           helperText={errors.password?.message}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton edge="end" onClick={() => setShowPassword((prev) => !prev)}>
+                <IconButton edge="end" onClick={() => setShowPassword(prev => !prev)}>
                   <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
                 </IconButton>
               </InputAdornment>
-            )
+            ),
           }}
         />
 
@@ -134,9 +136,8 @@ export default function RegisterForm() {
         </LoadingButton>
 
         <p style={{ fontSize: '10px', marginTop: '10px', textAlign: 'center' }}>
-          JUA Advisory is still in development mode.
-          We are currently user testing the platform and adding final touches.
-          Please feel free to register/sign in, experience the app, and give us feedback.
+          JUA Advisory is still in development mode. We are currently user testing the platform and adding final
+          touches. Please feel free to register/sign in, experience the app, and give us feedback.
         </p>
       </Stack>
     </form>

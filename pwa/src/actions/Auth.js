@@ -5,7 +5,7 @@ import {
   sendPasswordResetEmail,
   signOut,
   updatePassword,
-  onAuthStateChanged
+  onAuthStateChanged,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from './firebase';
@@ -13,9 +13,7 @@ import { auth, db } from './firebase';
 
 export const getCurrentUser = () => auth.currentUser;
 
-export const listenToAuthChanges = (callback) => {
-  return onAuthStateChanged(auth, callback);
-};
+export const listenToAuthChanges = callback => onAuthStateChanged(auth, callback);
 
 export const getIdToken = async () => {
   const user = auth.currentUser;
@@ -24,22 +22,22 @@ export const getIdToken = async () => {
 
 // ------------------- Authentication Actions -------------------
 
-export const emailAndPasswordRegister = async (values) => {
+export const emailAndPasswordRegister = async values => {
   const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
-  const user = userCredential.user;
+  const { user } = userCredential;
 
   // Store additional profile data in Firestore
   await setDoc(doc(db, 'users', user.uid), {
     first_name: values.first_name,
     last_name: values.last_name,
     email: values.email,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   });
 
   return userCredential;
 };
 
-export const emailAndPasswordSignIn = async (values) => {
+export const emailAndPasswordSignIn = async values => {
   const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
   return userCredential;
 };
@@ -50,7 +48,7 @@ export const logout = async () => {
 
 // ------------------- User Info and Password -------------------
 
-export const getUserProfile = async (uid) => {
+export const getUserProfile = async uid => {
   const userDoc = await getDoc(doc(db, 'users', uid));
   if (userDoc.exists()) {
     return userDoc.data();
@@ -58,7 +56,7 @@ export const getUserProfile = async (uid) => {
   return null;
 };
 
-export const updateUserPassword = async (newPassword) => {
+export const updateUserPassword = async newPassword => {
   const user = auth.currentUser;
   if (user) {
     await updatePassword(user, newPassword);
@@ -69,7 +67,6 @@ export const updateUserPassword = async (newPassword) => {
 
 // ------------------- Password Reset -------------------
 
-export const sendPasswordResetOtp = async (values) => {
+export const sendPasswordResetOtp = async values => {
   await sendPasswordResetEmail(auth, values.email);
 };
-

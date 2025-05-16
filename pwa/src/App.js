@@ -4,9 +4,9 @@ import { NotificationContainer } from 'react-notifications';
 import ReactGA from 'react-ga';
 import * as Sentry from '@sentry/browser';
 import { BrowserTracing } from '@sentry/tracing';
-import CookieConsent from "react-cookie-consent";
+import CookieConsent from 'react-cookie-consent';
 import { onAuthStateChanged } from 'firebase/auth'; // ✅ Move this above local imports
-import { auth } from './actions/firebase';           // ✅ Local import follows external
+import { auth } from './actions/firebase'; // ✅ Local import follows external
 import { AuthProvider } from './contexts/AuthContext';
 import Router from './routes';
 import ThemeProvider from './theme';
@@ -27,10 +27,9 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
   });
 }
 
-
 export default function App() {
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, user => {
       if (user) {
         console.log('User is logged in:', user.email);
         // set user in context or redux here
@@ -55,8 +54,8 @@ export default function App() {
           buttonText="I Agree!"
           cookieName="jua_cookie_consent_notice"
           expires={150}
-          buttonStyle={{ color: "#4e503b", fontSize: 17 }}
-          style={{ background: "#2065d1", fontSize: 17, textAlign: 'center' }}
+          buttonStyle={{ color: '#4e503b', fontSize: 17 }}
+          style={{ background: '#2065d1', fontSize: 17, textAlign: 'center' }}
         >
           By using JUA, you agree to our use of cookies.
         </CookieConsent>

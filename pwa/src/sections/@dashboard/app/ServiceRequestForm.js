@@ -5,7 +5,18 @@ import ReactGA from 'react-ga';
 import moment from 'moment';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Stack, TextField, Snackbar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Alert } from '@mui/material';
+import {
+  Stack,
+  TextField,
+  Snackbar,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Alert,
+} from '@mui/material';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -14,11 +25,18 @@ import { doc, addDoc, updateDoc, collection, serverTimestamp } from 'firebase/fi
 import notificationManager from '../../../actions/NotificationManager';
 import { auth, db } from '../../../actions/firebase';
 
-export default function ServiceRequestForm({ closeDialog, serviceRequest, serviceProvider, isServiceProvider = false }) {
+export default function ServiceRequestForm({
+  closeDialog,
+  serviceRequest,
+  serviceProvider,
+  isServiceProvider = false,
+}) {
   const navigate = useNavigate();
   const formProps = useForm({ defaultValues: serviceRequest || {} });
   const { register, setValue, handleSubmit } = formProps;
-  const [date, setDate] = useState(get(serviceRequest, 'date_and_time') ? new Date(get(serviceRequest, 'date_and_time')) : null);
+  const [date, setDate] = useState(
+    get(serviceRequest, 'date_and_time') ? new Date(get(serviceRequest, 'date_and_time')) : null
+  );
   const [submissionLoading, setSubmissionLoading] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
   const [actionDialog, setActionDialog] = useState(null);
@@ -32,12 +50,12 @@ export default function ServiceRequestForm({ closeDialog, serviceRequest, servic
 
   const isFinalized = serviceRequest?.status === 'Accepted' || serviceRequest?.status === 'Cancelled';
 
-  const handleDateTimeChange = (newDate) => {
+  const handleDateTimeChange = newDate => {
     setDate(newDate?.toDate ? newDate.toDate() : newDate);
     setValue('date_and_time', newDate?.toDate ? newDate.toDate() : newDate);
   };
 
-  const onSubmit = async (values) => {
+  const onSubmit = async values => {
     if (isFinalized) return;
     try {
       setSubmissionLoading(true);
@@ -112,7 +130,7 @@ export default function ServiceRequestForm({ closeDialog, serviceRequest, servic
     }
   };
 
-  const handleAction = async (status) => {
+  const handleAction = async status => {
     try {
       const user = auth.currentUser;
       const requestRef = doc(db, 'serviceRequests', serviceRequest.id);
@@ -131,7 +149,6 @@ export default function ServiceRequestForm({ closeDialog, serviceRequest, servic
         performedBy: user?.uid || null,
         performedAt: serverTimestamp(),
       });
-
 
       const recipient = status === 'Cancelled' ? serviceRequest.serviceProvider : serviceRequest.customer;
       const notifRef = collection(db, 'users', recipient, 'notifications');
@@ -159,11 +176,18 @@ export default function ServiceRequestForm({ closeDialog, serviceRequest, servic
           This request has been <strong>{serviceRequest?.status}</strong>
           {serviceRequest?.reason ? ` — ${serviceRequest.reason}` : ''}
           {serviceRequest?.statusUpdatedAt?.toDate && (
-            <> on <strong>{moment(serviceRequest.statusUpdatedAt.toDate()).format('lll')}</strong></>
+            <>
+              {' '}
+              on <strong>{moment(serviceRequest.statusUpdatedAt.toDate()).format('lll')}</strong>
+            </>
           )}
           {serviceRequest?.statusUpdatedBy && (
-            <> by <strong>{serviceRequest.statusUpdatedBy === serviceRequest.customer ? 'customer' : 'provider'}</strong></>
-          )}.
+            <>
+              {' '}
+              by <strong>{serviceRequest.statusUpdatedBy === serviceRequest.customer ? 'customer' : 'provider'}</strong>
+            </>
+          )}
+          .
         </Alert>
       )}
 
@@ -184,7 +208,7 @@ export default function ServiceRequestForm({ closeDialog, serviceRequest, servic
               disabled={isFinalized}
               value={date}
               onChange={handleDateTimeChange}
-              renderInput={(params) => <TextField {...params} />}
+              renderInput={params => <TextField {...params} />}
             />
           </LocalizationProvider>
 
@@ -201,16 +225,22 @@ export default function ServiceRequestForm({ closeDialog, serviceRequest, servic
             {serviceRequest?.id ? 'Update Request' : 'Send Request'}
           </LoadingButton>
 
-          {serviceRequest?.id && !isFinalized && (
-            isServiceProvider ? (
+          {serviceRequest?.id &&
+            !isFinalized &&
+            (isServiceProvider ? (
               <Stack direction="row" spacing={2}>
-                <Button color="success" variant="outlined" onClick={() => setActionDialog('Accepted')}>Approve</Button>
-                <Button color="error" variant="outlined" onClick={() => setActionDialog('Cancelled')}>Cancel</Button>
+                <Button color="success" variant="outlined" onClick={() => setActionDialog('Accepted')}>
+                  Approve
+                </Button>
+                <Button color="error" variant="outlined" onClick={() => setActionDialog('Cancelled')}>
+                  Cancel
+                </Button>
               </Stack>
             ) : (
-              <Button color="error" variant="outlined" onClick={() => setActionDialog('Cancelled')}>Cancel Request</Button>
-            )
-          )}
+              <Button color="error" variant="outlined" onClick={() => setActionDialog('Cancelled')}>
+                Cancel Request
+              </Button>
+            ))}
         </Stack>
       </form>
 
@@ -230,7 +260,7 @@ export default function ServiceRequestForm({ closeDialog, serviceRequest, servic
               fullWidth
               variant="standard"
               value={actionReason}
-              onChange={(e) => setActionReason(e.target.value)}
+              onChange={e => setActionReason(e.target.value)}
             />
           )}
         </DialogContent>

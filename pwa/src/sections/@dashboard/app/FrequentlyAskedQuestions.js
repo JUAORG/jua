@@ -19,7 +19,7 @@ export default function FrequentlyAskedQuestions() {
       try {
         const q = query(collection(db, 'frequentlyAskedQuestions'), orderBy('createdAt', 'desc'));
         const snapshot = await getDocs(q);
-        const entries = snapshot.docs.map((doc) => ({
+        const entries = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
         }));

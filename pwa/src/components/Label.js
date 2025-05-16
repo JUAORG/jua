@@ -9,18 +9,18 @@ const RootStyle = styled('span')(({ theme, ownerState }) => {
   const isLight = theme.palette.mode === 'light';
   const { color, variant } = ownerState;
 
-  const styleFilled = (color) => ({
+  const styleFilled = color => ({
     color: theme.palette[color].contrastText,
     backgroundColor: theme.palette[color].main,
   });
 
-  const styleOutlined = (color) => ({
+  const styleOutlined = color => ({
     color: theme.palette[color].main,
     backgroundColor: 'transparent',
     border: `1px solid ${theme.palette[color].main}`,
   });
 
-  const styleGhost = (color) => ({
+  const styleGhost = color => ({
     color: theme.palette[color][isLight ? 'dark' : 'light'],
     backgroundColor: alpha(theme.palette[color].main, 0.16),
   });

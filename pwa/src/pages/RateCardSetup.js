@@ -40,39 +40,37 @@ export default function RateCardSetup() {
     navigate('/dashboard/wallet_setup', { replace: true });
   };
 
-  const renderFullScreenDialog = () => {
-    return (
-      <div>
-        <Dialog fullScreen open onClose={handleClose}>
-          <AppBar sx={{ position: 'relative' }}>
-            <Toolbar>
-              <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-                <CloseIcon />
-              </IconButton>
-              <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                {activeFormTitle}
-              </Typography>
-              <Button autoFocus color="inherit" onClick={handleClose}>
-                save
-              </Button>
-            </Toolbar>
-          </AppBar>
-          <Grid m={2}>
-            {activeFormTitle === 'Education History' && (
-              <>
-                <EducationHistoryForm />
-              </>
-            )}
-            {activeFormTitle !== 'Education History' && (
-              <>
-                <WorkHistoryForm />
-              </>
-            )}
-          </Grid>
-        </Dialog>
-      </div>
-    );
-  };
+  const renderFullScreenDialog = () => (
+    <div>
+      <Dialog fullScreen open onClose={handleClose}>
+        <AppBar sx={{ position: 'relative' }}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+              {activeFormTitle}
+            </Typography>
+            <Button autoFocus color="inherit" onClick={handleClose}>
+              save
+            </Button>
+          </Toolbar>
+        </AppBar>
+        <Grid m={2}>
+          {activeFormTitle === 'Education History' && (
+            <>
+              <EducationHistoryForm />
+            </>
+          )}
+          {activeFormTitle !== 'Education History' && (
+            <>
+              <WorkHistoryForm />
+            </>
+          )}
+        </Grid>
+      </Dialog>
+    </div>
+  );
 
   return (
     <Page title="Rate Card">

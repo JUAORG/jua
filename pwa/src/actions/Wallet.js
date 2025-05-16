@@ -1,13 +1,6 @@
 // File: src/actions/payment.js
 import { get } from 'lodash';
-import {
-  addDoc,
-  collection,
-  getDocs,
-  serverTimestamp,
-  query,
-  orderBy,
-} from 'firebase/firestore';
+import { addDoc, collection, getDocs, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import notificationManager from './NotificationManager';
 import { createId } from '../utils/uuid-generator';
 import { auth, db } from './firebase';
@@ -45,7 +38,7 @@ export async function makePayment(amount, serviceRequestId) {
     currency: 'ZAR',
     name: 'Jua Payment',
     description: 'Pay for advisory session on JUA',
-    callback: async (result) => {
+    callback: async result => {
       if (result.error) {
         const errorMessage = result.error.message;
         notificationManager.error(`${errorMessage}`, 'Error');

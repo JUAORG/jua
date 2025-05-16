@@ -49,14 +49,14 @@ export default function JuaPlatformFeedbackForm() {
         ...values,
         userId: uid,
         userEmail: email,
-        submittedAt: serverTimestamp()
+        submittedAt: serverTimestamp(),
       });
     },
     onSuccess: () => {
       notificationManager.success('Thank you for your feedback.', 'Success');
       reset();
     },
-    onError: (error) => {
+    onError: error => {
       console.error(error);
       notificationManager.error('Something went wrong', 'Error');
     },
@@ -65,11 +65,7 @@ export default function JuaPlatformFeedbackForm() {
   return (
     <form onSubmit={handleSubmit(() => mutate())}>
       <Stack spacing={3}>
-        <TextField
-          fullWidth
-          label="Subject"
-          {...register('subject', { required: 'Subject is required' })}
-        />
+        <TextField fullWidth label="Subject" {...register('subject', { required: 'Subject is required' })} />
         <TextField
           rows={4}
           fullWidth
@@ -78,13 +74,7 @@ export default function JuaPlatformFeedbackForm() {
           {...register('message', { required: 'Message is required' })}
           placeholder="Improvement suggestions for Jua/Support?"
         />
-        <LoadingButton
-          fullWidth
-          size="large"
-          type="submit"
-          loading={isLoading}
-          variant="contained"
-        >
+        <LoadingButton fullWidth size="large" type="submit" loading={isLoading} variant="contained">
           Submit
         </LoadingButton>
       </Stack>

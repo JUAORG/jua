@@ -35,7 +35,7 @@ export default function UserListHead({
   onRequestSort,
   onSelectAllClick,
 }) {
-  const createSortHandler = (property) => (event) => {
+  const createSortHandler = property => event => {
     onRequestSort(event, property);
   };
 
@@ -49,7 +49,7 @@ export default function UserListHead({
             onChange={onSelectAllClick}
           />
         </TableCell>
-        {headLabel.map((headCell) => (
+        {headLabel.map(headCell => (
           <TableCell
             key={headCell.id}
             align={headCell.alignRight ? 'right' : 'left'}

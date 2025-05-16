@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Stack, TextField, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from "../../../actions/firebase"; // Adjust the path to your firebase.js config
+import { auth } from '../../../actions/firebase'; // Adjust the path to your firebase.js config
 import notificationManager from '../../../actions/NotificationManager';
 import Iconify from '../../../components/Iconify';
 import PasswordResetForm from '../PasswordReset';
@@ -16,7 +16,7 @@ export default function LoginForm() {
   const { register, getValues, handleSubmit } = formProps;
 
   const handleShowPassword = () => {
-    setShowPassword((show) => !show);
+    setShowPassword(show => !show);
   };
 
   const onSubmit = async () => {
@@ -28,21 +28,20 @@ export default function LoginForm() {
       notificationManager.success('Successfully authenticated', 'Success');
       window.location.href = '/dashboard/app';
     } catch (error) {
-      const code = error.code;
+      const { code } = error;
       let message = 'Something went wrong. Please try again later.';
-    
+
       if (code === 'auth/user-not-found') {
         message = 'User not found';
       } else if (code === 'auth/wrong-password') {
         message = 'Incorrect password';
       }
-    
+
       notificationManager.error(message, 'Error');
     } finally {
       setLoading(false);
     }
-  }
-    
+  };
 
   const openPasswordResetForm = () => {
     setShowPasswordResetForm(true);
@@ -55,13 +54,7 @@ export default function LoginForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
-        <TextField
-          fullWidth
-          autoComplete="username"
-          type="email"
-          label="Email address"
-          {...register('email')}
-        />
+        <TextField fullWidth autoComplete="username" type="email" label="Email address" {...register('email')} />
         <TextField
           fullWidth
           autoComplete="current-password"
@@ -93,9 +86,8 @@ export default function LoginForm() {
       </LoadingButton>
 
       <p style={{ fontSize: '10px', marginTop: '10px', textAlign: 'center' }}>
-        JUA Advisory is still in development mode. We are currently user testing the platform and
-        adding final touches. Please feel free to register/sign in, experience the app, and give us
-        feedback.
+        JUA Advisory is still in development mode. We are currently user testing the platform and adding final touches.
+        Please feel free to register/sign in, experience the app, and give us feedback.
       </p>
     </form>
   );

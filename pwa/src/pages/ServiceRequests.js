@@ -12,7 +12,7 @@ import {
   Container,
   IconButton,
   Alert,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from 'react-router-dom';
@@ -34,10 +34,7 @@ export default function ServiceRequests() {
         const currentUid = auth.currentUser?.uid;
         if (!currentUid) throw new Error('User not logged in');
 
-        const q = query(
-          collection(db, 'serviceRequests'),
-          where('customer', '==', currentUid)
-        );
+        const q = query(collection(db, 'serviceRequests'), where('customer', '==', currentUid));
 
         const snapshot = await getDocs(q);
         const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -54,7 +51,7 @@ export default function ServiceRequests() {
     fetchRequests();
   }, []);
 
-  const handleOpenEdit = (req) => {
+  const handleOpenEdit = req => {
     setSelectedRequest(req);
   };
 
@@ -62,7 +59,7 @@ export default function ServiceRequests() {
     setSelectedRequest(null);
   };
 
-  const handleItemClick = (id) => {
+  const handleItemClick = id => {
     navigate(`/dashboard/service_request/${id}`);
   };
 
@@ -86,17 +83,21 @@ export default function ServiceRequests() {
           Your Service Requests
         </Typography>
         <List disablePadding>
-          {serviceRequests.map((req) => (
+          {serviceRequests.map(req => (
             <div key={req.id}>
               <ListItem
                 button
                 onClick={() => handleItemClick(req.id)}
                 alignItems="flex-start"
                 secondaryAction={
-                  <IconButton edge="end" aria-label="edit" onClick={(e) => {
-                    e.stopPropagation();
-                    handleOpenEdit(req);
-                  }}>
+                  <IconButton
+                    edge="end"
+                    aria-label="edit"
+                    onClick={e => {
+                      e.stopPropagation();
+                      handleOpenEdit(req);
+                    }}
+                  >
                     <EditIcon />
                   </IconButton>
                 }
@@ -132,12 +133,7 @@ export default function ServiceRequests() {
     <Page title="Service Requests">
       <Container maxWidth="md">
         <Typography align="center" variant="h4" sx={{ mb: 5 }}>
-          <img
-            alt="Booking"
-            width={150}
-            style={{ margin: 'auto' }}
-            src="/static/illustrations/undraw_booking.svg"
-          />
+          <img alt="Booking" width={150} style={{ margin: 'auto' }} src="/static/illustrations/undraw_booking.svg" />
           Service Requests
         </Typography>
 

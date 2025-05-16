@@ -1,7 +1,6 @@
 import Iconify from '../../components/Iconify';
 
-const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
-
+const getIcon = name => <Iconify icon={name} width={22} height={22} />;
 
 const navConfig = [
   // {
@@ -56,4 +55,4 @@ const navConfig = [
   // },
 ];
 
-export default navConfig
+export default navConfig;

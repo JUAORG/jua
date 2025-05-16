@@ -1,22 +1,14 @@
 import React, { useState } from 'react';
-import {
-  Button,
-  TextField,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle
-} from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from "../../actions/firebase"; // Adjust the path to your firebase.js config
+import { auth } from '../../actions/firebase'; // Adjust the path to your firebase.js config
 import notificationManager from '../../actions/NotificationManager';
 
 export default function PasswordResetForm({ handleClose }) {
   const [email, setEmail] = useState('');
   const [isSending, setIsSending] = useState(false);
 
-  const onSubmit = async (e) => {
+  const onSubmit = async e => {
     e.preventDefault();
     setIsSending(true);
 
@@ -51,12 +43,16 @@ export default function PasswordResetForm({ handleClose }) {
             fullWidth
             variant="standard"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} disabled={isSending}>Cancel</Button>
-          <Button type="submit" disabled={isSending}>Send Password Reset Email</Button>
+          <Button onClick={handleClose} disabled={isSending}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={isSending}>
+            Send Password Reset Email
+          </Button>
         </DialogActions>
       </Dialog>
     </form>

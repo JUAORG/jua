@@ -1,3 +1,3 @@
-import { NotificationManager } from 'react-notifications'
+import { NotificationManager } from 'react-notifications';
 
-export default NotificationManager
+export default NotificationManager;

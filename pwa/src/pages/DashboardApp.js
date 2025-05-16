@@ -21,7 +21,7 @@ export default function DashboardApp() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const currentUser = auth.currentUser;
+        const { currentUser } = auth;
         if (currentUser) {
           const userRef = doc(db, 'users', currentUser.uid);
           const userSnap = await getDoc(userRef);
@@ -63,7 +63,7 @@ export default function DashboardApp() {
     },
   ];
 
-  const handleJoyrideCallback = async (data) => {
+  const handleJoyrideCallback = async data => {
     const { status, action } = data;
     const finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED];
 
@@ -72,7 +72,7 @@ export default function DashboardApp() {
 
       // 🔥 Mark as completed in Firestore
       try {
-        const currentUser = auth.currentUser;
+        const { currentUser } = auth;
         if (currentUser) {
           const userRef = doc(db, 'users', currentUser.uid);
           await updateDoc(userRef, { tour_completed: true });
@@ -116,10 +116,20 @@ export default function DashboardApp() {
         <Grid container spacing={3}>
           {/* Conditional rendering based on user role */}
         </Grid>
-        <BasicSpeedDial actions={[
-          { icon: <FeedbackIcon />, name: 'Feedback', onClick: () => navigate(`/dashboard/about`, { replace: true }) },
-          { icon: <ShareIcon />, name: 'Share', onClick: () => navigator.share({ title: 'JUA', text: 'Join JUA today!', url: 'https://jua.one' }) },
-        ]} />
+        <BasicSpeedDial
+          actions={[
+            {
+              icon: <FeedbackIcon />,
+              name: 'Feedback',
+              onClick: () => navigate(`/dashboard/about`, { replace: true }),
+            },
+            {
+              icon: <ShareIcon />,
+              name: 'Share',
+              onClick: () => navigator.share({ title: 'JUA', text: 'Join JUA today!', url: 'https://jua.one' }),
+            },
+          ]}
+        />
       </Container>
     </Page>
   );

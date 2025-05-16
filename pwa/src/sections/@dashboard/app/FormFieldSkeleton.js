@@ -5,13 +5,11 @@ import { LoadingButton } from '@mui/lab';
 import notificationManager from '../../../actions/NotificationManager';
 import { fetchAccountPayment, updateAccountPayment } from '../../../actions/Profile';
 
-export const FormFieldSkeleton = () => {
-  return (
-    <>
-      <Skeleton height={50} animation="wave" />
-      <Skeleton height={50} animation="wave" />
-      <Skeleton height={50} animation="wave" />
-      <Skeleton height={50} animation="wave" />
-    </>
-  );
-}
+export const FormFieldSkeleton = () => (
+  <>
+    <Skeleton height={50} animation="wave" />
+    <Skeleton height={50} animation="wave" />
+    <Skeleton height={50} animation="wave" />
+    <Skeleton height={50} animation="wave" />
+  </>
+);

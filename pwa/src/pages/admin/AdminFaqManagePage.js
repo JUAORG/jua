@@ -30,7 +30,7 @@ export default function AdminFaqManagePage() {
   const fetchFaqs = async () => {
     try {
       const snapshot = await getDocs(collection(db, 'frequentlyAskedQuestions'));
-      const entries = snapshot.docs.map((doc) => ({
+      const entries = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
       }));
@@ -45,7 +45,7 @@ export default function AdminFaqManagePage() {
     fetchFaqs();
   }, []);
 
-  const onSubmit = async (values) => {
+  const onSubmit = async values => {
     try {
       setLoading(true);
       if (editingFaq) {
@@ -75,13 +75,13 @@ export default function AdminFaqManagePage() {
     }
   };
 
-  const handleEdit = (faq) => {
+  const handleEdit = faq => {
     setEditingFaq(faq);
     setValue('title', faq.title);
     setValue('body', faq.body);
   };
 
-  const handleDelete = async (faqId) => {
+  const handleDelete = async faqId => {
     try {
       await deleteDoc(doc(db, 'frequentlyAskedQuestions', faqId));
       notificationManager.success('FAQ deleted successfully', 'Success');
@@ -118,7 +118,7 @@ export default function AdminFaqManagePage() {
           </Typography>
           <Divider sx={{ mb: 2 }} />
           <List>
-            {faqs.map((faq) => (
+            {faqs.map(faq => (
               <ListItem key={faq.id} divider>
                 <ListItemText primary={faq.title} secondary={faq.body} />
                 <IconButton color="primary" onClick={() => handleEdit(faq)}>

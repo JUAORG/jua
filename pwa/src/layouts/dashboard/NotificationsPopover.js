@@ -28,15 +28,15 @@ export default function NotificationsPopover() {
 
   const { notifications, unreadCount, loading } = useNotificationData();
 
-  const unReadNotifications = notifications.filter((item) => !item.read);
-  const readNotifications = notifications.filter((item) => item.read);
+  const unReadNotifications = notifications.filter(item => !item.read);
+  const readNotifications = notifications.filter(item => item.read);
 
-  const handleOpen = (event) => setOpen(event.currentTarget);
+  const handleOpen = event => setOpen(event.currentTarget);
   const handleClose = () => setOpen(null);
 
   const handleMarkAllAsRead = async () => {
     const batch = writeBatch(db);
-    unReadNotifications.forEach((notif) => {
+    unReadNotifications.forEach(notif => {
       const ref = doc(db, 'users', auth.currentUser.uid, 'notifications', notif.id);
       batch.update(ref, { read: true });
     });
@@ -83,10 +83,10 @@ export default function NotificationsPopover() {
             {!loading && notifications.length === 0 && (
               <Typography sx={{ p: 2.5, color: 'text.secondary' }}>No notifications yet.</Typography>
             )}
-            {unReadNotifications.map((notification) => (
+            {unReadNotifications.map(notification => (
               <NotificationItem key={notification.id} notification={notification} navigate={navigate} />
             ))}
-            {readNotifications.map((notification) => (
+            {readNotifications.map(notification => (
               <NotificationItem key={notification.id} notification={notification} navigate={navigate} />
             ))}
           </List>

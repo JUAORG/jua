@@ -37,16 +37,16 @@ export default function AppWidgetSummary({ title, total, icon, color = 'primary'
         py: 5,
         boxShadow: 0,
         textAlign: 'center',
-        color: (theme) => theme.palette[color].darker,
-        bgcolor: (theme) => theme.palette[color].lighter,
+        color: theme => theme.palette[color].darker,
+        bgcolor: theme => theme.palette[color].lighter,
         ...sx,
       }}
       {...other}
     >
       <IconWrapperStyle
         sx={{
-          color: (theme) => theme.palette[color].dark,
-          backgroundImage: (theme) =>
+          color: theme => theme.palette[color].dark,
+          backgroundImage: theme =>
             `linear-gradient(135deg, ${alpha(theme.palette[color].dark, 0)} 0%, ${alpha(
               theme.palette[color].dark,
               0.24

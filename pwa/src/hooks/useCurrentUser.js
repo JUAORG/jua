@@ -9,7 +9,7 @@ export default function useCurrentUser() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const currentUser = auth.currentUser;
+        const { currentUser } = auth;
         if (currentUser) {
           const userRef = doc(db, 'users', currentUser.uid);
           const userSnap = await getDoc(userRef);

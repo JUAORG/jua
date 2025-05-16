@@ -11,18 +11,15 @@ export default function useNotificationData() {
   useEffect(() => {
     if (!auth.currentUser) return;
 
-    const q = query(
-      collection(db, 'users', auth.currentUser.uid, 'notifications'),
-      orderBy('createdAt', 'desc')
-    );
+    const q = query(collection(db, 'users', auth.currentUser.uid, 'notifications'), orderBy('createdAt', 'desc'));
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const entries = snapshot.docs.map((doc) => ({
+    const unsubscribe = onSnapshot(q, snapshot => {
+      const entries = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
       }));
       setNotifications(entries);
-      setUnreadCount(entries.filter((item) => !item.read).length);
+      setUnreadCount(entries.filter(item => !item.read).length);
       setLoading(false);
     });
 

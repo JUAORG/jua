@@ -28,7 +28,7 @@ import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
 import BasicSpeedDial from './SpeedDial';
 import { CustomChatBox } from './CustomChatBox';
 import notificationManager from '../actions/NotificationManager';
-import { ServiceRequestStatusButtons } from './serviceRequestStatusButtons'
+import { ServiceRequestStatusButtons } from './serviceRequestStatusButtons';
 import { fetchServiceRequest, serviceRequestStatusOptions } from '../actions/JuaNetwork';
 
 export const ServiceRequestDetail = ({ selectedServiceRequestRef, handleClose }) => {
@@ -39,24 +39,23 @@ export const ServiceRequestDetail = ({ selectedServiceRequestRef, handleClose })
   const [openChatBox, setOpenChatBox] = useState(false);
   const [expanded, setExpanded] = useState('panel1');
   const [showAlertDialog, setShowAlertDialog] = useState(false);
-  const [shouldShowServiceRequestStatusButton, setShouldShowServiceRequestStatusButton] = useState(false)
+  const [shouldShowServiceRequestStatusButton, setShouldShowServiceRequestStatusButton] = useState(false);
 
   const { isLoading, isError, data, error } = useQuery('service_request', () =>
     fetchServiceRequest(selectedServiceRequestRef)
   );
 
-
-
   const selectedServiceRequest = get(data, 'data');
   const selectedServiceRequestStatus = get(selectedServiceRequest, 'status');
 
-
   useEffect(() => {
-    if (get(user, 'ref') === get(selectedServiceRequest, 'service_provider_ref') &&
-        selectedServiceRequestStatus === serviceRequestStatusOptions.pending) {
-      setShouldShowServiceRequestStatusButton(true)
+    if (
+      get(user, 'ref') === get(selectedServiceRequest, 'service_provider_ref') &&
+      selectedServiceRequestStatus === serviceRequestStatusOptions.pending
+    ) {
+      setShouldShowServiceRequestStatusButton(true);
     }
-  },[user, selectedServiceRequest])
+  }, [user, selectedServiceRequest]);
 
   if (isLoading) {
     return <span>Loading...</span>;
@@ -67,28 +66,20 @@ export const ServiceRequestDetail = ({ selectedServiceRequestRef, handleClose })
     return <span>Error: {error.message}</span>;
   }
 
-
-  const handleChange = (panel) => (event, isExpanded) => {
+  const handleChange = panel => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
-
-
 
   const handleOpenChatBox = () => setOpenChatBox(true);
   const handleCloseChatBox = () => setOpenChatBox(false);
   const handleGoToServiceRequestMeeting = () => {
-    window.open(
-      `/dashboard/advisory_session_meeting/?room=${selectedServiceRequestRef}`,
-      '_blank',
-      'noreferrer'
-    )
+    window.open(`/dashboard/advisory_session_meeting/?room=${selectedServiceRequestRef}`, '_blank', 'noreferrer');
   };
 
-  const handleServiceRequestError = (message) => {
+  const handleServiceRequestError = message => {
     notificationManager.error(`${message}`, 'Error');
   };
 
-  
   const actions = [
     {
       icon: <FeedbackIcon sx={{ color: '#2065D1' }} />,
@@ -104,10 +95,10 @@ export const ServiceRequestDetail = ({ selectedServiceRequestRef, handleClose })
       icon: <MessageIcon sx={{ color: '#2065D1' }} />,
       name: 'Send a message',
       onClick:
-      selectedServiceRequestStatus === serviceRequestStatusOptions.approved
-        ? handleOpenChatBox
-        : () =>
-      handleServiceRequestError('In App messages may only be sent once the service request has been approved.'),
+        selectedServiceRequestStatus === serviceRequestStatusOptions.approved
+          ? handleOpenChatBox
+          : () =>
+              handleServiceRequestError('In App messages may only be sent once the service request has been approved.'),
     },
     // {
     //   icon: <AttachEmailIcon sx={{ color: '#2065D1' }} />,
@@ -118,13 +109,13 @@ export const ServiceRequestDetail = ({ selectedServiceRequestRef, handleClose })
       icon: <VideoCameraFrontIcon sx={{ color: '#2065D1' }} />,
       name: 'Start Service Request',
       onClick:
-      selectedServiceRequestStatus === serviceRequestStatusOptions.approved ||
+        selectedServiceRequestStatus === serviceRequestStatusOptions.approved ||
         selectedServiceRequestStatus === serviceRequestStatusOptions.inProgress
-        ? handleGoToServiceRequestMeeting
-        : () =>
-      handleServiceRequestError(
-        'This service request meeting room is not ready yet. Please wait for once it has been approved.'
-      ),
+          ? handleGoToServiceRequestMeeting
+          : () =>
+              handleServiceRequestError(
+                'This service request meeting room is not ready yet. Please wait for once it has been approved.'
+              ),
     },
   ];
 
@@ -186,11 +177,9 @@ export const ServiceRequestDetail = ({ selectedServiceRequestRef, handleClose })
               <Divider />
             </div>
             <Divider />
-            {shouldShowServiceRequestStatusButton &&
-             <ServiceRequestStatusButtons
-               serviceRequest={selectedServiceRequest}
-             />
-            }
+            {shouldShowServiceRequestStatusButton && (
+              <ServiceRequestStatusButtons serviceRequest={selectedServiceRequest} />
+            )}
           </Stack>
           {openChatBox && (
             <CustomChatBox serviceRequestRef={selectedServiceRequestRef} handleClose={handleCloseChatBox} />

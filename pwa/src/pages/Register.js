@@ -1,14 +1,7 @@
 import { useEffect, useContext } from 'react';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import {
-  Card,
-  Link,
-  Container,
-  Typography,
-  CircularProgress,
-  Box,
-} from '@mui/material';
+import { Card, Link, Container, Typography, CircularProgress, Box } from '@mui/material';
 import useResponsive from '../hooks/useResponsive';
 import Page from '../components/Page';
 import Logo from '../components/Logo';
@@ -102,7 +95,8 @@ export default function Register() {
         {mdUp && (
           <SectionStyle>
             <Typography variant="h4" sx={{ px: 5, mt: 10, mb: 5 }}>
-              With JUA, anyone with any skills or knowledge has value to share and will be paid for their advice and/or services
+              With JUA, anyone with any skills or knowledge has value to share and will be paid for their advice and/or
+              services
             </Typography>
             <img alt="register" src="/static/illustrations/undraw_team_spirit.svg" />
           </SectionStyle>

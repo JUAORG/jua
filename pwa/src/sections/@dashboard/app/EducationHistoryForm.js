@@ -4,13 +4,7 @@ import { Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import notificationManager from '../../../actions/NotificationManager';
 import { auth, db } from '../../../actions/firebase';
-import {
-  collection,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-} from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { useState } from 'react';
 
 export default function EducationHistoryForm(educationDoc) {
@@ -19,7 +13,7 @@ export default function EducationHistoryForm(educationDoc) {
   const { register, reset, handleSubmit } = formProps;
   const [loading, setLoading] = useState(false);
 
-  const saveEducation = async (values) => {
+  const saveEducation = async values => {
     const uid = auth.currentUser?.uid;
     if (!uid) throw new Error('User not authenticated');
 
@@ -60,29 +54,10 @@ export default function EducationHistoryForm(educationDoc) {
   return (
     <form onSubmit={handleSubmit(saveEducation)}>
       <Stack spacing={3} pb={5}>
-        <TextField
-          required
-          fullWidth
-          label="Institution/University"
-          {...register('institution')}
-        />
-        <TextField
-          required
-          fullWidth
-          label="Course"
-          {...register('course')}
-        />
-        <TextField
-          required
-          fullWidth
-          label="Field of study"
-          {...register('field_of_study')}
-        />
-        <Stack
-          sx={{ float: 'right' }}
-          direction={{ xs: 'column', sm: 'row' }}
-          spacing={2}
-        >
+        <TextField required fullWidth label="Institution/University" {...register('institution')} />
+        <TextField required fullWidth label="Course" {...register('course')} />
+        <TextField required fullWidth label="Field of study" {...register('field_of_study')} />
+        <Stack sx={{ float: 'right' }} direction={{ xs: 'column', sm: 'row' }} spacing={2}>
           <TextField
             required
             fullWidth
@@ -101,21 +76,10 @@ export default function EducationHistoryForm(educationDoc) {
             InputLabelProps={{ shrink: true }}
           />
         </Stack>
-        <TextField
-          fullWidth
-          type="text"
-          label="Description (optional)"
-          {...register('description')}
-        />
+        <TextField fullWidth type="text" label="Description (optional)" {...register('description')} />
         {education ? (
           <>
-            <LoadingButton
-              fullWidth
-              size="large"
-              type="submit"
-              loading={loading}
-              variant="contained"
-            >
+            <LoadingButton fullWidth size="large" type="submit" loading={loading} variant="contained">
               Update
             </LoadingButton>
             <LoadingButton
@@ -130,13 +94,7 @@ export default function EducationHistoryForm(educationDoc) {
             </LoadingButton>
           </>
         ) : (
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            loading={loading}
-            variant="contained"
-          >
+          <LoadingButton fullWidth size="large" type="submit" loading={loading} variant="contained">
             Add
           </LoadingButton>
         )}

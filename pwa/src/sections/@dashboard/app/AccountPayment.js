@@ -1,13 +1,7 @@
 import { useState, useEffect } from 'react';
 import { get } from 'lodash';
 import { useForm } from 'react-hook-form';
-import {
-  Stack,
-  TextField,
-  MenuItem,
-  InputLabel,
-  Select,
-} from '@mui/material';
+import { Stack, TextField, MenuItem, InputLabel, Select } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import notificationManager from '../../../actions/NotificationManager';
@@ -40,7 +34,7 @@ export default function AccountPaymentMethodForm() {
     loadPaymentData();
   }, [reset]);
 
-  const onSubmit = async (values) => {
+  const onSubmit = async values => {
     try {
       setLoading(true);
       const userRef = doc(db, 'users', auth.currentUser.uid);
@@ -63,14 +57,14 @@ export default function AccountPaymentMethodForm() {
             <InputLabel>Preferred Payment Method</InputLabel>
             <Select
               value={preferredPaymentMethod}
-              onChange={(e) => {
+              onChange={e => {
                 setValue('preferred_payment_method', e.target.value);
                 setPreferredPaymentMethod(e.target.value);
               }}
               required
             >
-              <MenuItem value='EWALLET'>Ewallet</MenuItem>
-              <MenuItem value='EFT'>EFT</MenuItem>
+              <MenuItem value="EWALLET">Ewallet</MenuItem>
+              <MenuItem value="EFT">EFT</MenuItem>
             </Select>
 
             <TextField required fullWidth label="Account Holder Name" {...register('account_holder_name')} />

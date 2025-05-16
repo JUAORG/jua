@@ -26,7 +26,6 @@ export default function SearchBar() {
   );
 }
 
-
 // import { useState, useEffect } from 'react';
 // import { Paper, InputBase, IconButton, List, ListItem, ListItemText, Divider, CircularProgress } from '@mui/material';
 // import SearchIcon from '@mui/icons-material/Search';

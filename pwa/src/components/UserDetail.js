@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { get } from 'lodash'
+import { get } from 'lodash';
 import {
   Avatar,
   Stack,
@@ -9,8 +9,8 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle
-} from '@mui/material'
+  DialogTitle,
+} from '@mui/material';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -22,14 +22,13 @@ import ServiceRequestForm from '../sections/@dashboard/app/ServiceRequestForm';
 import IconTextDateList from './reusables/IconTextDateList';
 
 export const UserDetail = ({ user, handleClose }) => {
-  const [open, setOpen] = React.useState(true)
-  const [scroll, setScroll] = React.useState('paper')
-  const [expanded, setExpanded] = React.useState('panel1')
+  const [open, setOpen] = React.useState(true);
+  const [scroll, setScroll] = React.useState('paper');
+  const [expanded, setExpanded] = React.useState('panel1');
 
-  const handleChange = (panel) => (event, isExpanded) => {
+  const handleChange = panel => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
-  }
-
+  };
 
   const descriptionElementRef = React.useRef(null);
   React.useEffect(() => {
@@ -43,48 +42,32 @@ export const UserDetail = ({ user, handleClose }) => {
 
   return (
     <div>
-      <Dialog
-        open
-        onClose={handleClose}
-        scroll={scroll}
-      >
+      <Dialog open onClose={handleClose} scroll={scroll}>
         <DialogContent dividers={scroll === 'paper'}>
-          <DialogContentText
-            id="scroll-dialog-description"
-            ref={descriptionElementRef}
-            tabIndex={-1}
-          >
-            <DialogTitle id="scroll-dialog-title">
-              Create Service Request
-            </DialogTitle>
-            <UserItem user={user}/>
-            <Stack
-              direction="column"
-              justifyContent="space-evenly"
-              alignItems="center"
-              spacing={2}
-            >
+          <DialogContentText id="scroll-dialog-description" ref={descriptionElementRef} tabIndex={-1}>
+            <DialogTitle id="scroll-dialog-title">Create Service Request</DialogTitle>
+            <UserItem user={user} />
+            <Stack direction="column" justifyContent="space-evenly" alignItems="center" spacing={2}>
               <div>
-                <Divider/>
+                <Divider />
                 <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1bh-content"
                     id="panel1bh-header"
                   >
-                    <Typography sx={{ width: '33%', flexShrink: 0 }}>
-                      Request
-                    </Typography>
+                    <Typography sx={{ width: '33%', flexShrink: 0 }}>Request</Typography>
                     <Typography sx={{ color: 'text.secondary' }}>Advisory Session</Typography>
                   </AccordionSummary>
                   <AccordionDetails>
                     <Typography mb={3}>
-                      By requesting the booking, you are agreeing to the Expert's hourly rate of R {get(user, 'rate_per_hour_in_rands')}.
+                      By requesting the booking, you are agreeing to the Expert's hourly rate of R{' '}
+                      {get(user, 'rate_per_hour_in_rands')}.
                     </Typography>
-                    <ServiceRequestForm serviceProvider={user}/>
+                    <ServiceRequestForm serviceProvider={user} />
                   </AccordionDetails>
                 </Accordion>
-                <Divider/>
+                <Divider />
                 <Accordion disabled expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
@@ -93,21 +76,18 @@ export const UserDetail = ({ user, handleClose }) => {
                   >
                     <Typography sx={{ width: '33%', flexShrink: 0 }}>Reviews</Typography>
                   </AccordionSummary>
-                  <AccordionDetails>
-                    {<IconTextDateList/>}
-                  </AccordionDetails>
+                  <AccordionDetails>{<IconTextDateList />}</AccordionDetails>
                 </Accordion>
               </div>
             </Stack>
-            <Divider/>
+            <Divider />
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Close</Button> |
-          <Button disabled>Report</Button> |
+          <Button onClick={handleClose}>Close</Button> |<Button disabled>Report</Button> |
           <Button disabled>Request Service Request</Button>
         </DialogActions>
       </Dialog>
     </div>
   );
-}
+};

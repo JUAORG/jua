@@ -63,8 +63,8 @@ export default function Router() {
         { path: 'service_request/:serviceRequestId', element: <ServiceRequest /> },
         { path: 'advisory_session_meeting', element: <AdvisorySessionMeeting /> },
         { path: 'advisory_session_meeting/feedback/:serviceRequestId', element: <AdvisorySessionFeedback /> },
-        {path: 'admin/feedback', element: <AdminFeedbackPage />},
-        {path: 'admin/faq', element: <AdminFaqManagePage />},
+        { path: 'admin/feedback', element: <AdminFeedbackPage /> },
+        { path: 'admin/faq', element: <AdminFaqManagePage /> },
       ],
     },
     {
@@ -81,9 +81,17 @@ export default function Router() {
   ]);
 
   return (
-    <Suspense fallback={<Box textAlign="center" mt={10}><CircularProgress /></Box>}>
+    <Suspense
+      fallback={
+        <Box textAlign="center" mt={10}>
+          <CircularProgress />
+        </Box>
+      }
+    >
       {initializing ? (
-        <Box textAlign="center" mt={10}><CircularProgress /></Box>
+        <Box textAlign="center" mt={10}>
+          <CircularProgress />
+        </Box>
       ) : (
         routes
       )}

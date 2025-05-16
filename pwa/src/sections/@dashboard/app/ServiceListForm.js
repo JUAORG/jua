@@ -18,27 +18,27 @@ export default function ServiceListForm({ serviceDoc }) {
     register,
     handleSubmit,
     reset,
-    formState: { errors }
+    formState: { errors },
   } = useForm({
     defaultValues: service || {
       name: '',
       price: '',
-      description: ''
-    }
+      description: '',
+    },
   });
 
   useEffect(() => {
     if (service) reset(service);
   }, [service, reset]);
 
-  const onSubmit = async (values) => {
+  const onSubmit = async values => {
     setIsSubmitting(true);
     try {
       if (service) {
         // await updateUserService({ ...values, ref: service.id });
         notificationManager.success('Service updated', 'Success');
       } else {
-        const created = true // await createUserService(values);
+        const created = true; // await createUserService(values);
         setService(created); // switch to update mode
         notificationManager.success('Service added', 'Success');
       }
@@ -84,32 +84,21 @@ export default function ServiceListForm({ serviceDoc }) {
             placeholder="1500"
             {...register('price', {
               required: 'Price is required',
-              valueAsNumber: true
+              valueAsNumber: true,
             })}
             error={!!errors.price}
             helperText={errors.price?.message}
             InputProps={{
-              startAdornment: <InputAdornment position="start">R</InputAdornment>
+              startAdornment: <InputAdornment position="start">R</InputAdornment>,
             }}
           />
         </Stack>
 
-        <TextField
-          fullWidth
-          type="text"
-          label="Short Description (optional)"
-          {...register('description')}
-        />
+        <TextField fullWidth type="text" label="Short Description (optional)" {...register('description')} />
 
         {service ? (
           <>
-            <LoadingButton
-              fullWidth
-              size="large"
-              type="submit"
-              loading={isSubmitting}
-              variant="contained"
-            >
+            <LoadingButton fullWidth size="large" type="submit" loading={isSubmitting} variant="contained">
               Update
             </LoadingButton>
             <LoadingButton
@@ -124,13 +113,7 @@ export default function ServiceListForm({ serviceDoc }) {
             </LoadingButton>
           </>
         ) : (
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            loading={isSubmitting}
-            variant="contained"
-          >
+          <LoadingButton fullWidth size="large" type="submit" loading={isSubmitting} variant="contained">
             Add
           </LoadingButton>
         )}

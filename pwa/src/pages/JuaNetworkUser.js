@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
-import {
-  get,
-  map,
-} from 'lodash';
+import { get, map } from 'lodash';
 import {
   Container,
   Typography,
@@ -45,11 +42,11 @@ export default function JuaNetworkUser() {
 
           // Fetch education
           const educationSnap = await getDocs(collection(db, 'users', juaNetworkUserId, 'education'));
-          const education = educationSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+          const education = educationSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
           // Fetch work (experience)
           const workSnap = await getDocs(collection(db, 'users', juaNetworkUserId, 'experience'));
-          const work = workSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+          const work = workSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
           setJuaNetworkUser({
             ...userData,
@@ -122,7 +119,7 @@ export default function JuaNetworkUser() {
                     Jua member since: {new Date(juaNetworkUser.join_date).toDateString().slice(4)}
                   </Typography>
                   <Typography variant="h6">Education</Typography>
-                  {map(juaNetworkUser.education, (x) => (
+                  {map(juaNetworkUser.education, x => (
                     <div key={x.id}>
                       <Typography variant="body2">Degree: {x.degree}</Typography>
                       <Typography variant="body2">Institution: {x.institution}</Typography>
@@ -133,7 +130,7 @@ export default function JuaNetworkUser() {
                     </div>
                   ))}
                   <Typography variant="h6">Work</Typography>
-                  {map(juaNetworkUser.work, (x) => (
+                  {map(juaNetworkUser.work, x => (
                     <div key={x.id}>
                       <Typography variant="body2">Company: {x.company}</Typography>
                       <Typography variant="body2">Title: {x.title}</Typography>
