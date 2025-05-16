@@ -1,43 +1,64 @@
-import { get } from 'lodash'
-import { useForm } from "react-hook-form"
-import { Stack, TextField } from '@mui/material'
-import { useMutation, useQueryClient } from 'react-query';
-import { LoadingButton } from '@mui/lab'
-import notificationManager from '../../../actions/NotificationManager'
-import { createUserEducation, updateUserEducation, deleteUserEducation } from '../../../actions/Profile'
-
+import { get } from 'lodash';
+import { useForm } from 'react-hook-form';
+import { Stack, TextField } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
+import notificationManager from '../../../actions/NotificationManager';
+import { auth, db } from '../../../actions/firebase';
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from 'firebase/firestore';
+import { useState } from 'react';
 
 export default function EducationHistoryForm(educationDoc) {
-  const queryClient = useQueryClient();
   const education = get(educationDoc, 'educationDoc');
   const formProps = useForm({ defaultValues: education });
-
   const { register, reset, handleSubmit } = formProps;
+  const [loading, setLoading] = useState(false);
 
-  const { mutate, isLoading } = useMutation({
-    mutationFn: (values) => (get(education, 'ref') ? updateUserEducation(values) : createUserEducation(values)),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
+  const saveEducation = async (values) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) throw new Error('User not authenticated');
+
+    setLoading(true);
+    try {
+      if (education?.id) {
+        const ref = doc(db, 'users', uid, 'education', education.id);
+        await updateDoc(ref, values);
+      } else {
+        const collectionRef = collection(db, 'users', uid, 'education');
+        await addDoc(collectionRef, values);
+      }
       notificationManager.success('Profile updated', 'Success');
       reset();
-    },
-    onError: () => alert('Something went wrong'),
-  });
-
-  const deleteItem = (values) => {
-    deleteUserEducation(values)
-      .then(() => {
-        reset();
-        queryClient.invalidateQueries({ queryKey: ['user'] });
-        notificationManager.success('Profile updated', 'Success');
-      })
-      .catch((error) => {
-        notificationManager.error(error, 'Error');
-      });
+    } catch (err) {
+      console.error(err);
+      notificationManager.error('Something went wrong', 'Error');
+    } finally {
+      setLoading(false);
+    }
   };
-  
+
+  const deleteItem = async () => {
+    const uid = auth.currentUser?.uid;
+    if (!uid || !education?.id) return;
+
+    try {
+      const ref = doc(db, 'users', uid, 'education', education.id);
+      await deleteDoc(ref);
+      reset();
+      notificationManager.success('Profile updated', 'Success');
+    } catch (error) {
+      console.error(error);
+      notificationManager.error(error.message, 'Error');
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit((values) => mutate(values))}>
+    <form onSubmit={handleSubmit(saveEducation)}>
       <Stack spacing={3} pb={5}>
         <TextField
           required
@@ -58,7 +79,7 @@ export default function EducationHistoryForm(educationDoc) {
           {...register('field_of_study')}
         />
         <Stack
-          sx={{float: "right"}}
+          sx={{ float: 'right' }}
           direction={{ xs: 'column', sm: 'row' }}
           spacing={2}
         >
@@ -69,9 +90,7 @@ export default function EducationHistoryForm(educationDoc) {
             label="Start Year"
             type="date"
             {...register('date_from')}
-            InputLabelProps={{
-              shrink: true,
-            }}
+            InputLabelProps={{ shrink: true }}
           />
           <TextField
             fullWidth
@@ -79,11 +98,8 @@ export default function EducationHistoryForm(educationDoc) {
             label="End Year"
             type="date"
             {...register('date_to')}
-            InputLabelProps={{
-              shrink: true,
-            }}
+            InputLabelProps={{ shrink: true }}
           />
-          
         </Stack>
         <TextField
           fullWidth
@@ -91,37 +107,40 @@ export default function EducationHistoryForm(educationDoc) {
           label="Description (optional)"
           {...register('description')}
         />
-        {education && (
+        {education ? (
           <>
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            loading={false}
-            variant="contained">
-            Update
-          </LoadingButton>
-          <LoadingButton
-            fullWidth
-            size="large"
-            loading={false}
-            onClick={() => deleteItem(education)}
-            variant="contained">
-            Delete
-          </LoadingButton>
+            <LoadingButton
+              fullWidth
+              size="large"
+              type="submit"
+              loading={loading}
+              variant="contained"
+            >
+              Update
+            </LoadingButton>
+            <LoadingButton
+              fullWidth
+              size="large"
+              loading={false}
+              onClick={deleteItem}
+              variant="contained"
+              color="error"
+            >
+              Delete
+            </LoadingButton>
           </>
-        )}
-        {!education && (
+        ) : (
           <LoadingButton
             fullWidth
             size="large"
             type="submit"
-            loading={false}
-            variant="contained">
+            loading={loading}
+            variant="contained"
+          >
             Add
           </LoadingButton>
         )}
       </Stack>
     </form>
-  )
+  );
 }

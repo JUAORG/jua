@@ -5,7 +5,6 @@ import ReactGA from 'react-ga';
 import * as Sentry from '@sentry/browser';
 import { BrowserTracing } from '@sentry/tracing';
 import CookieConsent from "react-cookie-consent";
-import { ReactQueryDevtools } from "react-query/devtools";import { QueryClient, QueryClientProvider } from 'react-query';
 import { onAuthStateChanged } from 'firebase/auth'; // ✅ Move this above local imports
 import { auth } from './actions/firebase';           // ✅ Local import follows external
 import { AuthProvider } from './contexts/AuthContext';
@@ -28,7 +27,6 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
   });
 }
 
-const queryClient = new QueryClient({});
 
 export default function App() {
   useEffect(() => {
@@ -48,7 +46,6 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <QueryClientProvider client={queryClient}>
         <ScrollToTop />
         <Router />
         <NotificationContainer />
@@ -63,10 +60,6 @@ export default function App() {
         >
           By using JUA, you agree to our use of cookies.
         </CookieConsent>
-        {(!process.env.NODE_ENV || process.env.NODE_ENV === 'development') && (
-          <ReactQueryDevtools />
-        )}
-        </QueryClientProvider>
       </AuthProvider>
     </ThemeProvider>
   );

@@ -17,9 +17,10 @@ import {
 import { LoadingButton } from '@mui/lab';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { auth, db } from '../../../actions/firebase'; // Adjust the path to your firebase.js config
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { updateProfile } from 'firebase/auth';
+import { auth, db, storage } from '../../../actions/firebase';
 import notificationManager from '../../../actions/NotificationManager';
-import ProfilePictureUploader from './ProfilePictureUploadForm';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -52,13 +53,13 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 export default function UserProfileForm() {
   const formProps = useForm();
-  const [openProfilePictureUploader, setOpenProfilePictureUploader] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [industryOptions, setIndustryOptions] = useState([
+  const [industryOptions] = useState([
     { name: 'Finance' },
     { name: 'Tech' },
     { name: 'Legal' },
   ]);
+  const [photoURL, setPhotoURL] = useState('');
 
   const { register, reset, handleSubmit } = formProps;
 
@@ -78,6 +79,7 @@ export default function UserProfileForm() {
             rate_per_hour_in_rands: data.rate_per_hour_in_rands || '',
             linkedIn: data.linkedIn || '',
           });
+          setPhotoURL(data.photoURL || auth.currentUser.photoURL || '');
         }
       } catch (error) {
         console.error('Failed to load profile', error);
@@ -87,10 +89,29 @@ export default function UserProfileForm() {
     loadUserProfile();
   }, [reset]);
 
-  const handleCloseProfilePictureUploader = () => setOpenProfilePictureUploader(false);
+  const handleProfileImageChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file || !auth.currentUser) return;
 
-  const onClickProfilePicture = () => {
-    setOpenProfilePictureUploader(true);
+    try {
+      const fileRef = ref(storage, `users/${auth.currentUser.uid}/profile_picture`);
+      await uploadBytes(fileRef, file);
+      const downloadURL = await getDownloadURL(fileRef);
+
+      // 1. Update Firebase Auth profile
+      await updateProfile(auth.currentUser, { photoURL: downloadURL });
+
+      // 2. Update Firestore user document
+      const userDocRef = doc(db, 'users', auth.currentUser.uid);
+      await updateDoc(userDocRef, { photoURL: downloadURL });
+
+      // 3. Update local state
+      setPhotoURL(downloadURL);
+      notificationManager.success('Profile picture updated', 'Success');
+    } catch (error) {
+      console.error('Upload failed', error);
+      notificationManager.error('Failed to upload profile picture', 'Error');
+    }
   };
 
   const onSubmit = async (values) => {
@@ -114,23 +135,29 @@ export default function UserProfileForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {openProfilePictureUploader && (
-        <ProfilePictureUploader handleClose={handleCloseProfilePictureUploader} />
-      )}
       <Stack spacing={3}>
-        <Tooltip title="Update Profile Picture">
-          <StyledBadge
-            overlap="circular"
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            variant="dot"
-            sx={{ cursor: 'pointer' }}
-          >
-            <Avatar
-              onClick={onClickProfilePicture}
-              alt="Profile Picture"
-              src={auth.currentUser?.photoURL || ''}
+        <Tooltip title="Click to change profile picture">
+          <label htmlFor="profile-picture-upload">
+            <input
+              type="file"
+              accept="image/*"
+              id="profile-picture-upload"
+              style={{ display: 'none' }}
+              onChange={handleProfileImageChange}
             />
-          </StyledBadge>
+            <StyledBadge
+              overlap="circular"
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              variant="dot"
+              sx={{ cursor: 'pointer' }}
+            >
+              <Avatar
+                alt="Profile Picture"
+                src={typeof photoURL === 'string' && photoURL.trim() !== '' ? photoURL : '/static/avatar_placeholder.png'}
+                sx={{ width: 80, height: 80 }}
+              />
+            </StyledBadge>
+          </label>
         </Tooltip>
 
         <TextField fullWidth label="First Name" {...register('first_name')} />

@@ -8,10 +8,18 @@ import {
   CircularProgress,
   Alert
 } from '@mui/material';
-import Page from '../components/Page';
+import { httpsCallable, getFunctions } from 'firebase/functions';
 import ServiceRequestForm from '../sections/@dashboard/app/ServiceRequestForm';
 import { fetchServiceRequest } from '../utils/serviceRequest';
+import notificationManager from '../actions/NotificationManager';
+import Page from '../components/Page';
 import { auth } from '../actions/firebase';
+
+const functions = getFunctions();
+
+const yoco = new window.YocoSDK({
+  publicKey: "pk_test_ed3c54a6gOol69qa7f45" // process.env.REACT_APP_YOCO_PUBLIC_KEY,
+});
 
 export default function ServiceRequest() {
   const navigate = useNavigate();
@@ -20,6 +28,7 @@ export default function ServiceRequest() {
   const [serviceRequest, setServiceRequest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [paying, setPaying] = useState(false);
 
   const goBack = () => {
     navigate('/dashboard/service_requests', { replace: true });
@@ -27,6 +36,45 @@ export default function ServiceRequest() {
 
   const goToServiceRequestMeeting = () => {
     navigate(`/dashboard/advisory_session_meeting/?room=${serviceRequestId}`, { replace: true });
+  };
+
+  const handlePopupPayment = async () => {
+    const amount = serviceRequest?.fee;
+    const amountInCents = 2000 // = amount * 100;
+    setPaying(true);
+
+    yoco.showPopup({
+      amountInCents,
+      currency: 'ZAR',
+      name: 'Jua Payment',
+      description: 'Pay for advisory session on JUA',
+      callback: async (result) => {
+        if (result.error) {
+          notificationManager.error(`${result.error.message}`, 'Error');
+          setPaying(false);
+          return;
+        }
+
+        try {
+          const processPayment = httpsCallable(functions, 'processPayment');
+          await processPayment({
+            tokenId: result.id,
+            amount,
+            serviceRequestId,
+          });
+
+          notificationManager.success(`R${amount} paid for session`, 'Success');
+
+          const { data } = await fetchServiceRequest(serviceRequestId);
+          setServiceRequest(data);
+        } catch (err) {
+          console.error(err);
+          notificationManager.error('Something went wrong while processing payment', 'Error');
+        } finally {
+          setPaying(false);
+        }
+      },
+    });
   };
 
   useEffect(() => {
@@ -41,6 +89,7 @@ export default function ServiceRequest() {
 
   const currentUid = auth.currentUser?.uid;
   const isServiceProvider = currentUid && currentUid === serviceRequest?.serviceProvider;
+  const isCustomer = currentUid && currentUid === serviceRequest?.customer;
 
   return (
     <Page title="Service Request">
@@ -63,8 +112,19 @@ export default function ServiceRequest() {
               isServiceProvider={isServiceProvider}
             />
 
-            {serviceRequest.status === 'Accepted' && (
-              <Button 
+            {isCustomer && serviceRequest.status === 'Accepted' && serviceRequest.paymentStatus !== 'paid' && (
+              <Button
+                variant="contained"
+                sx={{ mt: 5, mr: 2 }}
+                disabled={paying}
+                onClick={handlePopupPayment}
+              >
+                {paying ? 'Processing...' : `Pay R${serviceRequest.fee}`}
+              </Button>
+            )}
+
+            {serviceRequest.status === 'Accepted' && serviceRequest.paymentStatus === 'paid' && (
+              <Button
                 sx={{ mt: 5 }}
                 variant="contained"
                 onClick={goToServiceRequestMeeting}

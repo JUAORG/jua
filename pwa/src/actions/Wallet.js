@@ -1,75 +1,79 @@
-// import axios from 'axios';
-// import { map, get } from 'lodash';
-// import notificationManager from './NotificationManager';
-// import { createId } from '../utils/uuid-generator';
-// import { defaultHeaders } from './Auth';
+// File: src/actions/payment.js
+import { get } from 'lodash';
+import {
+  addDoc,
+  collection,
+  getDocs,
+  serverTimestamp,
+  query,
+  orderBy,
+} from 'firebase/firestore';
+import notificationManager from './NotificationManager';
+import { createId } from '../utils/uuid-generator';
+import { auth, db } from './firebase';
 
-// export const yoco = new window.YocoSDK({
-//   publicKey: process.env.REACT_APP_YOCO_PUBLIC_KEY,
-// });
+export const yoco = new window.YocoSDK({
+  publicKey: process.env.REACT_APP_YOCO_PUBLIC_KEY,
+});
 
-// export async function creditJuaWallet(amount) {
-//   const transactionId = createId();
-//   const values = {};
-//   values.id = transactionId;
-//   values.action = 'credit';
-//   values.amount = parseFloat(amount);
-// }
+export async function creditJuaWallet(amount, serviceRequestId) {
+  const uid = auth.currentUser?.uid;
+  if (!uid) return;
+  const ledgerRef = collection(db, 'users', uid, 'ledger');
 
-// export async function getAvailableFunds(ledgerRecords) {
-//   let total = 0;
-//   const bb = map(ledgerRecords, (x) => {
-//     total += get(x, 'amount');
-//   });
-//   return total;
-// }
+  await addDoc(ledgerRef, {
+    type: 'credit',
+    amount: parseFloat(amount),
+    serviceRequestId,
+    createdAt: serverTimestamp(),
+  });
+}
 
-// export async function fetchUserLedger() {
-//   return axios({
-//     method: 'GET',
-//     url: `${process.env.REACT_APP_API_BASE_URL}/api/user_profile_ledger/`,
-//     withCredentials: false,
-//     headers: defaultHeaders,
-//   });
-// }
+export async function getAvailableFunds() {
+  const uid = auth.currentUser?.uid;
+  if (!uid) return 0;
+  const q = query(collection(db, 'users', uid, 'ledger'), orderBy('createdAt', 'desc'));
+  const snap = await getDocs(q);
+  return snap.docs.reduce((total, doc) => total + (doc.data().amount || 0), 0);
+}
 
-// export async function makePayment(amount, serviceRequest) {
-//   const amountInCents = amount * 100;
-//   yoco.showPopup({
-//     amountInCents,
-//     currency: 'ZAR',
-//     name: 'Jua Wallet',
-//     description: 'Funds in your JUA wallet allows to make service requests',
-//     callback: (result) => {
-//       // This function returns a token that your server can use to capture a payment
-//       if (result.error) {
-//         const errorMessage = result.error.message;
-//         notificationManager.error(`${result.error.message}', 'Error`);
-//         alert(`error occured: ${errorMessage}`);
-//       } else {
-//         axios({
-//           method: 'POST',
-//           url: process.env.REACT_APP_PAYMENT_ENDPOINT,
-//           withCredentials: false,
-//           headers: defaultHeaders,
-//           data: {
-//             amountInCents,
-//             serviceRequest,
-//             token: get(result, 'id')
-//           },
-//         })
-//           .then((res) => {
-//             const statusCode = res.status;
-//             if (statusCode === 200 || statusCode === 201) {
-//               creditJuaWallet(amount).then(() => {
-//                 notificationManager.success(`R${amount} credited to your JUA wallet', 'Success`);
-//               });
-//             }
-//           })
-//           .catch(() => {
-//             notificationManager.error('Something went wrong', 'Error');
-//           });
-//       }
-//     },
-//   });
-// }
+export async function makePayment(amount, serviceRequestId) {
+  const amountInCents = amount * 100;
+
+  yoco.showPopup({
+    amountInCents,
+    currency: 'ZAR',
+    name: 'Jua Payment',
+    description: 'Pay for advisory session on JUA',
+    callback: async (result) => {
+      if (result.error) {
+        const errorMessage = result.error.message;
+        notificationManager.error(`${errorMessage}`, 'Error');
+        return;
+      }
+
+      try {
+        await creditJuaWallet(amount, serviceRequestId);
+        notificationManager.success(`R${amount} paid for session`, 'Success');
+
+        await addDoc(collection(db, 'serviceRequests', serviceRequestId, 'logs'), {
+          type: 'payment',
+          message: `Customer paid R${amount} for the session`,
+          createdAt: serverTimestamp(),
+          userId: auth.currentUser.uid,
+        });
+
+        await addDoc(collection(db, 'users', auth.currentUser.uid, 'notifications'), {
+          title: 'Payment Received',
+          message: `Payment of R${amount} successfully processed`,
+          type: 'payment',
+          createdAt: serverTimestamp(),
+          read: false,
+        });
+      } catch (err) {
+        console.error(err);
+        notificationManager.error('Something went wrong while processing payment', 'Error');
+      }
+    },
+  });
+}

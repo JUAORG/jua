@@ -9,7 +9,6 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../actions/firebase';
 import Page from '../components/Page';
 import BasicSpeedDial from '../components/SpeedDial';
-import BriefFeedCards from '../components/BriefFeedCards';
 import BriefServiceCards from '../components/BriefServiceCards';
 import SearchBar from '../components/SearchBar';
 
@@ -111,11 +110,9 @@ export default function DashboardApp() {
         <Typography variant="h6" my={4}>
           Industries
         </Typography>
-        <BriefServiceCards />
         <Typography variant="h6" my={4}>
           Feed
         </Typography>
-        <BriefFeedCards />
         <Grid container spacing={3}>
           {/* Conditional rendering based on user role */}
         </Grid>

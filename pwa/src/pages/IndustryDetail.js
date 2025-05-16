@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+
 import { get, map, last } from 'lodash'
 import {
   Avatar,

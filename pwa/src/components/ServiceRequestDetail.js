@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { get, head } from 'lodash';
-import { useQuery } from 'react-query';
+
 import {
   Box,
   AppBar,
@@ -33,7 +33,6 @@ import { fetchServiceRequest, serviceRequestStatusOptions } from '../actions/Jua
 
 export const ServiceRequestDetail = ({ selectedServiceRequestRef, handleClose }) => {
   const navigate = useNavigate();
-  const { data: userP } = useQuery(['user']);
   const user = get(userP, 'data', {});
   const [open, setOpen] = useState(true);
   const [scroll, setScroll] = useState('paper');

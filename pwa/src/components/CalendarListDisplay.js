@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { map, get } from 'lodash';
-import { useQuery } from 'react-query';
+
 import {
   CardContent,
   Typography,

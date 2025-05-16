@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Box,
   List,
@@ -13,43 +13,23 @@ import {
   ListItemAvatar,
   ListItemButton,
 } from '@mui/material';
-import { collection, doc, onSnapshot, orderBy, query, updateDoc, getDocs, writeBatch } from 'firebase/firestore';
+import { doc, updateDoc, writeBatch } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { get } from 'lodash';
-import Scrollbar from '../../components/Scrollbar';
-import { AnimationsSkeleton } from '../../components/Skeletons';
-import { auth, db } from '../../actions/firebase'; // Adjust the path to your firebase.js config
 import Iconify from '../../components/Iconify';
+import Scrollbar from '../../components/Scrollbar';
+import { db, auth } from '../../actions/firebase';
+import useNotificationData from '../../hooks/useNotificationData'; // use updated hook here
+import { AnimationsSkeleton } from '../../components/Skeletons';
+import { get } from 'lodash';
 
 export default function NotificationsPopover() {
   const [open, setOpen] = useState(null);
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!auth.currentUser) return;
+  const { notifications, unreadCount, loading } = useNotificationData();
 
-    const q = query(
-      collection(db, 'users', auth.currentUser.uid, 'notifications'),
-      orderBy('createdAt', 'desc')
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const entries = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setNotifications(entries);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const totalUnRead = notifications.filter((item) => !item.read).length;
-  const readNotifications = notifications.filter((item) => item.read);
   const unReadNotifications = notifications.filter((item) => !item.read);
+  const readNotifications = notifications.filter((item) => item.read);
 
   const handleOpen = (event) => setOpen(event.currentTarget);
   const handleClose = () => setOpen(null);
@@ -66,7 +46,7 @@ export default function NotificationsPopover() {
   return (
     <>
       <IconButton color={open ? 'primary' : 'default'} onClick={handleOpen} sx={{ width: 40, height: 40 }}>
-        <Badge badgeContent={totalUnRead} color="error">
+        <Badge badgeContent={unreadCount} color="error">
           <Iconify icon="eva:bell-fill" />
         </Badge>
       </IconButton>
@@ -83,10 +63,10 @@ export default function NotificationsPopover() {
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="subtitle1">Notifications</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              You have {totalUnRead} unread notifications
+              You have {unreadCount} unread notifications
             </Typography>
           </Box>
-          {totalUnRead > 0 && (
+          {unreadCount > 0 && (
             <Tooltip title="Mark all as read">
               <IconButton color="primary" onClick={handleMarkAllAsRead}>
                 <Iconify icon="eva:done-all-fill" />

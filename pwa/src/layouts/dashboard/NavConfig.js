@@ -9,14 +9,14 @@ const navConfig = [
   //   path: '/dashboard/service_requests',
   //   icon: getIcon('eva:calendar-fill'),
   // },
-  {
-    title: 'Homepage',
-    path: '/dashboard/app',
-    icon: getIcon('eva:home-fill'),
-  },
+  // {
+  //   title: 'Homepage',
+  //   path: '/dashboard/app',
+  //   icon: getIcon('eva:home-fill'),
+  // },
   {
     title: 'JUA Network',
-    path: '/dashboard/jua_network',
+    path: '/dashboard/app',
     icon: getIcon('eva:people-fill'),
   },
   {

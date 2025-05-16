@@ -13,7 +13,6 @@ const Register = lazy(() => import('./pages/Register'));
 const NotFound = lazy(() => import('./pages/Page404'));
 const DashboardApp = lazy(() => import('./pages/DashboardApp'));
 const Profile = lazy(() => import('./pages/Profile'));
-const Wallet = lazy(() => import('./pages/Wallet'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Services = lazy(() => import('./pages/Services'));
 const Service = lazy(() => import('./pages/Service'));
@@ -22,7 +21,6 @@ const About = lazy(() => import('./pages/About'));
 const JuaNetwork = lazy(() => import('./pages/JuaNetwork'));
 const JuaNetworkUser = lazy(() => import('./pages/JuaNetworkUser'));
 const PasswordChange = lazy(() => import('./pages/PasswordChange'));
-const FeedItemDetail = lazy(() => import('./pages/FeedItemDetail'));
 const IndustryDetail = lazy(() => import('./pages/IndustryDetail'));
 const ServiceRequests = lazy(() => import('./pages/ServiceRequests'));
 const SavedOpportunities = lazy(() => import('./pages/SavedOpportunities'));
@@ -51,19 +49,17 @@ export default function Router() {
       children: [
         { path: 'faq', element: <Faq /> },
         { path: 'about', element: <About /> },
-        { path: 'wallet', element: <Wallet /> },
         { path: 'profile', element: <Profile /> },
-        { path: 'app', element: <DashboardApp /> },
+        // { path: 'app', element: <DashboardApp /> },
         { path: 'settings', element: <Settings /> },
         { path: 'services', element: <Services /> },
         { path: 'service/:serviceName', element: <Service /> },
-        { path: 'jua_network', element: <JuaNetwork /> },
+        { path: 'app', element: <JuaNetwork /> },
         { path: 'jua_network/:juaNetworkUserId', element: <JuaNetworkUser /> },
         { path: 'password_change', element: <PasswordChange /> },
         { path: 'service_requests', element: <ServiceRequests /> },
         { path: 'saved_opportunities', element: <SavedOpportunities /> },
         { path: 'industry/:industryRef', element: <IndustryDetail /> },
-        { path: 'feed/:industryRef', element: <FeedItemDetail /> },
         { path: 'service_request/:serviceRequestId', element: <ServiceRequest /> },
         { path: 'advisory_session_meeting', element: <AdvisorySessionMeeting /> },
         { path: 'advisory_session_meeting/feedback/:serviceRequestId', element: <AdvisorySessionFeedback /> },

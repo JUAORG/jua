@@ -1,15 +1,12 @@
-import { useEffect } from 'react';
-import { Link as RouterLink, useNavigate} from 'react-router-dom';
-import { get } from 'lodash'
-import { useQuery } from 'react-query';
+import { useEffect, useContext } from 'react';
+import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { Card, Link, Container, Typography } from '@mui/material';
+import { Card, Link, Container, Typography, CircularProgress, Box } from '@mui/material';
 import useResponsive from '../hooks/useResponsive';
 import Page from '../components/Page';
 import Logo from '../components/Logo';
 import { LoginForm } from '../sections/auth/login';
-
-// ----------------------------------------------------------------------
+import { AuthContext } from '../contexts/AuthContext';
 
 const RootStyle = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
@@ -52,21 +49,29 @@ const ContentStyle = styled('div')(({ theme }) => ({
   padding: theme.spacing(12, 0),
 }));
 
-// ----------------------------------------------------------------------
-
 export default function Login() {
-  const navigate = useNavigate()
-  const { data, isLoading, isError } = useQuery(['user'])
-  
-  const smUp = useResponsive('up', 'sm');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useContext(AuthContext);
 
+  const redirectTo = new URLSearchParams(location.search).get('redirect') || '/dashboard/app';
+
+  const smUp = useResponsive('up', 'sm');
   const mdUp = useResponsive('up', 'md');
 
   useEffect(() => {
-    if (!isLoading && get(data, 'status') === 200 && !isError) {
-      navigate('/dashboard/app/')
+    if (user) {
+      navigate(redirectTo, { replace: true });
     }
-  }, [isLoading, data])
+  }, [user, navigate, redirectTo]);
+
+  if (user === undefined) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Page title="Login">
@@ -76,7 +81,7 @@ export default function Login() {
 
           {smUp && (
             <Typography variant="body2" sx={{ mt: { md: -2 } }}>
-              Don’t have an account? {''}
+              Don’t have an account?{' '}
               <Link variant="subtitle2" component={RouterLink} to="/register">
                 Get started
               </Link>
@@ -99,9 +104,9 @@ export default function Login() {
               Sign in to JUA
             </Typography>
 
-            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Enter your details below.</Typography>
-
-            {/* <AuthSocial /> */}
+            <Typography sx={{ color: 'text.secondary', mb: 5 }}>
+              Enter your details below.
+            </Typography>
 
             <LoginForm />
 

@@ -1,4 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import FeedbackIcon from '@mui/icons-material/Feedback';
+import ShareIcon from '@mui/icons-material/Share';
+import BasicSpeedDial from '../components/SpeedDial';
 import {
   Container,
   Typography,
@@ -207,6 +210,10 @@ export default function JuaNetwork() {
         {openUserDetailView && (
           <UserDetail user={selectedUser} handleClose={closeUserDetailView} />
         )}
+                <BasicSpeedDial actions={[
+          { icon: <FeedbackIcon />, name: 'Feedback', onClick: () => navigate(`/dashboard/about`, { replace: true }) },
+          { icon: <ShareIcon />, name: 'Share', onClick: () => navigator.share({ title: 'JUA', text: 'Join JUA today!', url: 'https://jua.one' }) },
+        ]} />
       </Container>
     </Page>
   );
