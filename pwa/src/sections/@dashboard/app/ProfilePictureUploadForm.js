@@ -40,7 +40,6 @@ export default function ProfilePictureUploader({ handleClose }) {
           window.location.reload()
         })
         .catch((err) => {
-          console.debug(err);
         })
         .finally(() => setLoading(false));
     }

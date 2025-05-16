@@ -84,7 +84,6 @@ export const ServiceRequestDetail = ({ selectedServiceRequestRef, handleClose })
     {
       icon: <FeedbackIcon sx={{ color: '#2065D1' }} />,
       name: 'Feedback',
-      onClick: () => console.log('You Can only provide feedback after the service request'),
     },
     {
       icon: <DeleteForeverIcon sx={{ color: '#2065D1' }} />,

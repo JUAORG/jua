@@ -29,7 +29,6 @@ export default function EducationHistoryForm(educationDoc) {
       notificationManager.success('Profile updated', 'Success');
       reset();
     } catch (err) {
-      console.error(err);
       notificationManager.error('Something went wrong', 'Error');
     } finally {
       setLoading(false);
@@ -46,7 +45,6 @@ export default function EducationHistoryForm(educationDoc) {
       reset();
       notificationManager.success('Profile updated', 'Success');
     } catch (error) {
-      console.error(error);
       notificationManager.error(error.message, 'Error');
     }
   };

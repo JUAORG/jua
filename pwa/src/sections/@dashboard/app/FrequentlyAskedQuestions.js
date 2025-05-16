@@ -25,7 +25,6 @@ export default function FrequentlyAskedQuestions() {
         }));
         setFaqs(entries);
       } catch (err) {
-        console.error('Failed to load FAQs:', err);
         setError(err);
       } finally {
         setLoading(false);

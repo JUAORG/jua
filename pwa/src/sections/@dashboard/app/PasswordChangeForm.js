@@ -27,7 +27,6 @@ export default function PasswordChangeForm({ handleClose }) {
         read: false,
       });
     } catch (error) {
-      console.error('Failed to log notification:', error);
     }
   };
 
@@ -68,7 +67,6 @@ export default function PasswordChangeForm({ handleClose }) {
       reset();
       handleClose();
     } catch (error) {
-      console.error(error);
       if (error.code === 'auth/wrong-password') {
         notificationManager.error('Current password is incorrect.', 'Error');
       } else if (error.code === 'auth/weak-password') {

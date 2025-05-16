@@ -64,7 +64,6 @@ export async function makePayment(amount, serviceRequestId) {
           read: false,
         });
       } catch (err) {
-        console.error(err);
         notificationManager.error('Something went wrong while processing payment', 'Error');
       }
     },

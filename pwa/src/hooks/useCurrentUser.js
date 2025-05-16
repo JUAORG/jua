@@ -18,7 +18,6 @@ export default function useCurrentUser() {
           }
         }
       } catch (error) {
-        console.error('Error fetching user data:', error);
       } finally {
         setLoadingUser(false);
       }

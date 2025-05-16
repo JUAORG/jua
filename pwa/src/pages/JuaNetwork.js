@@ -54,7 +54,6 @@ export default function JuaNetwork() {
         setLoading(false);
       },
       error => {
-        console.error(error);
         notificationManager.error('Failed to listen to network users', 'Error');
         setLoading(false);
       }
@@ -99,7 +98,6 @@ export default function JuaNetwork() {
         });
       }
     } catch (err) {
-      console.error(err);
       notificationManager.error('Could not load user details', 'Error');
     }
   };

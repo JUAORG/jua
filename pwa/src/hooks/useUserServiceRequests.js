@@ -48,7 +48,6 @@ export function useUserServiceRequests() {
           setLoading(false);
         }
       } catch (error) {
-        console.error('Error fetching service requests:', error);
         setAuthorized(false);
         setLoading(false);
       }

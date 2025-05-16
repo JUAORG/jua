@@ -38,7 +38,6 @@ export default function Settings() {
           notificationManager.error('User profile not found', 'Error');
         }
       } catch (err) {
-        console.error(err);
         notificationManager.error('Failed to load user profile', 'Error');
       } finally {
         setLoading(false);
@@ -61,7 +60,6 @@ export default function Settings() {
 
       notificationManager.success(`Profile visibility ${updatedVisibility ? 'enabled' : 'disabled'}`, 'Success');
     } catch (error) {
-      console.error(error);
       notificationManager.error('Failed to update profile visibility', 'Error');
     }
   };

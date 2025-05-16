@@ -90,7 +90,6 @@ export default function AdvisorySessionFeedback() {
         navigate(`/dashboard/app`, { replace: true });
       })
       .catch(error => {
-        console.error(error);
       });
   };
 

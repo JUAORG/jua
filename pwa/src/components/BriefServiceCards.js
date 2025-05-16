@@ -33,7 +33,6 @@ export default function BriefServiceCards() {
         setLoading(false);
       },
       error => {
-        console.error('Error fetching industries:', error);
         setLoading(false);
       }
     );

@@ -57,7 +57,6 @@ export default function JuaNetworkUser() {
           notificationManager.error('User not found', 'Error');
         }
       } catch (error) {
-        console.error(error);
         notificationManager.error('Failed to load user profile', 'Error');
       } finally {
         setLoading(false);

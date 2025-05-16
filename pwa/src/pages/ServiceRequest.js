@@ -67,7 +67,6 @@ export default function ServiceRequest() {
           const { data } = await fetchServiceRequest(serviceRequestId);
           setServiceRequest(data);
         } catch (err) {
-          console.error(err);
           notificationManager.error('Something went wrong while processing payment', 'Error');
         } finally {
           setPaying(false);

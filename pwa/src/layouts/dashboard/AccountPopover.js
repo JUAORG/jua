@@ -19,7 +19,6 @@ export default function AccountPopover() {
   const displayName = currentUser?.firstName || 'Anonymous User';
   const email = currentUser?.email || 'Unknown Email';
   const photoURL = currentUser?.photoURL || '';
-  console.debug(currentUser);
   const handleOpen = event => {
     setOpen(event.currentTarget);
   };
@@ -45,7 +44,6 @@ export default function AccountPopover() {
       await signOut(auth);
       notificationManager.success('Logged out', 'Success');
     } catch (err) {
-      console.error('Logout error:', err);
       notificationManager.error('Something went wrong', 'Error');
     } finally {
       clearSession();

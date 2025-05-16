@@ -57,7 +57,6 @@ export default function JuaPlatformFeedbackForm() {
       reset();
     },
     onError: error => {
-      console.error(error);
       notificationManager.error('Something went wrong', 'Error');
     },
   });

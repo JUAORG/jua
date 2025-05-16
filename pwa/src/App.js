@@ -15,7 +15,6 @@ import ScrollToTop from './components/ScrollToTop';
 // ----------------------------------------------------------------------
 
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-  console.debug('DEV MOVE');
 } else {
   ReactGA.initialize(process.env.REACT_APP_GA_UA_CODE, {
     titleCase: false,
@@ -31,10 +30,8 @@ export default function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
       if (user) {
-        console.log('User is logged in:', user.email);
         // set user in context or redux here
       } else {
-        console.log('User is logged out');
         // redirect or show login
       }
     });

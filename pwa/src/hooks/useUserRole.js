@@ -25,7 +25,6 @@
 //           setRole(data.role || null);
 //         }
 //       } catch (error) {
-//         console.error('Error fetching user role:', error);
 //       } finally {
 //         setLoading(false);
 //       }

@@ -55,11 +55,9 @@ class JitsiComponent extends Component {
     }
 
   handleParticipantLeft = async (participant) => {
-    console.log("participant left")
   }
 
   handleParticipantJoined = async () => {
-    console.log("participant joined")
   }
 
   handleVideoConferenceJoined = async () => {
@@ -87,7 +85,6 @@ class JitsiComponent extends Component {
       category: `Advisory Session:${this.state.room}`,
       action: `Clicked Mute/Unmute audio: ${audio.muted}`
     })
-    console.log("handleMuteStatus", audio); // { muted: true }
   }
 
   handleVideoStatus = (video) => {
@@ -96,7 +93,6 @@ class JitsiComponent extends Component {
       category: `Advisory Session Video Status: ${this.state.room}`,
       action: `Clicked Stop/Start camera: ${video.muted}`
     })
-    console.log("handleVideoStatus", video); // { muted: true }
   }
 
   getParticipants() {

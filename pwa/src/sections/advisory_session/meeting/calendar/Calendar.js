@@ -43,7 +43,6 @@ export const Calendar = ({ sentServiceRequests, recievedServiceRequests, calenda
     return (
       <div>
         <Dialog keepMounted onClose={handleClose} open={calendarEventModal}>
-          {console.log(calendarEventModal)}
           <DialogTitle>Title: {get(calendarEventModal, 'title')}</DialogTitle>
           <DialogContent>
             <DialogContentText>Description: {get(calendarEventDetails, 'description')}</DialogContentText>

@@ -41,7 +41,6 @@ export default function ServiceRequests() {
 
         setServiceRequests(data);
       } catch (err) {
-        console.error(err);
         setError('Failed to load service requests.');
       } finally {
         setLoading(false);

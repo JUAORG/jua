@@ -26,7 +26,6 @@ export default function AccountPaymentMethodForm() {
           setPreferredPaymentMethod(data.preferred_payment_method || '');
         }
       } catch (error) {
-        console.error('Failed to load account payment', error);
       } finally {
         setLoading(false);
       }
@@ -41,7 +40,6 @@ export default function AccountPaymentMethodForm() {
       await updateDoc(userRef, { accountPayment: values });
       notificationManager.success('Account payment updated', 'Success');
     } catch (error) {
-      console.error(error);
       notificationManager.error('Something went wrong', 'Error');
     } finally {
       setLoading(false);

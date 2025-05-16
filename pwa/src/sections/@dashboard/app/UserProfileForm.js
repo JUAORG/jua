@@ -78,7 +78,6 @@ export default function UserProfileForm() {
           setPhotoURL(data.photoURL || auth.currentUser.photoURL || '');
         }
       } catch (error) {
-        console.error('Failed to load profile', error);
       }
     };
 
@@ -105,7 +104,6 @@ export default function UserProfileForm() {
       setPhotoURL(downloadURL);
       notificationManager.success('Profile picture updated', 'Success');
     } catch (error) {
-      console.error('Upload failed', error);
       notificationManager.error('Failed to upload profile picture', 'Error');
     }
   };
@@ -122,7 +120,6 @@ export default function UserProfileForm() {
       await updateDoc(userRef, values);
       notificationManager.success('Profile updated successfully', 'Success');
     } catch (error) {
-      console.error(error);
       notificationManager.error('Something went wrong', 'Error');
     } finally {
       setIsLoading(false);

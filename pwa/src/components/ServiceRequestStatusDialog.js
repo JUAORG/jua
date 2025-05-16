@@ -53,7 +53,6 @@ export const ServiceRequestStatusDialog = ({ status, handleClose, serviceRequest
       setIsLoading(true);
     },
     onError: (error, variables, context) => {
-      console.error(error);
       notificationManager.error('something went wrong', 'Error');
     },
     onSuccess: (data, variables, context) => {

@@ -119,7 +119,6 @@ export const submitActiveServiceRequestAction = (serviceRequestId, action) => {
 };
 
 export async function updateServiceRequest(values) {
-  console.debug(values, 'frrfr');
   return axios({
     method: 'PATCH',
     url: `${process.env.REACT_APP_API_BASE_URL}/api/service_request/${get(values, 'ref')}/`,

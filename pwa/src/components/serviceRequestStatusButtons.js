@@ -36,7 +36,6 @@ export const ServiceRequestStatusButtons = ({ status, handleClose, serviceReques
   const [showAlertDialog, setShowAlertDialog] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const serviceRequestRef = get(serviceRequest, 'ref');
-  console.debug('frfr', serviceRequest);
   const updateServiceRequestStatus = useMutation(values => updateServiceRequest(values), {
     onMutate: variables => {
       // A mutation is about to happen!
@@ -45,7 +44,6 @@ export const ServiceRequestStatusButtons = ({ status, handleClose, serviceReques
     },
     onError: (error, variables, context) => {
       // An error happened!
-      console.error(error);
       notificationManager.error('something went wrong', 'Error');
     },
     onSuccess: (data, variables, context) => {

@@ -36,7 +36,6 @@ export default function AdminFaqManagePage() {
       }));
       setFaqs(entries);
     } catch (error) {
-      console.error('Failed to fetch FAQs:', error);
       notificationManager.error('Failed to load FAQs', 'Error');
     }
   };
@@ -68,7 +67,6 @@ export default function AdminFaqManagePage() {
       setEditingFaq(null);
       fetchFaqs();
     } catch (error) {
-      console.error('Error creating/updating FAQ:', error);
       notificationManager.error('Failed to submit FAQ', 'Error');
     } finally {
       setLoading(false);
@@ -87,7 +85,6 @@ export default function AdminFaqManagePage() {
       notificationManager.success('FAQ deleted successfully', 'Success');
       fetchFaqs();
     } catch (error) {
-      console.error('Error deleting FAQ:', error);
       notificationManager.error('Failed to delete FAQ', 'Error');
     }
   };

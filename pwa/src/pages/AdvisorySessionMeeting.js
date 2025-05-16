@@ -76,7 +76,6 @@ export default function AdvisorySessionMeeting() {
             uploaderName = `${firstName || ''} ${lastName || ''}`.trim() || data.uploadedBy;
           }
         } catch (err) {
-          console.error('Failed to fetch uploader name:', err);
         }
         return { id: docSnap.id, ...data, uploaderName };
       })
@@ -168,7 +167,6 @@ export default function AdvisorySessionMeeting() {
       const fileRef = ref(storage, `serviceRequests/${roomId}/resources/${file.name}`);
       const uploadTask = uploadBytesResumable(fileRef, file);
 
-      uploadTask.on('state_changed', null, console.error, async () => {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
         await addDoc(collection(db, 'serviceRequests', roomId, 'resources'), {
           fileName: file.name,
@@ -185,7 +183,6 @@ export default function AdvisorySessionMeeting() {
         setSnackOpen(true);
       });
     } catch (err) {
-      console.error(err);
     } finally {
       setUploading(false);
     }
@@ -203,7 +200,6 @@ export default function AdvisorySessionMeeting() {
       await deleteObject(fileRef);
       fetchResources();
     } catch (err) {
-      console.error('Delete failed:', err);
     }
   };
 
@@ -214,7 +210,6 @@ export default function AdvisorySessionMeeting() {
       setResources(prev => prev.map(item => (item.id === res.id ? { ...item, views: (item.views || 0) + 1 } : item)));
       window.open(res.url, '_blank', 'noopener');
     } catch (err) {
-      console.error('Failed to increment view count:', err);
     }
   };
 

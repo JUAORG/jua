@@ -17,7 +17,6 @@ export default function PasswordResetForm({ handleClose }) {
       notificationManager.success('Password reset email sent. Please check your inbox.', 'Success');
       handleClose();
     } catch (error) {
-      console.error('Password reset error:', error);
       notificationManager.error('Failed to send reset email. Please check the email address.', 'Error');
     } finally {
       setIsSending(false);

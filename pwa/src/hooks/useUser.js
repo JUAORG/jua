@@ -31,7 +31,6 @@ export function useUser() {
           setUser(baseUser);
         }
       } catch (error) {
-        console.error('Error fetching user:', error);
         setUser({
           uid: firebaseUser.uid,
           email: firebaseUser.email,

@@ -21,7 +21,6 @@ export default function Profile() {
   const [affiliateExpertApplicationButtonDisabled, setAffiliateExpertApplicationButtonDisabled] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
 
-  console.debug();
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -40,7 +39,6 @@ export default function Profile() {
         const expSnap = await getDocs(collection(db, 'users', uid, 'experience'));
         setExperienceList(expSnap.docs.map(doc => ({ ...doc.data(), id: doc.id })));
       } catch (error) {
-        console.error(error);
         notificationManager.error('Failed to load profile data', 'Error');
       } finally {
         setLoading(false);
@@ -60,7 +58,6 @@ export default function Profile() {
     //     notificationManager.success('Application submitted successfully', 'Success');
     //   }
     // } catch (err) {
-    //   console.error(err);
     //   notificationManager.error('Submission failed', 'Error');
     // } finally {
     //   setIsApplying(false);

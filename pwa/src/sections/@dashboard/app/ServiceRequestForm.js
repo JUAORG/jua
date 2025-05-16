@@ -123,7 +123,6 @@ export default function ServiceRequestForm({
       setOpenSuccess(true);
       closeDialog?.();
     } catch (error) {
-      console.error(error);
       notificationManager.error('Something went wrong while submitting the request.', 'Error');
     } finally {
       setSubmissionLoading(false);
@@ -164,7 +163,6 @@ export default function ServiceRequestForm({
       setActionReason('');
       notificationManager.success(`Request ${status.toLowerCase()} successfully`, 'Success');
     } catch (error) {
-      console.error(error);
       notificationManager.error('Failed to process the request.', 'Error');
     }
   };

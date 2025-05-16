@@ -36,7 +36,6 @@ export default function DashboardApp() {
           }
         }
       } catch (error) {
-        console.error('Error fetching user data:', error);
       } finally {
         setLoadingUser(false);
       }
@@ -78,7 +77,6 @@ export default function DashboardApp() {
           await updateDoc(userRef, { tour_completed: true });
         }
       } catch (err) {
-        console.error('Failed to update tour status:', err);
       }
     }
   };

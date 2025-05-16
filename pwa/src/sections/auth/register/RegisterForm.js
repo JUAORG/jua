@@ -61,7 +61,6 @@ export default function RegisterForm() {
       notificationManager.success('Account created. Please log in.', 'Success');
       navigate('/login', { replace: true });
     } catch (error) {
-      console.error('Registration error:', error);
       const fallback = 'Registration failed. Please try again.';
       const message = error?.message || fallback;
       notificationManager.error(message, 'Error');

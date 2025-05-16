@@ -43,7 +43,6 @@ export default function ServiceListForm({ serviceDoc }) {
         notificationManager.success('Service added', 'Success');
       }
     } catch (err) {
-      console.error(err);
       notificationManager.error('Failed to save service', 'Error');
     } finally {
       setIsSubmitting(false);
@@ -59,7 +58,6 @@ export default function ServiceListForm({ serviceDoc }) {
       setService(null);
       reset();
     } catch (err) {
-      console.error(err);
       notificationManager.error('Failed to delete service', 'Error');
     } finally {
       setIsDeleting(false);

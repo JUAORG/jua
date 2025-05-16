@@ -53,7 +53,6 @@ export default function UserProfileForm() {
 
   const onSubmit = values => {
     if (userProfile) {
-      console.log(values);
       editUserProfile(values);
     }
   };

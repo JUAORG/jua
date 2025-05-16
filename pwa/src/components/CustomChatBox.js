@@ -74,7 +74,6 @@ export const CustomChatBox = ({ serviceRequestRef, customerId, handleClose }) =>
         setLoading(false);
       },
       error => {
-        console.error(error);
         notificationManager.error('Failed to load chat', 'Error');
         setLoading(false);
       }
@@ -100,7 +99,6 @@ export const CustomChatBox = ({ serviceRequestRef, customerId, handleClose }) =>
       notificationManager.success('Message Sent', 'Success');
       setMessage('');
     } catch (error) {
-      console.error(error);
       notificationManager.error('Failed to send message', 'Error');
     } finally {
       setSubmitButtonDisabled(false);
