@@ -89,8 +89,7 @@ export default function AdvisorySessionFeedback() {
         notificationManager.success('Thank you for your feedback', 'Success');
         navigate(`/dashboard/app`, { replace: true });
       })
-      .catch(error => {
-      });
+      .catch(error => {});
   };
 
   return (

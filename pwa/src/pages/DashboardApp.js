@@ -76,8 +76,7 @@ export default function DashboardApp() {
           const userRef = doc(db, 'users', currentUser.uid);
           await updateDoc(userRef, { tour_completed: true });
         }
-      } catch (err) {
-      }
+      } catch (err) {}
     }
   };
 

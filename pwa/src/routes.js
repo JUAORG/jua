@@ -21,7 +21,7 @@ const About = lazy(() => import('./pages/About'));
 const JuaNetwork = lazy(() => import('./pages/JuaNetwork'));
 const JuaNetworkUser = lazy(() => import('./pages/JuaNetworkUser'));
 const PasswordChange = lazy(() => import('./pages/PasswordChange'));
-const IndustryDetail = lazy(() => import('./pages/IndustryDetail'));
+// const IndustryDetail = lazy(() => import('./pages/IndustryDetail'));
 const ServiceRequests = lazy(() => import('./pages/ServiceRequests'));
 const SavedOpportunities = lazy(() => import('./pages/SavedOpportunities'));
 const AdvisorySessionMeeting = lazy(() => import('./pages/AdvisorySessionMeeting'));
@@ -59,7 +59,7 @@ export default function Router() {
         { path: 'password_change', element: <PasswordChange /> },
         { path: 'service_requests', element: <ServiceRequests /> },
         { path: 'saved_opportunities', element: <SavedOpportunities /> },
-        { path: 'industry/:industryRef', element: <IndustryDetail /> },
+        // { path: 'industry/:industryRef', element: <IndustryDetail /> },
         { path: 'service_request/:serviceRequestId', element: <ServiceRequest /> },
         { path: 'advisory_session_meeting', element: <AdvisorySessionMeeting /> },
         { path: 'advisory_session_meeting/feedback/:serviceRequestId', element: <AdvisorySessionFeedback /> },

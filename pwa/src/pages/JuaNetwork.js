@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import FeedbackIcon from '@mui/icons-material/Feedback';
+import { useNavigate, useParams } from 'react-router-dom';
 import ShareIcon from '@mui/icons-material/Share';
 import BasicSpeedDial from '../components/SpeedDial';
 import {
@@ -29,6 +30,7 @@ const ITEMS_PER_PAGE = 6;
 
 export default function JuaNetwork() {
   const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
   const [industryFilter, setIndustryFilter] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);

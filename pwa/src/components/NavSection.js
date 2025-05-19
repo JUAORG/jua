@@ -134,19 +134,19 @@ NavSection.propTypes = {
 
 export default function NavSection({ navConfig, ...other }) {
   const { pathname } = useLocation();
-  const disabled = true;
+  // const disabled = true;
   const match = path => (path ? !!matchPath({ path, end: false }, pathname) : false);
-  const isAdvisorySessionActive = pathname === '/dashboard/advisory_session_meeting/';
+  // const isAdvisorySessionActive = pathname === '/dashboard/advisory_session_meeting/';
 
   return (
     <Box {...other}>
       <List disablePadding sx={{ p: 1 }}>
-        {isAdvisorySessionActive && (
+        {/* {isAdvisorySessionActive && (
           <Typography variant="p" component="p" sx={{ mt: 1, fontSize: '14px', textAlign: 'center' }}>
             Side bar disabled during active advisory session
           </Typography>
-        )}
-        {!isAdvisorySessionActive && navConfig.map(item => <NavItem key={item.title} item={item} active={match} />)}
+        )} */}
+        {navConfig.map(item => <NavItem key={item.title} item={item} active={match} />)}
       </List>
       <Typography variant="p" component="p" sx={{ mt: 1, fontSize: '11px', textAlign: 'center' }}>
         Proudly 🇿🇦 South African

@@ -21,7 +21,6 @@ export default function Profile() {
   const [affiliateExpertApplicationButtonDisabled, setAffiliateExpertApplicationButtonDisabled] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
 
-
   useEffect(() => {
     const fetchProfileData = async () => {
       try {

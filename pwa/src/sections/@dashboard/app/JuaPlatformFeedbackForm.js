@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles';
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { Stack, Badge, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -36,11 +37,12 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 export default function JuaPlatformFeedbackForm() {
-  const formProps = useForm();
-  const { reset, register, getValues, handleSubmit } = formProps;
+  const { reset, register, getValues, handleSubmit } = useForm();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { mutate, isLoading } = useMutation({
-    mutationFn: async () => {
+  const onSubmit = async () => {
+    setIsLoading(true);
+    try {
       const values = getValues();
       const uid = auth.currentUser?.uid || null;
       const email = auth.currentUser?.email || null;
@@ -51,20 +53,24 @@ export default function JuaPlatformFeedbackForm() {
         userEmail: email,
         submittedAt: serverTimestamp(),
       });
-    },
-    onSuccess: () => {
+
       notificationManager.success('Thank you for your feedback.', 'Success');
       reset();
-    },
-    onError: error => {
+    } catch (error) {
       notificationManager.error('Something went wrong', 'Error');
-    },
-  });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <form onSubmit={handleSubmit(() => mutate())}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
-        <TextField fullWidth label="Subject" {...register('subject', { required: 'Subject is required' })} />
+        <TextField
+          fullWidth
+          label="Subject"
+          {...register('subject', { required: 'Subject is required' })}
+        />
         <TextField
           rows={4}
           fullWidth
@@ -73,7 +79,13 @@ export default function JuaPlatformFeedbackForm() {
           {...register('message', { required: 'Message is required' })}
           placeholder="Improvement suggestions for Jua/Support?"
         />
-        <LoadingButton fullWidth size="large" type="submit" loading={isLoading} variant="contained">
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          loading={isLoading}
+          variant="contained"
+        >
           Submit
         </LoadingButton>
       </Stack>

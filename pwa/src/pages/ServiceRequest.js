@@ -113,11 +113,11 @@ export default function ServiceRequest() {
               </Button>
             )}
 
-            {serviceRequest.status === 'Accepted' && serviceRequest.paymentStatus === 'paid' && (
-              <Button sx={{ mt: 5 }} variant="contained" onClick={goToServiceRequestMeeting}>
-                Go To Service Request
-              </Button>
-            )}
+            {/* {serviceRequest.status === 'Accepted' && serviceRequest.paymentStatus === 'paid' && ( */}
+            <Button sx={{ mt: 5 }} variant="contained" onClick={goToServiceRequestMeeting}>
+              Go To Service Request
+            </Button>
+            {/* )} */}
           </>
         )}
       </Container>

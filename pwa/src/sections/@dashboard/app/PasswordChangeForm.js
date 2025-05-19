@@ -26,8 +26,7 @@ export default function PasswordChangeForm({ handleClose }) {
         createdAt: serverTimestamp(),
         read: false,
       });
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const onSubmit = async values => {

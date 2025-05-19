@@ -75,8 +75,7 @@ export default function AdvisorySessionMeeting() {
             const { firstName, lastName } = userSnap.data();
             uploaderName = `${firstName || ''} ${lastName || ''}`.trim() || data.uploadedBy;
           }
-        } catch (err) {
-        }
+        } catch (err) {}
         return { id: docSnap.id, ...data, uploaderName };
       })
     );
@@ -164,25 +163,37 @@ export default function AdvisorySessionMeeting() {
 
     try {
       setUploading(true);
+
       const fileRef = ref(storage, `serviceRequests/${roomId}/resources/${file.name}`);
       const uploadTask = uploadBytesResumable(fileRef, file);
 
-        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-        await addDoc(collection(db, 'serviceRequests', roomId, 'resources'), {
-          fileName: file.name,
-          fileType: file.type,
-          fileSize: file.size,
-          url: downloadURL,
-          uploadedBy: user.uid,
-          tag: fileTag || '',
-          views: 0,
-          createdAt: serverTimestamp(),
-        });
-        setFile(null);
-        setFileTag('');
-        setSnackOpen(true);
+      await new Promise((resolve, reject) => {
+        uploadTask.on(
+          'state_changed',
+          null,
+          error => reject(error),
+          async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            await addDoc(collection(db, 'serviceRequests', roomId, 'resources'), {
+              fileName: file.name,
+              fileType: file.type,
+              fileSize: file.size,
+              url: downloadURL,
+              uploadedBy: user.uid,
+              tag: fileTag || '',
+              views: 0,
+              createdAt: serverTimestamp(),
+            });
+            resolve();
+          }
+        );
       });
+
+      setFile(null);
+      setFileTag('');
+      setSnackOpen(true);
     } catch (err) {
+      console.error('Upload error:', err);
     } finally {
       setUploading(false);
     }
@@ -199,8 +210,7 @@ export default function AdvisorySessionMeeting() {
       const fileRef = ref(storage, `serviceRequests/${roomId}/resources/${res.fileName}`);
       await deleteObject(fileRef);
       fetchResources();
-    } catch (err) {
-    }
+    } catch (err) {}
   };
 
   const handleView = async res => {
@@ -209,8 +219,7 @@ export default function AdvisorySessionMeeting() {
       await updateDoc(resRef, { views: increment(1) });
       setResources(prev => prev.map(item => (item.id === res.id ? { ...item, views: (item.views || 0) + 1 } : item)));
       window.open(res.url, '_blank', 'noopener');
-    } catch (err) {
-    }
+    } catch (err) {}
   };
 
   return (
@@ -219,6 +228,12 @@ export default function AdvisorySessionMeeting() {
         <Typography variant="h3" sx={{ mb: 5 }}>
           Advisory Session
         </Typography>
+        <Grid>
+          <Typography variant="p" sx={{ my: 1 }}>
+            Meeting Link
+          </Typography>
+          <Link href={`https://meet.jua.one/${roomId}`} target="_blank" rel="noopener noreferrer">Meetling Link</Link>
+        </Grid>
 
         <Box sx={{ mb: 3 }}>
           <InputLabel htmlFor="file">Upload Session Material</InputLabel>

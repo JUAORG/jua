@@ -77,8 +77,7 @@ export default function UserProfileForm() {
           });
           setPhotoURL(data.photoURL || auth.currentUser.photoURL || '');
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     };
 
     loadUserProfile();
