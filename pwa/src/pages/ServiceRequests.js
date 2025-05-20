@@ -1,5 +1,5 @@
 // File: src/pages/ServiceRequests.js
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Typography,
   Skeleton,
@@ -12,55 +12,38 @@ import {
   Container,
   IconButton,
   Alert,
-  CircularProgress,
+  TextField,
+  MenuItem,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from 'react-router-dom';
-import { collection, query, where, getDocs } from 'firebase/firestore';
 import Page from '../components/Page';
 import ServiceRequestForm from '../sections/@dashboard/app/ServiceRequestForm';
-import { auth, db } from '../actions/firebase';
+import { auth } from '../actions/firebase';
+import useUserServiceRequests from '../hooks/useUserServiceRequests';
 
 export default function ServiceRequests() {
-  const [serviceRequests, setServiceRequests] = useState([]);
-  const [selectedRequest, setSelectedRequest] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const currentUid = auth.currentUser?.uid;
 
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const currentUid = auth.currentUser?.uid;
-        if (!currentUid) throw new Error('User not logged in');
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
 
-        const q = query(collection(db, 'serviceRequests'), where('customer', '==', currentUid));
+  const { serviceRequests, loading, error } = useUserServiceRequests({
+    status: filterStatus || null,
+    sortBy: 'createdAt',
+    sortOrder: 'desc',
+  });
 
-        const snapshot = await getDocs(q);
-        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const handleOpenEdit = req => setSelectedRequest(req);
+  const handleCloseEdit = () => setSelectedRequest(null);
+  const handleItemClick = id => navigate(`/dashboard/service_request/${id}`);
 
-        setServiceRequests(data);
-      } catch (err) {
-        setError('Failed to load service requests.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRequests();
-  }, []);
-
-  const handleOpenEdit = req => {
-    setSelectedRequest(req);
-  };
-
-  const handleCloseEdit = () => {
-    setSelectedRequest(null);
-  };
-
-  const handleItemClick = id => {
-    navigate(`/dashboard/service_request/${id}`);
-  };
+  const filteredRequests = serviceRequests.filter(req =>
+    req.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    req.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const renderSkeletonList = () => (
     <>
@@ -81,8 +64,34 @@ export default function ServiceRequests() {
         <Typography variant="h6" gutterBottom>
           Your Service Requests
         </Typography>
+
+        <TextField
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          label="Search by subject or description"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+
+        <TextField
+          select
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          label="Filter by Status"
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+        >
+          <MenuItem value="">All</MenuItem>
+          <MenuItem value="Pending">Pending</MenuItem>
+          <MenuItem value="Accepted">Accepted</MenuItem>
+          <MenuItem value="Declined">Declined</MenuItem>
+          <MenuItem value="Completed">Completed</MenuItem>
+        </TextField>
+
         <List disablePadding>
-          {serviceRequests.map(req => (
+          {filteredRequests.map(req => (
             <div key={req.id}>
               <ListItem
                 button
@@ -118,9 +127,9 @@ export default function ServiceRequests() {
               <Divider component="li" />
             </div>
           ))}
-          {serviceRequests.length === 0 && !loading && (
+          {filteredRequests.length === 0 && !loading && (
             <Typography variant="body2" sx={{ textAlign: 'center', p: 2 }}>
-              No service requests yet.
+              No service requests found.
             </Typography>
           )}
         </List>

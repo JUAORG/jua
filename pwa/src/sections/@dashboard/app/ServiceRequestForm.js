@@ -21,19 +21,42 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LoadingButton } from '@mui/lab';
-import { doc, addDoc, updateDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { doc, addDoc, updateDoc, collection, serverTimestamp, onSnapshot } from 'firebase/firestore';
 import notificationManager from '../../../actions/NotificationManager';
 import { auth, db } from '../../../actions/firebase';
 
+function useServiceRequestLive(serviceRequestId) {
+  const [serviceRequest, setServiceRequest] = useState(null);
+
+  useEffect(() => {
+    if (!serviceRequestId) return;
+
+    const ref = doc(db, 'serviceRequests', serviceRequestId);
+    const unsub = onSnapshot(ref, (snap) => {
+      if (snap.exists()) {
+        setServiceRequest({ id: snap.id, ...snap.data() });
+      }
+    });
+
+    return () => unsub();
+  }, [serviceRequestId]);
+
+  return serviceRequest;
+}
+
 export default function ServiceRequestForm({
   closeDialog,
-  serviceRequest,
+  serviceRequest: initialRequest,
   serviceProvider,
   isServiceProvider = false,
 }) {
+  const liveServiceRequest = useServiceRequestLive(initialRequest?.id);
+  const serviceRequest = liveServiceRequest || initialRequest;
+
   const navigate = useNavigate();
   const formProps = useForm({ defaultValues: serviceRequest || {} });
   const { register, setValue, handleSubmit } = formProps;
+
   const [date, setDate] = useState(
     get(serviceRequest, 'date_and_time') ? new Date(get(serviceRequest, 'date_and_time')) : null
   );
@@ -42,28 +65,38 @@ export default function ServiceRequestForm({
   const [actionDialog, setActionDialog] = useState(null);
   const [actionReason, setActionReason] = useState('');
 
+  const isFinalized = serviceRequest?.status === 'Accepted' || serviceRequest?.status === 'Cancelled';
+
   useEffect(() => {
     if (serviceProvider) {
       setValue('serviceProvider', serviceProvider.ref || serviceProvider.id);
     }
   }, [serviceProvider, setValue]);
 
-  const isFinalized = serviceRequest?.status === 'Accepted' || serviceRequest?.status === 'Cancelled';
+  useEffect(() => {
+    if (serviceRequest) {
+      setValue('subject', serviceRequest.subject || '');
+      setValue('description', serviceRequest.description || '');
+      setDate(serviceRequest.date_and_time ? new Date(serviceRequest.date_and_time) : null);
+    }
+  }, [serviceRequest, setValue]);
 
   const handleDateTimeChange = newDate => {
-    setDate(newDate?.toDate ? newDate.toDate() : newDate);
-    setValue('date_and_time', newDate?.toDate ? newDate.toDate() : newDate);
+    const safeDate = newDate?.toDate ? newDate.toDate() : newDate;
+    setDate(safeDate);
+    setValue('date_and_time', safeDate);
   };
 
   const onSubmit = async values => {
     if (isFinalized) return;
+
     try {
       setSubmissionLoading(true);
 
       ReactGA.event({
         value: 1,
         category: 'Service Requests',
-        action: serviceRequest ? 'Service Request updated' : 'Service Request created',
+        action: serviceRequest?.id ? 'Service Request updated' : 'Service Request created',
       });
 
       const user = auth.currentUser;
@@ -140,7 +173,7 @@ export default function ServiceRequestForm({
         statusUpdatedBy: user?.uid || null,
         updatedAt: serverTimestamp(),
       });
-      // Log action to serviceRequests/{id}/logs
+
       const logRef = collection(db, 'serviceRequests', serviceRequest.id, 'logs');
       await addDoc(logRef, {
         action: status,
